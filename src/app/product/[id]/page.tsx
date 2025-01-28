@@ -46,7 +46,7 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
 
         <div className="product-page mt-[5rem]">
           <Image
-            className="h-[350px] object-cover"
+            className="h-[350px] w-full object-cover"
             src={product.image}
             alt={product.name}
             width={500}

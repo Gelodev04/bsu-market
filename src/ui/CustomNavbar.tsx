@@ -51,7 +51,7 @@ export default function CustomNavbarComponent({
         className={`fixed  py-4 transition-all duration-200 ${
           isScrolled ? "bg-white text-black py-3" : "bg-transparent text-white"
         }`}
-        shouldHideOnScroll
+       
         isBlurred={false} 
       >
         {children}

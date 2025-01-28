@@ -6,15 +6,14 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(navbar|pagination).js"
+    "./node_modules/@heroui/theme/dist/components/(input|navbar|pagination|form).js"
   ],
   theme: {
     extend: {
       colors: {
         danger: "#eb1c24",
         bsutheme: "#eb1c24",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        
       },
     },
   },
