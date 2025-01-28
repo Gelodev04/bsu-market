@@ -42,7 +42,7 @@ const ShopSection = ({ data }: ShopSectionProps) => {
 
       <div className="product-list grid grid-cols-2 gap-2 gap-y-4">
         {displayedProducts.map((product) => (
-          <div key={product.id} className="product-card bg-white rounded py-2 shadow-md flex flex-col h-[310px] relative hover:outline outline-2 hover:outline-bsutheme overflow-hidden cursor-pointer">
+          <div key={product.id} className="product-card bg-white rounded py-2 shadow-md flex flex-col h-[310px] relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme  overflow-hidden cursor-pointer">
               <Link href={`/product/${product.id}`} >
               <div className="px-2 flex flex-col">
                 <Image
@@ -60,9 +60,9 @@ const ShopSection = ({ data }: ShopSectionProps) => {
               </div>
           </Link>
               <div className="absolute bottom-0 px-2 flex w-full justify-between bg-bsutheme text-white py-1 text-sm">
-                <button onClick={()=> addToCart(product)} className="hover:scale-110 duration-150">Add to Cart</button>
+                <button onClick={()=> addToCart(product)} className="hover:scale-110 active:scale-110 duration-150">Add to Cart</button>
                 <div className="h-[23px] w-[1px] bg-white"></div>
-                <button className="hover:scale-110 duration-150">Buy Now</button>
+                <button className="hover:scale-110 active:scale-110 duration-150">Buy Now</button>
               </div>
             </div>
         ))}
