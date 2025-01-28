@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-
+import { CartProvider } from "@/components/CartContent";
 import "./globals.css";
 import { Poppins } from 'next/font/google';
 
@@ -22,12 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="">
-      <body
-        className={`${poppins.className}  antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <CartProvider>
+      <html lang="en" className="">
+        <body
+          className={`${poppins.className}  antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </CartProvider>
   );
 }

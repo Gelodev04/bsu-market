@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
+import { useCart } from "@/components/CartContent";
 
 interface Product {
   id: number;
@@ -21,6 +22,7 @@ interface ShopSectionProps {
 const ShopSection = ({ data }: ShopSectionProps) => {
   const itemsPerPage = 20; 
   const [currentPage, setCurrentPage] = useState(1); 
+  const { addToCart} = useCart();
 
 
   const handlePageChange = (page: number) => {
@@ -58,7 +60,7 @@ const ShopSection = ({ data }: ShopSectionProps) => {
               </div>
           </Link>
               <div className="absolute bottom-0 px-2 flex w-full justify-between bg-bsutheme text-white py-1 text-sm">
-                <button className="hover:scale-110 duration-150">Add to Cart</button>
+                <button onClick={()=> addToCart(product)} className="hover:scale-110 duration-150">Add to Cart</button>
                 <div className="h-[23px] w-[1px] bg-white"></div>
                 <button className="hover:scale-110 duration-150">Buy Now</button>
               </div>

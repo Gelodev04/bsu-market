@@ -1,5 +1,3 @@
-
-
 import {
   Navbar,
   NavbarBrand,
@@ -13,7 +11,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const CartSvg = () => {
- 
   return (
     <svg
       width={23}
@@ -42,7 +39,6 @@ export const CartSvg = () => {
 };
 
 export const Menu = () => {
- 
   return (
     <svg
       width={40}
@@ -73,7 +69,6 @@ export const Menu = () => {
     </svg>
   );
 };
-
 
 export default function PageNavbar() {
   return (
@@ -106,9 +101,6 @@ export default function PageNavbar() {
       <ul className="flex items-center gap-3">
         <li className="cursor-pointer">
           <CartSvg />
-        </li>
-        <li className="cursor-pointer" onPress={onOpen}>
-          <Menu />
         </li>
       </ul>
     </Navbar>

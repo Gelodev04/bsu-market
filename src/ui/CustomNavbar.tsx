@@ -48,7 +48,7 @@ export default function CustomNavbarComponent({
   return (
     <NavbarScrollContext.Provider value={isScrolled}>
       <Navbar
-        className={`fixed bg-opacity-[0.9] py-4 transition-all duration-200 ${
+        className={`fixed  py-4 transition-all duration-200 ${
           isScrolled ? "bg-white text-black py-3" : "bg-transparent text-white"
         }`}
         shouldHideOnScroll
