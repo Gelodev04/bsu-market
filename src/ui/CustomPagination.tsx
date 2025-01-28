@@ -15,10 +15,10 @@ export default function CustomPagination({
   return (
     <div className="flex justify-center items-center">
       <Pagination
-        page={currentPage} // Pass the current page here
-        total={total} // Pass the total number of pages here
+        page={currentPage} 
+        total={total} 
         showControls
-        onChange={onPageChange} // Handle page changes
+        onChange={onPageChange} 
         color="danger"
       />
     </div>

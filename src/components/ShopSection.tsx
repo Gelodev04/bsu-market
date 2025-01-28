@@ -19,19 +19,19 @@ interface ShopSectionProps {
 }
 
 const ShopSection = ({ data }: ShopSectionProps) => {
-  const itemsPerPage = 20; // Number of products to display per page
-  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const itemsPerPage = 20; 
+  const [currentPage, setCurrentPage] = useState(1); 
 
-  // Function to change the current page
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Calculate the index of the first and last product to display
+ 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  // Slice the data to show only the products for the current page
+ 
   const displayedProducts = data.slice(startIndex, endIndex);
 
   return (
@@ -54,7 +54,7 @@ const ShopSection = ({ data }: ShopSectionProps) => {
                 <span className="text-lg text-bsutheme font-medium">
                   ₱{product.price.toFixed(0)}
                 </span>
-                <span className="text-sm">{product.orders} sold</span>
+                <span className="text-sm">{product.orders ? `${product.orders} sold` : 'No sold yet'}</span>
               </div>
               <div className="absolute bottom-0 px-3 flex w-full justify-between bg-bsutheme text-white py-1 text-sm">
                 <button className="hover:scale-110 duration-150">Add to Cart</button>
@@ -66,11 +66,11 @@ const ShopSection = ({ data }: ShopSectionProps) => {
         ))}
       </div>
 
-      {/* Pagination */}
+ 
       <div className="py-5">
         <CustomPagination
           currentPage={currentPage}
-          total={Math.ceil(data.length / itemsPerPage)} // Total number of pages
+          total={Math.ceil(data.length / itemsPerPage)} 
           onPageChange={handlePageChange}
         />
       </div>
