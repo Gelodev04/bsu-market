@@ -1,3 +1,4 @@
+
 import {
   Navbar,
   NavbarBrand,
@@ -9,6 +10,30 @@ import {
 } from "@heroui/navbar";
 import Image from "next/image";
 import Link from "next/link";
+
+export const SearchSvg = () => {
+  
+  return (
+    <svg width={23} viewBox="0 0 24 24" fill="none">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        {" "}
+        <path
+          d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></path>{" "}
+      </g>
+    </svg>
+  );
+};
 
 export const CartSvg = () => {
   return (
@@ -70,39 +95,48 @@ export const Menu = () => {
   );
 };
 
+export const CloseSvg = () => {
+  return (
+    <svg width={30} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        {" "}
+        <path
+          d="M19 5L5 19M5.00001 5L19 19"
+          stroke="#000000"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></path>{" "}
+      </g>
+    </svg>
+  );
+};
+
 export default function PageNavbar() {
   return (
-    <Navbar
-      className="fixed bg-opacity-[0.9] transition-all duration-200
-            bg-white text-black py-3 
+    <nav
+      className="flex justify-between
+            bg-white text-black py-3 px-4 w-full
         "
-      shouldHideOnScroll
-      isBlurred={false}
     >
       <Link href="/#shop">
         <div className="flex gap-3 duration-200 ">
-          <Image
-            className="w-[50px]"
-            src="/images/BatStateU-NEU-Logo-300x282.png.webp"
-            alt="logo"
-            width={500}
-            height={500}
-          />
-          <h1 className="text-[1.5rem] font-semibold tracking-wider flex items-center gap-2">
-            <div className="relative">
-              <span className=" ">BSU</span>
-              <div className="absolute bottom-[2px] -left-1 h-[3px] rounded-full bg-bsutheme w-[29px]"></div>
-            </div>{" "}
-            <span className="">Market</span>
-          </h1>
+          <CloseSvg/>
         </div>
       </Link>
 
       <ul className="flex items-center gap-3">
         <li className="cursor-pointer">
-          <CartSvg />
+          <SearchSvg/>
+          
         </li>
       </ul>
-    </Navbar>
+    </nav>
   );
 }

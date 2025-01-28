@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { CartSvg, RightArrow } from "@/assets/svgs/Svg";
+import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
 
 interface Product {
   id: number;
@@ -44,7 +44,7 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
       <div className="h-screen overflow-hidden relative">
         <PageNavbar />
 
-        <div className="product-page mt-[5rem]">
+        <div className="product-page ">
           <Image
             className="h-[350px] w-full object-cover"
             src={product.image}
@@ -52,15 +52,16 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
             width={500}
             height={500}
           />
-          <div className="px-4 mt-5">
-            <span className="text-bsutheme">
-              ₱<span className="text-3xl font-semibold">{product.price.toFixed(0)}</span>
-            </span>
+          <div className="mx-4 ">
+            <div className="w-full py-3 my-1  flex justify-between border-b border-gray-300">
+              <span className="text-bsutheme">
+                ₱<span className="text-3xl font-semibold">{product.price.toFixed(0)}</span>
+              </span>
+              <span className="cursor-pointer"><SaveSvg/></span>
+            </div>
             <h1 className="text-xl font-medium mt-2">{product.name}</h1>
-            <p className="py-1">{product.description}</p>
-            <span className="font-semibold">
-              {product.orders ? `${product.orders} sold` : "No sold yet"}
-            </span>
+            <p className="py-1 text-gray-600">{product.description}</p>
+            
           </div>
         </div>
 
@@ -73,22 +74,19 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
               width={50}
               height={50}
             />
-            <span className="ml-2  text-gray-700 text-md">
+            <span className="ml-2 mr-2  text-gray-700 text-md">
               {product.seller.name}
             </span>
+            <button className="bg-bsutheme rounded text-white text-xs px-2 py-[1px]">Follow</button>
           </div>
         </div>
 
         <div className="fixed font-medium bottom-0 flex justify-evenly px-5 py-3 w-full bg-bsutheme text-white">
           <button className=" duration-150 active:scale-110 flex items-center gap-1">
-            <span>Add To Cart</span>
+            <span>Message the Seller</span>
             <CartSvg />
           </button>
-          <div className="h-[23px] w-[1px] bg-white"></div>
-          <button className="active:scale-110 duration-150 flex items-center gap-1">
-            <span>Buy Now</span>
-            <RightArrow />
-          </button>
+          
         </div>
       </div>
     </>

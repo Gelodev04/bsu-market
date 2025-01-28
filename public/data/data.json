@@ -1,59 +1,63 @@
 [
   {
     "id": 1,
-    "name": "BSU T-Shirt",
+    "name": "Big BIke",
     "description": "A comfortable cotton t-shirt with the BSU logo.",
     "price": 70,
-    "image": "/images/cart.jpg",
+    "image": "/images/bike.jpg",
     "category": "Apparel",
     "orders": null,
     "seller": {
       "name": "John Doe",
       "profileImage": "/images/seller1.jpg"
-    }
+    },
+    "location": "Alangilan"
   },
   {
     "id": 2,
-    "name": "BSU Hoodie",
+    "name": "BIg CAr",
     "description": "A warm hoodie with the BSU logo.",
     "price": 100,
-    "image": "/images/cart.jpg",
+    "image": "/images/car.jpg",
     "category": "Apparel",
     "orders": 100,
     "seller": {
       "name": "John Doe",
       "profileImage": "/images/seller1.jpg"
-    }
+    },
+    "location": "Alangilan"
   },
   {
     "id": 3,
-    "name": "BSU Mug",
+    "name": "Camera",
     "description": "A ceramic mug with the BSU logo.",
     "price": 9.99,
-    "image": "/images/cart.jpg",
+    "image": "/images/camera.jpg",
     "category": "Accessories",
     "orders": 200,
     "seller": {
       "name": "John Doe",
       "profileImage": "/images/seller1.jpg"
-    }
+    },
+    "location": "Alangilan"
   },
   {
     "id": 4,
-    "name": "BSU Cap",
+    "name": "phone",
     "description": "A stylish cap with the BSU logo.",
     "price": 50,
-    "image": "/images/cart.jpg",
+    "image": "/images/phone.jpg",
     "category": "Accessories",
     "orders": 75,
     "seller": {
       "name": "John Doe",
       "profileImage": "/images/seller1.jpg"
-    }
+    },
+    "location": "Alangilan"
   },
   {
     "id": 5,
-    "name": "BSU Backpack",
+    "name": "Fake Phone",
     "description": "A durable backpack with the BSU logo.",
     "price": 49.99,
     "image": "/images/cart.jpg",

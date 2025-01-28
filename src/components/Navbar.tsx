@@ -31,14 +31,7 @@ export default function MyNavbar() {
           <li className="cursor-pointer">
             <SearchSvg/>
           </li>
-          <li className="cursor-pointer">
-          
-              <Link href="/cart">
-                <CartSvg />
-              </Link>
-           
-            
-          </li>
+         
         </ul>
       </CustomNavbarComponent>
     </>
