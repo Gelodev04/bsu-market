@@ -1,0 +1,191 @@
+[
+  {
+    "id": 1,
+    "name": "BSU T-Shirt",
+    "description": "A comfortable cotton t-shirt with the BSU logo.",
+    "price": 70,
+    "image": "/images/cart.jpg",
+    "category": "Apparel",
+    "orders": 150
+  },
+  {
+    "id": 2,
+    "name": "BSU Hoodie",
+    "description": "A warm hoodie with the BSU logo.",
+    "price": 100,
+    "image": "/images/cart.jpg",
+    "category": "Apparel",
+    "orders": 100
+  },
+  {
+    "id": 3,
+    "name": "BSU Mug",
+    "description": "A ceramic mug with the BSU logo.",
+    "price": 9.99,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 200
+  },
+  {
+    "id": 4,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 5,
+    "name": "BSU Backpack",
+    "description": "A durable backpack with the BSU logo.",
+    "price": 49.99,
+    "image": "/images/cart.jpg",
+    "category": "Bags",
+    "orders": 60
+  },
+  {
+    "id": 6,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 12
+  },
+  {
+    "id": 7,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 8,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 9,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 10,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 11,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 12,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 13,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 14,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 15,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 16,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 17,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 18,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 19,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 20,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  },
+  {
+    "id": 21,
+    "name": "BSU Cap",
+    "description": "A stylish cap with the BSU logo.",
+    "price": 50,
+    "image": "/images/cart.jpg",
+    "category": "Accessories",
+    "orders": 75
+  }
+]
