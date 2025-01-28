@@ -40,8 +40,8 @@ const ShopSection = ({ data }: ShopSectionProps) => {
 
       <div className="product-list grid grid-cols-2 gap-2">
         {displayedProducts.map((product) => (
-          <Link href={`/product/${product.id}`} key={product.id}>
-            <div className="product-card bg-white rounded py-2 shadow-md flex flex-col h-[310px] relative hover:outline outline-2 hover:outline-bsutheme overflow-hidden cursor-pointer">
+          <div key={product.id} className="product-card bg-white rounded py-2 shadow-md flex flex-col h-[310px] relative hover:outline outline-2 hover:outline-bsutheme overflow-hidden cursor-pointer">
+              <Link href={`/product/${product.id}`} >
               <div className="px-2 flex flex-col">
                 <Image
                   className="object-cover w-full h-[170px]"
@@ -50,19 +50,19 @@ const ShopSection = ({ data }: ShopSectionProps) => {
                   width={500}
                   height={500}
                 />
-                <h3 className="py-2 text-lg truncate">{product.name}</h3>
-                <span className="text-lg text-bsutheme font-medium">
+                <h3 className="pt-2 text-lg truncate">{product.name}</h3>
+                <span className="text-lg text-bsutheme font-medium mb-1">
                   ₱{product.price.toFixed(0)}
                 </span>
                 <span className="text-sm">{product.orders ? `${product.orders} sold` : 'No sold yet'}</span>
               </div>
-              <div className="absolute bottom-0 px-3 flex w-full justify-between bg-bsutheme text-white py-1 text-sm">
+          </Link>
+              <div className="absolute bottom-0 px-2 flex w-full justify-between bg-bsutheme text-white py-1 text-sm">
                 <button className="hover:scale-110 duration-150">Add to Cart</button>
                 <div className="h-[23px] w-[1px] bg-white"></div>
                 <button className="hover:scale-110 duration-150">Buy Now</button>
               </div>
             </div>
-          </Link>
         ))}
       </div>
 

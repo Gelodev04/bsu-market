@@ -6,7 +6,11 @@
     "price": 70,
     "image": "/images/cart.jpg",
     "category": "Apparel",
-    "orders": null
+    "orders": null,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 2,
@@ -15,7 +19,11 @@
     "price": 100,
     "image": "/images/cart.jpg",
     "category": "Apparel",
-    "orders": 100
+    "orders": 100,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 3,
@@ -24,7 +32,11 @@
     "price": 9.99,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 200
+    "orders": 200,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 4,
@@ -33,7 +45,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 5,
@@ -42,7 +58,11 @@
     "price": 49.99,
     "image": "/images/cart.jpg",
     "category": "Bags",
-    "orders": 60
+    "orders": 60,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 6,
@@ -51,7 +71,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 12
+    "orders": 12,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 7,
@@ -60,7 +84,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 8,
@@ -69,7 +97,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 9,
@@ -78,7 +110,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 10,
@@ -87,7 +123,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 11,
@@ -96,7 +136,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 12,
@@ -105,7 +149,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 13,
@@ -114,7 +162,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 14,
@@ -123,7 +175,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 15,
@@ -132,7 +188,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 16,
@@ -141,7 +201,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 17,
@@ -150,7 +214,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 18,
@@ -159,7 +227,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 19,
@@ -168,7 +240,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 20,
@@ -177,7 +253,11 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   },
   {
     "id": 21,
@@ -186,6 +266,10 @@
     "price": 50,
     "image": "/images/cart.jpg",
     "category": "Accessories",
-    "orders": 75
+    "orders": 75,
+    "seller": {
+      "name": "John Doe",
+      "profileImage": "/images/seller1.jpg"
+    }
   }
 ]
