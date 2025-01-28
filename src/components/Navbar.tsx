@@ -1,8 +1,12 @@
 import Image from "next/image";
-import { CartSvg, Menu } from "@/assets/svgs/Svg";
+import { CartSvg, Menu, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 
+
+
 export default function MyNavbar() {
+
+  
   return (
     <>
       <CustomNavbarComponent>
@@ -25,7 +29,13 @@ export default function MyNavbar() {
 
         <ul className="flex items-center gap-3">
           <li className="cursor-pointer">
-            <CartSvg />
+            <SearchSvg/>
+          </li>
+          <li className="cursor-pointer">
+          
+              <CartSvg />
+           
+            
           </li>
         </ul>
       </CustomNavbarComponent>

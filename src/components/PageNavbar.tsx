@@ -107,7 +107,7 @@ export default function PageNavbar() {
         <li className="cursor-pointer">
           <CartSvg />
         </li>
-        <li className="cursor-pointer">
+        <li className="cursor-pointer" onPress={onOpen}>
           <Menu />
         </li>
       </ul>

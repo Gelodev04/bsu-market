@@ -38,7 +38,7 @@ const ShopSection = ({ data }: ShopSectionProps) => {
     <div id="shop" className="mx-3 mt-10 relative">
       <h2 className="text-[3rem]">Latest</h2>
 
-      <div className="product-list grid grid-cols-2 gap-2">
+      <div className="product-list grid grid-cols-2 gap-2 gap-y-4">
         {displayedProducts.map((product) => (
           <div key={product.id} className="product-card bg-white rounded py-2 shadow-md flex flex-col h-[310px] relative hover:outline outline-2 hover:outline-bsutheme overflow-hidden cursor-pointer">
               <Link href={`/product/${product.id}`} >
