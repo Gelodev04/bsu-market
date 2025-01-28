@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCart } from "@/components/CartContent";
 import Image from 'next/image';
 import { RemoveSvg } from '@/assets/svgs/Svg';
-import QuantityInput from '@/ui/CountOrder';
+
 
 interface CartItem {
   id: number;
