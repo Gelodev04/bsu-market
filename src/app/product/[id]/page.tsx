@@ -26,7 +26,8 @@ async function fetchProduct(id: string): Promise<Product | null> {
   return product || null;
 }
 
-const ProductPage = async ({ params }: { params: { id: string } }) => {
+const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const product = await fetchProduct(params.id);
 
   if (!product) {
