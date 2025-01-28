@@ -1,3 +1,4 @@
+
 import PageNavbar from "@/components/PageNavbar";
 import React from "react";
 import fs from "fs";
@@ -5,13 +6,15 @@ import path from "path";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
+import Carousel from "@/ui/Carousel";
+
 
 interface Product {
   id: number;
   name: string;
   description: string;
   price: number;
-  image: string;
+  images: { url: string}[];
   category: string;
   orders: number | null;
   seller: {
@@ -48,13 +51,18 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
         {/* PRODUCT */}
 
         <div className="product-page ">
-          <Image
-            className="h-[350px] w-full object-cover"
-            src={product.image}
-            alt={product.name}
-            width={500}
-            height={500}
-          />
+        <Carousel>
+            {product.images.map((image, index) => (
+              <Image
+                key={index}
+                className="h-[350px] w-full object-cover"
+                src={image.url}
+                alt={`Product image ${index + 1}`}
+                width={500}
+                height={500}
+              />
+            ))}
+          </Carousel>
           <div className="mx-4 ">
             <div className="w-full py-3 my-1  flex justify-between border-b border-gray-300">
               <span className="text-bsutheme">

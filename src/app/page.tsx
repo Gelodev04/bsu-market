@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import HomeSection from "@/components/HomeSection";
 import fs from 'fs';
 import path from 'path';
+import Carousel from '@/ui/Carousel';
 
 
 async function fetchData() {

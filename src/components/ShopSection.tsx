@@ -10,7 +10,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  image: string;
+  images: { url: string}[];
   category: string;
   orders: number | null;
   location: string;
@@ -46,13 +46,16 @@ const ShopSection = ({ data }: ShopSectionProps) => {
           <div key={product.id} className="product-card  rounded  flex flex-col h-[240px] relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme  overflow-hidden cursor-pointer">
               <Link href={`/product/${product.id}`} >
               <div className=" flex flex-col">
-                <Image
-                  className="object-cover w-full h-[170px] rounded"
-                  src={product.image}
-                  alt={product.name}
-                  width={500}
-                  height={500}
-                />
+              {product.images.length > 0 && (
+                  <Image
+                   
+                    className="object-cover w-full h-[170px] rounded"
+                    src={product.images[0].url}
+                    alt={product.name}
+                    width={500}
+                    height={500}
+                  />
+              )}
                 <div className="-space-y-1 mt-1">
                   <span className="text-lg text-bsutheme font-medium ">
                     ₱{product.price.toFixed(0)}
