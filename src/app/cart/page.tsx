@@ -18,12 +18,12 @@ interface CartItem {
 export default function Page() {
   const { cartItems, removeFromCart } = useCart() as unknown as { cartItems: CartItem[], removeFromCart: (id: number) => void };
 
-
+  const cartItemCount = cartItems.length;
  
   return (
     <div className='min-h-screen'>
-      <CartNavbar />
-      <ul className='mt-10'>
+      <CartNavbar cartItemCount={cartItemCount}/>
+      <ul className='mt-10 flex flex-col gap-2'>
         {cartItems.map(item => (
           <li key={item.id} className='relative bg-white shadow-md h-[170px] flex items-center'>
             <div className='flex mx-5 py-1 gap-3'>

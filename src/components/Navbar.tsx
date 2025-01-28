@@ -12,7 +12,7 @@ export default function MyNavbar() {
       <CustomNavbarComponent>
         <div className="flex gap-3 items-center duration-200">
           <Image
-            className="w-[50px]"
+            className="w-[50px] h-[50px]"
             src="/images/BatStateU-NEU-Logo-300x282.png.webp"
             alt="logo"
             width={50}
