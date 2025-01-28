@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { CartSvg, Menu, SearchSvg } from "@/assets/svgs/Svg";
+import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
 
@@ -31,7 +31,9 @@ export default function MyNavbar() {
           <li className="cursor-pointer">
             <SearchSvg/>
           </li>
-         
+          <li className="cursor-pointer">
+            <ProfileSvg/>
+          </li>
         </ul>
       </CustomNavbarComponent>
     </>
