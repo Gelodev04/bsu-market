@@ -15,10 +15,10 @@ interface Product {
   orders: number | null;
 }
 
-async function fetchProduct(id: string): Promise<Product> {
+async function fetchProduct(id: string): Promise<Product | null> {
   const filePath = path.join(process.cwd(), "public/data/data.json");
   const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
- 
+
   const product = jsonData.find(
     (product: Product) => product.id.toString() === id
   );
@@ -43,9 +43,11 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
             alt={product.name}
             width={500}
             height={500}
-            />
+          />
           <div className="px-3 mt-5">
-            <span className="text-bsutheme">₱<span className="text-3xl font-semibold">{product.price}</span></span>
+            <span className="text-bsutheme">
+              ₱<span className="text-3xl font-semibold">{product.price}</span>
+            </span>
             <h1>{product.name}</h1>
             <p>{product.description}</p>
             <span>Orders: {product.orders}</span>
