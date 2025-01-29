@@ -1,177 +1,74 @@
 [
   {
     "id": 1,
-    "name": "Big BIke",
-    "description": "A comfortable cotton t-shirt with the BSU logo.",
-    "price": 70,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Apparel",
-    "orders": null,
-    "seller": {
+    "seller":{
       "name": "John Doe",
-      "profileImage": "/images/seller1.jpg"
+      "profileImage": "/images/seller1.jpg",
+      "followers": 12
     },
+    "products":[
+      {
+        "items": "Big Bike",
+        "itemimage": [
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"}
+        ],
+        "price": 70,
+        "description": "very fast bike"
+      },
+      {
+        "items": "Second hand bike",
+        "itemimage": [
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"}
+        ],
+        "price": 120,
+        "description": "good bike"
+      }
+    ],
     "location": "Alangilan"
   },
   {
     "id": 2,
-    "name": "BIg CAr",
-    "description": "A warm hoodie with the BSU logo.",
-    "price": 100,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Apparel",
-    "orders": 100,
-    "seller": {
-      "name": "John Doe",
+    "seller":{
+      "name": "Mary Lite",
       "profileImage": "/images/seller1.jpg"
     },
-    "location": "Alangilan"
+    "products":[
+      {
+        "items": "Big Car",
+        "itemimage": [
+          {"url": "/images/car.jpg"},
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"}
+        ],
+        "price": 70,
+        "description": "very fast car"
+      }
+    ],
+    "location": "Pablo Borbon"
   },
   {
     "id": 3,
-    "name": "Camera",
-    "description": "A ceramic mug with the BSU logo.",
-    "price": 9.99,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 200,
-    "seller": {
-      "name": "John Doe",
+    "seller":{
+      "name": "Bob",
       "profileImage": "/images/seller1.jpg"
     },
-    "location": "Alangilan"
-  },
-  {
-    "id": 4,
-    "name": "phone",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
+    "products":[
+      {
+        "items": "Phone",
+        "itemimage": [
+          {"url": "/images/phone.jpg"},
+          {"url": "/images/bike.jpg"},
+          {"url": "/images/bike.jpg"}
+        ],
+        "price": 70,
+        "description": "second hand phone"
+      }
     ],
-    "category": "Accessories",
-    "orders": 75,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "/images/seller1.jpg"
-    },
-    "location": "Alangilan"
-  },
-  {
-    "id": 5,
-    "name": "Fake Phone",
-    "description": "A durable backpack with the BSU logo.",
-    "price": 49.99,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Bags",
-    "orders": 60,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "/images/seller1.jpg"
-    }
-  },
-
-  {
-    "id": 6,
-    "name": "BSU Cap",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 12,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "https://images.unsplash.com/photo-1563468227-6b5e3890c767?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjQzOXwwfDF8c2VhcmNofDJ8fGJlYWxlc3xlbnwwfDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080"
-    }
-  },
-  {
-    "id": 7,
-    "name": "BSU Cap",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 75,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "https://images.unsplash.com/photo-1563202218-6192ec9f5803?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjQzOXwwfDF8c2VhcmNofDJ8fGJlYWxlc3xlbnwwfDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080"
-    }
-  },
-  {
-    "id": 8,
-    "name": "BSU Cap",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 75,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "https://images.unsplash.com/photo-1571795601164-07c9833f0605?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjQzOXwwfDF8c2VhcmNofDJ8fGJlYWxlc3xlbnwwfDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080"
-    }
-  },
-  {
-    "id": 9,
-    "name": "BSU Cap",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 75,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "https://images.unsplash.com/photo-1600076894094-9f75ff567a5b?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjQzOXwwfDF8c2VhcmNofDJ8fGJlYWxlc3xlbnwwfDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080"
-    }
-  },
-  {
-    "id": 10,
-    "name": "BSU Cap",
-    "description": "A stylish cap with the BSU logo.",
-    "price": 50,
-    "images": [
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"},
-      {"url": "/images/bike.jpg"}
-    ],
-    "category": "Accessories",
-    "orders": 75,
-    "seller": {
-      "name": "John Doe",
-      "profileImage": "https://images.unsplash.com/photo-1596456364053-689f47f1d256?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjQzOXwwfDF8c2VhcmNofDJ8fGJlYWxlc3xlbnwwfDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080"
-    }
+    "location": "Pablo Borbon"
   }
+ 
 ]

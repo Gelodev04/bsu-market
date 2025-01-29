@@ -7,41 +7,47 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
 import Carousel from "@/ui/Carousel";
-
+import Link from "next/link";
 
 interface Product {
-  id: number;
-  name: string;
-  description: string;
+  products: any;
+  items: string;
+  itemimage: { url: string }[];
   price: number;
-  images: { url: string}[];
-  category: string;
-  orders: number | null;
+  description: string;
+}
+
+interface Seller {
+  id: number;
   seller: {
     name: string;
     profileImage: string;
   };
+  products: Product[];
   location: string;
 }
 
-async function fetchProduct(id: string): Promise<Product | null> {
+async function fetchProduct(id: string): Promise<Seller | null> {
   const filePath = path.join(process.cwd(), "public/data/data.json");
   const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-  const product = jsonData.find(
-    (product: Product) => product.id.toString() === id
+  const seller = jsonData.find(
+    (seller: Seller) => seller.id.toString() === id
   );
 
-  return product || null;
+  return seller || null;
 }
 
-const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
-  const params = await props.params;
-  const product = await fetchProduct(params.id);
+const ProductPage = async ({params}: { params: { id: string } }) => {
+  const { id } = params;
+  const [sellerId, productIndex] = id.split('-');
+  const seller = await fetchProduct(sellerId);
 
-  if (!product) {
+  if (!seller) {
     notFound();
   }
+
+  const product = seller.products[parseInt(productIndex)];
 
   return (
     <>
@@ -52,7 +58,7 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
 
         <div className="product-page ">
         <Carousel>
-            {product.images.map((image, index) => (
+            {product.itemimage.map((image, index) => (
               <Image
                 key={index}
                 className="h-[350px] w-full object-cover"
@@ -75,7 +81,7 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
                 <SaveSvg />
               </span>
             </div>
-            <h1 className="text-xl font-medium mt-2">{product.name}</h1>
+            <h1 className="text-xl font-medium mt-2">{product.items}</h1>
             <p className="py-1 text-gray-600">{product.description}</p>
           </div>
         </div>
@@ -84,16 +90,18 @@ const ProductPage = async (props: { params: Promise<{ id: string }> }) => {
 
         <div className="flex items-center mt-2 border-t border-b border-gray-300 py-2 mx-3 ">
           <div className="cursor-pointer flex items-center">
-            <Image
-              className="rounded-full w-[50px]"
-              src={product.seller.profileImage}
-              alt={product.seller.name}
-              width={50}
-              height={50}
-            />
-            <span className="ml-2 mr-2  text-gray-700 text-md">
-              {product.seller.name}
-            </span>
+            <Link className="flex items-center" href={`/sellerprofile/${encodeURIComponent(seller.seller.name)}`}>
+              <Image
+                className="rounded-full w-[50px]"
+                src={seller.seller.profileImage}
+                alt={seller.seller.name}
+                width={50}
+                height={50}
+              />
+              <span className="ml-2 mr-2  text-gray-700 text-md">
+                {seller.seller.name}
+              </span>
+            </Link>
             <button className="bg-bsutheme rounded text-white text-xs px-2 py-[1px]">
               Follow
             </button>
