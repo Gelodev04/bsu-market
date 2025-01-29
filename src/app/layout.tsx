@@ -22,14 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <CartProvider>
-      <html lang="en" className="">
-        <body
-          className={`${poppins.className}  antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    </CartProvider>
+  
+      <CartProvider>
+        <html lang="en" className="">
+          <body
+            className={`${poppins.className}  antialiased`}
+          >
+            {children}
+          </body>
+        </html>
+      </CartProvider>
+   
   );
 }

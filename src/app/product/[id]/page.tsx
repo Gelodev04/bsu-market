@@ -9,23 +9,21 @@ import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
 import Carousel from "@/ui/Carousel";
 import Link from "next/link";
 
-interface Product {
-  products: any;
-  items: string;
-  itemimage: { url: string }[];
-  price: number;
-  description: string;
-}
-
-interface Seller {
-  id: number;
+type Seller = {
+  id: string;
   seller: {
     name: string;
     profileImage: string;
   };
-  products: Product[];
-  location: string;
-}
+  products: {
+    itemimage: { url: string }[];
+    price: number;
+    items: string;
+    description: string;
+  }[];
+};
+
+
 
 async function fetchProduct(id: string): Promise<Seller | null> {
   const filePath = path.join(process.cwd(), "public/data/data.json");
