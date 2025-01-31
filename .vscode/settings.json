@@ -10,7 +10,7 @@
             "port": 3306,
             "driver": "MySQL",
             "name": "bsumarket",
-            "database": "bsumarket",
+            "database": "marketplace_db",
             "username": "root",
             "password": "4545"
         }

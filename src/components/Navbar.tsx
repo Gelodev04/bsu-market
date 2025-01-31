@@ -1,13 +1,13 @@
-
+"use client";
 import Image from "next/image";
 import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
-
-
+import { useAuth } from "@/context/AuthContext";
 
 export default function MyNavbar() {
-  
+  const { isLoggedIn,  logout} = useAuth(); // Access the user and logout function
+
   return (
     <>
       <CustomNavbarComponent>
@@ -32,14 +32,33 @@ export default function MyNavbar() {
           <li className="cursor-pointer">
             <SearchSvg />
           </li>
-          <li className="cursor-pointer">
-       
-      
-              <Link href="/logsign">
-                <ProfileSvg />
-              </Link>
-       
-          </li>
+          {isLoggedIn ? (
+            <>
+              <li>
+                <Link href="/user-dashboard">
+                  <p className="text-white">Products</p>
+                </Link>
+              </li>
+              <li>
+                <button onClick={logout} className="text-white">
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link href="/login">
+                  <p className="text-white">Login</p>
+                </Link>
+              </li>
+              <li>
+                <Link href="/register">
+                  <p className="text-white">Register</p>
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </CustomNavbarComponent>
     </>
