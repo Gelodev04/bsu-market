@@ -33,20 +33,8 @@ export default function MyNavbar() {
             <SearchSvg />
           </li>
          
-            <>
-              <li>
-                <Link href="/user-dashboard">
-                  <p className="text-white">Products</p>
-                </Link>
-              </li>
-              <li>
-                <button className="text-white">
-                  Logout
-                </button>
-              </li>
-            </>
+           
       
-            <>
               <li>
                 <Link href="/login">
                   <p className="text-white">Login</p>
@@ -57,7 +45,7 @@ export default function MyNavbar() {
                   <p className="text-white">Register</p>
                 </Link>
               </li>
-            </>
+       
      
         </ul>
       </CustomNavbarComponent>
