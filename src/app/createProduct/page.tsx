@@ -38,7 +38,7 @@ export default function CreateProduct() {
         required
       />
       <input
-        type="text"
+        type="image"
         placeholder="Image URL"
         value={image}
         onChange={(e) => setImage(e.target.value)}
