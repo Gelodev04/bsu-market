@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { CartProvider } from "@/components/CartContent";
+
 import "./globals.css";
 import { Poppins } from 'next/font/google';
-import { AuthProvider } from '@/context/AuthContext';
+
 
 const poppins = Poppins({
   subsets: ['latin'], 
@@ -25,8 +25,7 @@ export default function RootLayout({
   return (
 
       
-        <AuthProvider>
-          <CartProvider>
+       
             <html lang="en" className="">
               <body
                 className={`${poppins.className}  antialiased`}
@@ -34,8 +33,7 @@ export default function RootLayout({
                 {children}
               </body>
             </html>
-          </CartProvider>
-        </AuthProvider>
+          
       
   );
 }

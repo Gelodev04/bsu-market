@@ -1,10 +1,10 @@
 // src/components/Navbar.tsx
 "use client";
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+
 
 const Navbar = () => {
-  const { isLoggedIn, logout } = useAuth();
+ 
 
   return (
     <nav className="bg-gray-800 p-4">
