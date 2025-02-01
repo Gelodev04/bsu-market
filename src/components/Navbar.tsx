@@ -3,10 +3,10 @@ import Image from "next/image";
 import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+
 
 export default function MyNavbar() {
-  const { isLoggedIn,  logout} = useAuth(); // Access the user and logout function
+ 
 
   return (
     <>
@@ -32,7 +32,7 @@ export default function MyNavbar() {
           <li className="cursor-pointer">
             <SearchSvg />
           </li>
-          {isLoggedIn ? (
+         
             <>
               <li>
                 <Link href="/user-dashboard">
@@ -40,12 +40,12 @@ export default function MyNavbar() {
                 </Link>
               </li>
               <li>
-                <button onClick={logout} className="text-white">
+                <button className="text-white">
                   Logout
                 </button>
               </li>
             </>
-          ) : (
+      
             <>
               <li>
                 <Link href="/login">
@@ -58,7 +58,7 @@ export default function MyNavbar() {
                 </Link>
               </li>
             </>
-          )}
+     
         </ul>
       </CustomNavbarComponent>
     </>

@@ -1,26 +1,40 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
-import { getAllProducts } from '@/services/productService';
-
-
+import { useEffect, useState } from "react";
+import { fetchProducts } from "../services/api";
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  location: string;
+}
 
 const ShopSection = () => {
- 
-    const [products, setProducts] = useState<{ id: number; price: number; name: string; description: string; }[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+    
   
-    useEffect(() => {
-      const fetchProducts = async () => {
-        const data = await getAllProducts();
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const data = await fetchProducts();
         setProducts(data);
-      };
-  
-      fetchProducts();
-    }, []);
-  
-   
+      } catch (err) {
+        setError("Failed to fetch products");
+      } finally {
+        setLoading(false);
+      }
+    };
+    getProducts();
+  }, []);
+
+  if (loading) return <div>Loading products...</div>;
+  if (error) return <div>{error}</div>; 
 
  
 
