@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import router from 'next/router';
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -12,15 +13,21 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!profileImage) {
       setError('Profile image is required');
       return;
     }
     try {
-      await register(username, password, role, profileImage);
-    } catch (err) {
-      setError('Registration failed');
-    }
+        await register(username, password, role, profileImage);
+        router.push('/login');
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('Registration failed');
+        }
+      }
   };
 
   return (
