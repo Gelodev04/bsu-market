@@ -21,11 +21,19 @@ export const createUser = async (user: { username: string; googleaccount: string
 };
 
 export const createProduct = async (product: FormData) => {
+    const token = localStorage.getItem('token'); // Get the token from localStorage
+    
+    if (!token) {
+        throw new Error('No token found');
+    }
+
     const response = await api.post('/products', product, {
         headers: {
-            'Content-Type': 'multipart/form-data'
+            'Authorization': `Bearer ${token}`,  // Add token to Authorization header
+            'Content-Type': 'multipart/form-data',  // Ensure the content type is set
         }
     });
+    
     return response.data;
 };
 

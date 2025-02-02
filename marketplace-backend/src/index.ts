@@ -13,7 +13,10 @@ const port = 3001;
 const secretKey = 'your_secret_key';
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Your Next.js frontend URL
+    methods: ['GET', 'POST'],
+  }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const db = mysql.createConnection({
@@ -78,6 +81,43 @@ app.get('/api/user', (req: Request, res: Response): void => {
 });
 
 
+app.get('/api/products', (req: Request, res: Response) => {
+    // Extract the token from the request header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send('Authorization header missing');
+        return;
+    }
+
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            res.status(403).send('Invalid or expired token');
+            return;
+        }
+
+        // Extract user ID from the token
+        const { id } = decoded as { id: number };
+
+        // Query products based on user ID (if needed)
+        const query = 'SELECT * FROM products WHERE user_id = ?';
+        db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
+            if (err) {
+                console.error('Error fetching products:', err);
+                return res.status(500).send(err);
+            }
+            if (results.length === 0) {
+                res.status(404).send('No products found for the user');
+                return;
+            }
+            res.status(200).json(results);  // Return the products belonging to the authenticated user
+        });
+    });
+});
+
+
+
+
 
 app.post('/register', async (req: Request, res: Response) => {
     console.log(req.body);
@@ -136,24 +176,40 @@ app.post('/users', (req: Request, res: Response) => {
 
 
 // Product routes
-app.post('/products', upload.single('image'), (req: Request, res: Response) => {
+app.post('/products', upload.single('image'), (req: Request, res: Response): void => {
     const { name, price, description, location } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
+    // Extract the token from the request header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).send('Authorization header missing');
+        res.status(401).send('Authorization header missing');
+        return;
     }
-    
-    const query = 'INSERT INTO products (name, price, description, image, location) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [name, price, description, image, location], (err, results: mysql.ResultSetHeader) => {
+
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
-            console.error('Error inserting product:', err);
-            return res.status(500).send(err);
+            res.status(403).send('Invalid or expired token');
+            return;
         }
-        res.status(201).send({ id: results.insertId });
+
+        // Extract user ID from the token
+        const { id } = decoded as { id: number };
+
+        // Insert the product with the user ID
+        const query = 'INSERT INTO products (name, price, description, image, location, user_id) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(query, [name, price, description, image, location, id], (err, results: mysql.ResultSetHeader) => {
+            if (err) {
+                console.error('Error inserting product:', err);
+                res.status(500).send(err);
+                return;
+            }
+            res.status(201).send({ id: results.insertId });
+        });
     });
 });
+
 
 app.get('/products', (req: Request, res: Response) => {
     const query = 'SELECT * FROM products';

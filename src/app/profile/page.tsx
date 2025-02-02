@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
 import Image from "next/image";
-
+import Link from "next/link";
 const ProfilePage = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,6 +16,7 @@ const ProfilePage = () => {
     if (!token) {
       router.push("/login");
     } else {
+        
       const fetchUserData = async () => {
         try {
           const response = await fetch("http://localhost:3001/api/user", {
@@ -30,9 +32,20 @@ const ProfilePage = () => {
           const data = await response.json();
           setUsername(data.username);
           setLocation(data.location);
+
+          const productsResponse = await fetch("http://localhost:3001/api/products", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!productsResponse.ok) {
+            throw new Error("Failed to fetch products");
+          }
+          const productsData = await productsResponse.json();
+          setProducts(productsData);
         } catch (error) {
           console.error("Error fetching user data:", error);
-          router.push("/login");
         }
       };
       fetchUserData();
@@ -45,7 +58,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen">
       <PageNavbar />
       <div className="flex  pt-10 px-10 gap-2 flex-col border-b border-gray-400 pb-5">
         <div className="] rounded-full">
@@ -70,8 +83,35 @@ const ProfilePage = () => {
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>
+             
             </div>
+            <Link href="/postproduct">Add product</Link>
           </div>
+        </div>
+      </div>
+
+
+      <div className="pt-10 px-10">
+        <h2 className="text-2xl font-semibold">Your Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-5">
+          {products.length === 0 ? (
+            <p>No products available.</p>
+          ) : (
+            products.map((product) => (
+              <div key={product.id} className="border rounded-md p-4">
+                <Image
+                  className="w-full h-[200px] object-cover"
+                  src={`http://localhost:3001${product.image}`}
+                  alt={product.name}
+                  width={500}
+                  height={500}
+                />
+                <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
+                <p>{product.description}</p>
+                <p className="text-green-600 font-semibold">${product.price}</p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -12,8 +12,9 @@ const LoginPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const { token } = await loginUser({ username, password });
+            const { token, userId } = await loginUser({ username, password });
             localStorage.setItem('token', token);
+            localStorage.setItem('userId', userId);
             alert('Login successful!');
             router.push('/');
         } catch (error) {
