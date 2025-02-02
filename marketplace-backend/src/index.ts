@@ -36,7 +36,7 @@ db.connect(err => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'dist/uploads/');
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);

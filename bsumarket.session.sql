@@ -1,4 +1,6 @@
-DELETE FROM products;
+ALTER TABLE products
+MODIFY COLUMN image VARCHAR(255);
+
 
 
 
