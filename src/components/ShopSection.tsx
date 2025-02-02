@@ -48,7 +48,7 @@ export default async function ShopSection()  {
                       ₱{product.price}
                     </span>
                     <h3 className="text-sm truncate">{product.name}</h3>
-                    <p className="text-gray-700 text-xs">{product.description}</p>
+                    <p className="text-gray-700 text-xs">{product.location}</p>
                   </div>
                 </div>
               </Link>
