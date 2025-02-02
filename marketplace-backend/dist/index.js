@@ -49,11 +49,43 @@ const storage = multer_1.default.diskStorage({
     }
 });
 const upload = (0, multer_1.default)({ storage });
+app.get('/api/user', (req, res) => {
+    // Extract the token from the request header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send('Authorization header missing');
+        return;
+    }
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    jsonwebtoken_1.default.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            res.status(403).send('Invalid or expired token');
+            return;
+        }
+        // Extract user ID from the token
+        const { id } = decoded;
+        // Query user data from the database
+        const query = 'SELECT id, username, googleaccount, location FROM users WHERE id = ?';
+        db.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('Error fetching user data:', err);
+                res.status(500).send(err);
+                return;
+            }
+            if (results.length === 0) {
+                res.status(404).send('User not found');
+                return;
+            }
+            res.status(200).json(results[0]);
+        });
+    });
+});
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, googleaccount, password } = req.body;
+    console.log(req.body);
+    const { username, googleaccount, password, location } = req.body;
     const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-    const query = 'INSERT INTO users (username, googleaccount, password) VALUES (?, ?, ?)';
-    db.query(query, [username, googleaccount, hashedPassword], (err, results) => {
+    const query = 'INSERT INTO users (username, googleaccount, password, location) VALUES (?, ?, ?, ?)';
+    db.query(query, [username, googleaccount, hashedPassword, location], (err, results) => {
         if (err) {
             console.error('Error registering user:', err);
             return res.status(500).send(err);
@@ -80,16 +112,16 @@ app.post('/login', (req, res) => {
             return res.status(401).send('Invalid username or password');
         }
         const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
-        res.status(200).send({ token });
+        res.status(200).send({ token, username: user.username });
     }));
 });
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 app.post('/users', (req, res) => {
-    const { username, googleaccount, password } = req.body;
-    const query = 'INSERT INTO users (username, googleaccount, password) VALUES (?, ?, ?)';
-    db.query(query, [username, googleaccount, password], (err, results) => {
+    const { username, googleaccount, password, location } = req.body;
+    const query = 'INSERT INTO users (username, googleaccount, password, location) VALUES (?, ?, ?, ?)';
+    db.query(query, [username, googleaccount, password, location], (err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
@@ -116,15 +148,5 @@ app.get('/products', (req, res) => {
             return res.status(500).send(err);
         }
         res.status(200).send(results);
-    });
-});
-app.get('/products/:id', (req, res) => {
-    const { id } = req.params;
-    const query = 'SELECT * FROM products WHERE id = ?';
-    db.query(query, [id], (err, results) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).send(results[0]);
     });
 });

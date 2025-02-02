@@ -1,0 +1,6 @@
+DELETE FROM products;
+
+
+
+
+

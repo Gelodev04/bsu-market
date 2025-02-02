@@ -1,5 +1,5 @@
 // filepath: src/index.ts
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mysql from 'mysql2';
@@ -42,11 +42,49 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+app.get('/api/user', (req: Request, res: Response): void => {
+    // Extract the token from the request header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send('Authorization header missing');
+        return;
+    }
+
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            res.status(403).send('Invalid or expired token');
+            return;
+        }
+
+        // Extract user ID from the token
+        const { id } = decoded as { id: number };
+
+        // Query user data from the database
+        const query = 'SELECT id, username, googleaccount, location FROM users WHERE id = ?';
+        db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
+            if (err) {
+                console.error('Error fetching user data:', err);
+                res.status(500).send(err);
+                return;
+            }
+            if (results.length === 0) {
+                res.status(404).send('User not found');
+                return;
+            }
+            res.status(200).json(results[0]);
+        });
+    });
+});
+
+
+
 app.post('/register', async (req: Request, res: Response) => {
-    const { username, googleaccount, password } = req.body;
+    console.log(req.body);
+    const { username, googleaccount, password, location } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO users (username, googleaccount, password) VALUES (?, ?, ?)';
-    db.query(query, [username, googleaccount, hashedPassword], (err, results) => {
+    const query = 'INSERT INTO users (username, googleaccount, password, location) VALUES (?, ?, ?, ?)';
+    db.query(query, [username, googleaccount, hashedPassword, location], (err, results) => {
         if (err) {
             console.error('Error registering user:', err);
             return res.status(500).send(err);
@@ -55,6 +93,7 @@ app.post('/register', async (req: Request, res: Response) => {
         res.status(201).send({ id: result.insertId });
     });
 });
+
 
 app.post('/login', (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -74,7 +113,7 @@ app.post('/login', (req: Request, res: Response) => {
             return res.status(401).send('Invalid username or password');
         }
         const token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
-        res.status(200).send({ token });
+        res.status(200).send({ token, username: user.username });
     });
 });
 
@@ -83,9 +122,9 @@ app.listen(port, () => {
 });
 
 app.post('/users', (req: Request, res: Response) => {
-    const { username, googleaccount, password } = req.body;
-    const query = 'INSERT INTO users (username, googleaccount, password) VALUES (?, ?, ?)';
-    db.query(query, [username, googleaccount, password], (err, results: mysql.ResultSetHeader) => {
+    const { username, googleaccount, password, location } = req.body;
+    const query = 'INSERT INTO users (username, googleaccount, password, location) VALUES (?, ?, ?, ?)';
+    db.query(query, [username, googleaccount, password, location], (err, results: mysql.ResultSetHeader) => {
         if (err) {
             return res.status(500).send(err);
         }
@@ -93,10 +132,19 @@ app.post('/users', (req: Request, res: Response) => {
     });
 });
 
+
+
+
 // Product routes
 app.post('/products', upload.single('image'), (req: Request, res: Response) => {
     const { name, price, description, location } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send('Authorization header missing');
+    }
+    
     const query = 'INSERT INTO products (name, price, description, image, location) VALUES (?, ?, ?, ?, ?)';
     db.query(query, [name, price, description, image, location], (err, results: mysql.ResultSetHeader) => {
         if (err) {
@@ -117,13 +165,6 @@ app.get('/products', (req: Request, res: Response) => {
     });
 });
 
-app.get('/products/:id', (req: Request, res: Response) => {
-    const { id } = req.params;
-    const query = 'SELECT * FROM products WHERE id = ?';
-    db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).send(results[0]);
-    });
-});
+
+
+

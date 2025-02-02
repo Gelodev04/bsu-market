@@ -10,16 +10,25 @@ const ProductForm = () => {
     const [image, setImage] = useState<File | null>(null);
     const [location, setLocation] = useState('');
 
+    const userId = localStorage.getItem('userId');
+  
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if(!userId){
+            alert('You must be logged in');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('price', price);
         formData.append('description', description);
         formData.append('location', location);
+        formData.append('userId', userId);
         if (image) {
             formData.append('image', image);
         }
+        
         try {
             await createProduct(formData);
             alert('Product created successfully!');
