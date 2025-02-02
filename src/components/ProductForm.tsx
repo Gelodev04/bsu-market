@@ -7,19 +7,26 @@ const ProductForm = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState<File | null>(null);
     const [location, setLocation] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const product = { name, price: parseFloat(price), description, image, location };
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('description', description);
+        formData.append('location', location);
+        if (image) {
+            formData.append('image', image);
+        }
         try {
-            await createProduct(product);
+            await createProduct(formData);
             alert('Product created successfully!');
             setName('');
             setPrice('');
             setDescription('');
-            setImage('');
+            setImage(null);
             setLocation('');
         } catch (error) {
             console.error('Error creating product:', error);
@@ -42,8 +49,8 @@ const ProductForm = () => {
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
             </div>
             <div>
-                <label>Image URL:</label>
-                <input type="text" value={image} onChange={(e) => setImage(e.target.value)} required />
+                <label>Image:</label>
+                <input type="file" onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)} required />
             </div>
             <div>
                 <label>Location:</label>

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
 import Carousel from "@/ui/Carousel";
 import Link from "next/link";
+import { GetServerSideProps } from 'next';
 
 type Seller = {
   id: string;

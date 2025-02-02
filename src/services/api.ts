@@ -20,7 +20,21 @@ export const createUser = async (user: { username: string; googleaccount: string
     return response.data;
 };
 
-export const createProduct = async (product: { name: string; price: number; description: string; image: string; location: string }) => {
-    const response = await api.post('/products', product);
+export const createProduct = async (product: FormData) => {
+    const response = await api.post('/products', product, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+};
+
+export const registerUser = async (user: { username: string; googleaccount: string; password: string }) => {
+    const response = await api.post('/register', user);
+    return response.data;
+};
+
+export const loginUser = async (user: { username: string; password: string }) => {
+    const response = await api.post('/login', user);
     return response.data;
 };

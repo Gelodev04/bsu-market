@@ -3,10 +3,15 @@ import Image from "next/image";
 import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
-
+import { useState, useEffect } from "react";
 
 export default function MyNavbar() {
- 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   return (
     <>
@@ -32,21 +37,29 @@ export default function MyNavbar() {
           <li className="cursor-pointer">
             <SearchSvg />
           </li>
-         
-           
-      
+
+          {isLoggedIn ? (
+            <>
+              <li>
+                <Link href="/profile">
+                  <p className="text-white">Profile</p>
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
               <li>
                 <Link href="/login">
                   <p className="text-white">Login</p>
                 </Link>
               </li>
               <li>
-                <Link href="/register">
-                  <p className="text-white">Register</p>
+                <Link href="/signup">
+                  <p className="text-white">Sign Up</p>
                 </Link>
               </li>
-       
-     
+            </>
+          )}
         </ul>
       </CustomNavbarComponent>
     </>

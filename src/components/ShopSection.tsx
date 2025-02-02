@@ -1,8 +1,7 @@
-"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
-import { useEffect, useState } from "react";
 import { getProducts } from '@/services/api';
 
 interface Product {
@@ -36,15 +35,14 @@ export default async function ShopSection()  {
             >
               <Link href={`/product/${product.id}`}>
                 <div className="flex flex-col">
-                 
+                 {product.image && 
                     <Image
                       className="object-cover w-full aspect-[4/3] rounded"
-                      src="/images/bike.jpg"
-                      alt="image"
+                      src={`http://localhost:3001${product.image}`}
+                      alt={product.name}
                       width={500}
                       height={500}
-                    />
-                
+                    />}
                   <div className="-space-y-1 mt-1">
                     <span className="text-lg text-bsutheme font-medium">
                       ₱{product.price}
