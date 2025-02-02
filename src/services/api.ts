@@ -1,40 +1,26 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+// filepath: src/services/api.ts
+import axios from 'axios';
 
-export const fetchUsers = async () => {
-  const response = await fetch(`${API_URL}/users`);
-  return await response.json();
+const api = axios.create({
+    baseURL: 'http://localhost:3001',
+});
+
+export const getProducts = async () => {
+    const response = await api.get('/products');
+    return response.data;
 };
 
-export const createUser = async (user: {
-  username: string;
-  password: string;
-  role: "user" | "admin";
-  profileImage: string;
-}) => {
-  const response = await fetch(`${API_URL}/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
-  return await response.json();
+export const getProductById = async (id: number) => {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
 };
 
-export const fetchProducts = async () => {
-  const response = await fetch(`${API_URL}/products`);
-  return await response.json();
+export const createUser = async (user: { username: string; googleaccount: string; password: string }) => {
+    const response = await api.post('/users', user);
+    return response.data;
 };
 
-export const createProduct = async (product: {
-  name: string;
-  price: number;
-  description: string;
-  image: string;
-  location: string;
-}) => {
-  const response = await fetch(`${API_URL}/products`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(product),
-  });
-  return await response.json();
+export const createProduct = async (product: { name: string; price: number; description: string; image: string; location: string }) => {
+    const response = await api.post('/products', product);
+    return response.data;
 };

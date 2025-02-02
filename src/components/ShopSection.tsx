@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
 import { useEffect, useState } from "react";
-import { fetchProducts } from "../services/api";
+import { getProducts } from '@/services/api';
+
 interface Product {
   id: number;
   name: string;
@@ -13,29 +14,8 @@ interface Product {
   location: string;
 }
 
-const ShopSection = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-    
-  
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const data = await fetchProducts();
-        setProducts(data);
-      } catch (err) {
-        setError("Failed to fetch products");
-      } finally {
-        setLoading(false);
-      }
-    };
-    getProducts();
-  }, []);
-
-  if (loading) return <div>Loading products...</div>;
-  if (error) return <div>{error}</div>; 
-
+export default async function ShopSection()  {
+  const products = await getProducts();
  
 
   return (
@@ -49,7 +29,7 @@ const ShopSection = () => {
       
       
         <div className="product-list grid grid-cols-2 gap-2 gap-y-4 mt-4">
-          {products.map((product) => (
+          {products.map((product: any) => (
             <div
               key={product.id}
               className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[240px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors"
@@ -92,5 +72,5 @@ const ShopSection = () => {
   );
   
 };
-export default ShopSection;
+
 
