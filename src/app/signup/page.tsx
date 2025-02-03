@@ -5,7 +5,7 @@ import { registerUser } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/react";
-
+import Link from "next/link";
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
   const [googleaccount, setGoogleAccount] = useState("");
@@ -57,11 +57,12 @@ const SignUpPage = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center">
+    <div className="h-screen flex flex-col justify-center items-center ">
       <h1 className="text-[2rem] font-bold">Sign Up</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="w-[450px] flex flex-col gap-2 " onSubmit={handleSubmit}>
         <div>
           <Input
+           color="danger"
             value={username}
             onChange={handleUsernameChange}
             required
@@ -82,7 +83,7 @@ const SignUpPage = () => {
             label="Gmail(optional)"
             type="email"
             variant="faded"
-           
+           color="danger"
           />
         </div>
 
@@ -94,6 +95,7 @@ const SignUpPage = () => {
             label="Password"
             type="password"
             variant="faded"
+            color="danger"
           />
         </div>
 
@@ -104,6 +106,8 @@ const SignUpPage = () => {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
+            color="danger"
+            variant="faded"
           >
             {[
               { value: "alangilan", label: "Alangilan" },
@@ -116,9 +120,13 @@ const SignUpPage = () => {
           </Select>
         </div>
 
-        <button type="submit" disabled={usernameTaken}>
+        <button className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3" type="submit" disabled={usernameTaken}>
           Sign Up
         </button>
+        <div className="flex gap-1 justify-center">
+          <span>Already have an account?</span>
+          <Link  href="/login"><span className="text-bsutheme">Log in</span></Link>
+        </div>
       </form>
     </div>
   );
