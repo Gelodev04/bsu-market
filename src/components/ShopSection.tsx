@@ -33,7 +33,7 @@ export default async function ShopSection()  {
               key={product.id}
               className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[240px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors"
             >
-              <Link href={`/product/${product.id}`}>
+              <Link href={`/productdetail/${product.name}`}>
                 <div className="flex flex-col">
                  {product.image && 
                     <Image

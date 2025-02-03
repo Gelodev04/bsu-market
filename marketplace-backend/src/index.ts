@@ -17,6 +17,8 @@ app.use(cors({
     origin: 'http://localhost:3000', // Your Next.js frontend URL
     methods: ['GET', 'POST'],
   }));
+
+  
   
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -37,7 +39,7 @@ db.connect(err => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, path.join(__dirname, 'uploads'));
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
@@ -119,7 +121,54 @@ app.get('/api/products', (req: Request, res: Response) => {
 
 
 
-
+app.get('/api/productdetail/:name', (req: Request, res: Response): void => {
+    // Extract the product name from the route parameter
+    const { name } = req.params;
+  
+    // Extract the token from the request header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+       res.status(401).send('Authorization header missing');
+       return;
+    }
+  
+    // The header is expected in the format: Bearer <token>
+    const token = authHeader.split(' ')[1];
+  
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        res.status(403).send('Invalid or expired token');
+        return;
+      }
+  
+      // Extract the user ID from the token payload
+      const { id: userId } = decoded as { id: number };
+  
+      // SQL query to join the products with user info,
+      // ensuring that only the owner of the product can view its details.
+      const query = `
+        SELECT 
+          products.*, 
+          users.username 
+        FROM products 
+        JOIN users ON products.user_id = users.id 
+        WHERE products.name = ? AND users.id = ?`;
+  
+      db.query(query, [name, userId], (err, results: mysql.RowDataPacket[]) => {
+        if (err) {
+          console.error('Error fetching product details:', err);
+           res.status(500).send('Database error');
+           return;
+        }
+        if (results.length === 0) {
+          res.status(404).send('Product not found or access unauthorized');
+          return;
+        }
+        // Return the first result (assuming names are unique per user)
+        res.status(200).json(results[0]);
+      });
+    });
+  });
 
 app.post('/register', async (req: Request, res: Response) => {
     console.log(req.body);

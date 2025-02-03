@@ -25,7 +25,10 @@ const app = (0, express_1.default)();
 const port = 3001;
 const secretKey = 'your_secret_key';
 app.use(body_parser_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3000', // Your Next.js frontend URL
+    methods: ['GET', 'POST'],
+}));
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
 const db = mysql2_1.default.createConnection({
     host: 'localhost',
@@ -42,7 +45,7 @@ db.connect(err => {
 });
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'dist/uploads/');
+        cb(null, path_1.default.join(__dirname, 'uploads'));
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
@@ -102,11 +105,54 @@ app.get('/api/products', (req, res) => {
                 console.error('Error fetching products:', err);
                 return res.status(500).send(err);
             }
+            console.log('Query Results:', results);
             if (results.length === 0) {
                 res.status(404).send('No products found for the user');
                 return;
             }
             res.status(200).json(results); // Return the products belonging to the authenticated user
+        });
+    });
+});
+app.get('/api/productdetail/:name', (req, res) => {
+    // Extract the product name from the route parameter
+    const { name } = req.params;
+    // Extract the token from the request header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send('Authorization header missing');
+        return;
+    }
+    // The header is expected in the format: Bearer <token>
+    const token = authHeader.split(' ')[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            res.status(403).send('Invalid or expired token');
+            return;
+        }
+        // Extract the user ID from the token payload
+        const { id: userId } = decoded;
+        // SQL query to join the products with user info,
+        // ensuring that only the owner of the product can view its details.
+        const query = `
+        SELECT 
+          products.*, 
+          users.username 
+        FROM products 
+        JOIN users ON products.user_id = users.id 
+        WHERE products.name = ? AND users.id = ?`;
+        db.query(query, [name, userId], (err, results) => {
+            if (err) {
+                console.error('Error fetching product details:', err);
+                res.status(500).send('Database error');
+                return;
+            }
+            if (results.length === 0) {
+                res.status(404).send('Product not found or access unauthorized');
+                return;
+            }
+            // Return the first result (assuming names are unique per user)
+            res.status(200).json(results[0]);
         });
     });
 });
