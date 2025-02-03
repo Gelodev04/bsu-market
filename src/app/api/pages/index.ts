@@ -5,7 +5,7 @@ import cors from 'cors';
 import mysql, { QueryResult } from 'mysql2';
 import multer from 'multer';
 import path from 'path';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 const app = express();
