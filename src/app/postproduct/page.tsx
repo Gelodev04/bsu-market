@@ -8,10 +8,13 @@ const NewProductPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Assuming you store the token in localStorage
-    if (!token) {
-      // If there is no token, redirect to the login page
-      router.push("/login");
+    if (typeof window !== "undefined") {
+      // Now we can safely access localStorage in the client-side
+      const token = localStorage.getItem("token"); // Assuming you store the token in localStorage
+      if (!token) {
+        // If there is no token, redirect to the login page
+        router.push("/login");
+      }
     }
   }, [router]);
 
