@@ -1,130 +1,124 @@
-
+// filepath: src/app/profile/page.tsx
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
-import React from "react";
-import fs from "fs";
-import path from "path";
-import { notFound } from "next/navigation";
 import Image from "next/image";
-import { CartSvg, RightArrow, SaveSvg } from "@/assets/svgs/Svg";
-import Carousel from "@/ui/Carousel";
 import Link from "next/link";
-import { GetServerSideProps } from 'next';
 
-type Seller = {
-  id: string;
-  seller: {
-    name: string;
-    profileImage: string;
+
+const ProfilePage = () => {
+  const [username, setUsername] = useState("");
+  const [location, setLocation] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+  
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    } else {
+        
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch("http://localhost:3001/api/user", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const data = await response.json();
+          setUsername(data.username);
+          setLocation(data.location);
+
+          const productsResponse = await fetch("http://localhost:3001/api/products", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!productsResponse.ok) {
+            throw new Error("Failed to fetch products");
+          }
+          const productsData = await productsResponse.json();
+          setProducts(productsData);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+      fetchUserData();
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
   };
-  products: {
-    itemimage: { url: string }[];
-    price: number;
-    items: string;
-    description: string;
-  }[];
-};
-
-
-
-async function fetchProduct(id: string): Promise<Seller | null> {
-  const filePath = path.join(process.cwd(), "public/data/data.json");
-  const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-
-  const seller = jsonData.find(
-    (seller: Seller) => seller.id.toString() === id
-  );
-
-  return seller || null;
-}
-
-const ProductPage = async ({params}: { params: { id: string } }) => {
-  const { id } = params;
-  const [sellerId, productIndex] = id.split('-');
-  const seller = await fetchProduct(sellerId);
-
-  if (!seller) {
-    notFound();
-  }
-
-  const product = seller.products[parseInt(productIndex)];
 
   return (
-    <>
-      <div className="h-screen overflow-hidden relative">
-        <PageNavbar />
-
-        {/* PRODUCT */}
-
-        <div className="product-page ">
-        <Carousel>
-            {product.itemimage.map((image, index) => (
-              <Image
-                key={index}
-                className="h-[350px] w-full object-cover"
-                src={image.url}
-                alt={`Product image ${index + 1}`}
-                width={500}
-                height={500}
-              />
-            ))}
-          </Carousel>
-          <div className="mx-4 ">
-            <div className="w-full py-3 my-1  flex justify-between border-b border-gray-300">
-              <span className="text-bsutheme">
-                ₱
-                <span className="text-3xl font-semibold">
-                  {product.price.toFixed(0)}
-                </span>
-              </span>
-              <span className="cursor-pointer">
-                <SaveSvg />
-              </span>
+    <div className="min-h-screen">
+      <PageNavbar />
+      <div className="flex  pt-10 px-10 gap-2 flex-col border-b border-gray-400 pb-5">
+        <div className="] rounded-full">
+          <Image
+            className="w-[150px] h-[150px] rounded-full object-cover"
+            src="/images/seller1.jpg"
+            alt="profile"
+            width={500}
+            height={500}
+          />
+        </div>
+        <div className="pl-2">
+          <div className="-space-y-2 ">
+            <p className="text-[2.5rem] font-medium capitalize ">{username}</p>
+            <p className="capitalize">{location}</p>
+          </div>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <div className="w-[270px] flex items-center justify-center bg-bsutheme h-[40px] rounded">
+              <span className="text-white font-medium">Edit Profile</span>
             </div>
-            <h1 className="text-xl font-medium mt-2">{product.items}</h1>
-            <p className="py-1 text-gray-600">{product.description}</p>
-          </div>
-        </div>
-
-        {/* PROFILE */}
-
-        <div className="flex items-center mt-2 border-t border-b border-gray-300 py-2 mx-3 ">
-          <div className="cursor-pointer flex items-center">
-            <Link className="flex items-center" href={`/sellerprofile/${encodeURIComponent(seller.seller.name)}`}>
-              <Image
-                className="rounded-full w-[50px]"
-                src={seller.seller.profileImage}
-                alt={seller.seller.name}
-                width={50}
-                height={50}
-              />
-              <span className="ml-2 mr-2  text-gray-700 text-md">
-                {seller.seller.name}
+            <div className="w-[100px] flex items-center justify-center bg-[#cecccc] h-[40px] rounded">
+              <span onClick={handleLogout} className="text-black font-medium">
+                Log out
               </span>
-            </Link>
-            <button className="bg-bsutheme rounded text-white text-xs px-2 py-[1px]">
-              Follow
-            </button>
+             
+            </div>
+            <Link href="/postproduct">Add product</Link>
           </div>
-        </div>
-
-        {/* DETAILS */}
-
-        <div className="mx-4">
-          <h1 className="font-semibold mt-3 text-[1.3rem]">Details</h1>
-          
-        </div>
-
-        {/* MESSAGE */}
-
-        <div className="fixed font-medium bottom-0 flex justify-evenly px-5 py-3 w-full bg-bsutheme text-white">
-          <button className=" duration-150 active:scale-110 flex items-center gap-1">
-            <span>Message the Seller</span>
-            <CartSvg />
-          </button>
         </div>
       </div>
-    </>
+
+
+      <div className="pt-10 px-10">
+        <h2 className="text-2xl font-semibold">Your Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-5">
+          {products.length === 0 ? (
+            <p>No products available.</p>
+          ) : (
+            products.map((product) => (
+              <div key={product.id} className="border rounded-md p-4">
+                <Image
+                  className="w-full h-[200px] object-cover"
+                  src={`http://localhost:3001${product.image}`}
+                  alt={product.name}
+                  width={500}
+                  height={500}
+                />
+                <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
+                <p>{product.description}</p>
+                <p className="text-green-600 font-semibold">${product.price}</p>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default ProductPage;
+export default ProfilePage;
