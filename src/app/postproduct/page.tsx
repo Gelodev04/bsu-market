@@ -1,8 +1,15 @@
+// Import your component dynamically
+import dynamic from 'next/dynamic';
+
+// Only load the ProductForm component on the client-side
+const ProductForm = dynamic(() => import('@/components/ProductForm'), {
+  ssr: false, // This disables server-side rendering for this component
+});
+
 "use client"; // To indicate that this component runs in the client-side
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ProductForm from "@/components/ProductForm";
 
 const NewProductPage = () => {
   const router = useRouter();
