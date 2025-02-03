@@ -15,11 +15,7 @@ interface ProductDetail {
   image: string;
 }
 
-export default function ProductDetailPage({
-  params,
-}: {
-  params: { name: string };
-}) {
+export default function ProductDetailPage() {
   
   const { name } = useParams() as { name: string };
   const [data, setData] = useState<ProductDetail | null>(null);
