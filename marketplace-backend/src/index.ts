@@ -2,7 +2,7 @@
 import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import mysql from 'mysql2';
+import mysql, { QueryResult } from 'mysql2';
 import multer from 'multer';
 import path from 'path';
 import bcrypt from 'bcrypt';
@@ -169,6 +169,28 @@ app.get('/api/productdetail/:name', (req: Request, res: Response): void => {
       });
     });
   });
+
+// In your backend (e.g., Express.js)
+app.get('/api/check-username/:username', (req, res) => {
+    const { username } = req.params;
+  
+    const query = 'SELECT * FROM users WHERE username = ?';
+    db.query(query, [username], (err, results: mysql.RowDataPacket[]) => {
+      if (err) {
+        console.error('Error checking username:', err);
+        return res.status(500).send('Database error');
+      }
+      
+      if (results.length > 0) {
+        // Username exists
+        return res.status(409).send('Username already taken');
+      }
+      
+      // Username is available
+      return res.status(200).send('Username available');
+    });
+  });
+  
 
 app.post('/register', async (req: Request, res: Response) => {
     console.log(req.body);

@@ -18,7 +18,7 @@ const LoginPage = () => {
             alert('Login successful!');
             router.push('/');
         } catch (error) {
-            console.error('Error logging in:', error);
+          
             alert('Failed to log in.');
         }
     };

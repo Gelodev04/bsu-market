@@ -156,6 +156,23 @@ app.get('/api/productdetail/:name', (req, res) => {
         });
     });
 });
+// In your backend (e.g., Express.js)
+app.get('/api/check-username/:username', (req, res) => {
+    const { username } = req.params;
+    const query = 'SELECT * FROM users WHERE username = ?';
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            console.error('Error checking username:', err);
+            return res.status(500).send('Database error');
+        }
+        if (results.length > 0) {
+            // Username exists
+            return res.status(409).send('Username already taken');
+        }
+        // Username is available
+        return res.status(200).send('Username available');
+    });
+});
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
     const { username, googleaccount, password, location } = req.body;
