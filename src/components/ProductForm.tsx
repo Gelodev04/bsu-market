@@ -8,7 +8,7 @@ const ProductForm = () => {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState("Alangilan");
 
   const userId = localStorage.getItem("userId");
 

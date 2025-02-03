@@ -17,6 +17,7 @@ app.use(cors({
     origin: 'http://localhost:3000', // Your Next.js frontend URL
     methods: ['GET', 'POST'],
   }));
+  
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const db = mysql.createConnection({
