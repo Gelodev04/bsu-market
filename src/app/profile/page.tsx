@@ -60,7 +60,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen">
       <PageNavbar />
-      <div className="flex  pt-10 px-10 gap-2 flex-col border-b border-gray-400 pb-5">
+      <div className="flex  pt-10 px-3 gap-2 flex-col border-b border-gray-400 pb-5">
         <div className="] rounded-full">
           <Image
             className="w-[150px] h-[150px] rounded-full object-cover"

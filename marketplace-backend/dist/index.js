@@ -117,43 +117,30 @@ app.get('/api/products', (req, res) => {
 app.get('/api/productdetail/:name', (req, res) => {
     // Extract the product name from the route parameter
     const { name } = req.params;
+    const decodedName = decodeURIComponent(name);
     // Extract the token from the request header
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        res.status(401).send('Authorization header missing');
-        return;
-    }
-    // The header is expected in the format: Bearer <token>
-    const token = authHeader.split(' ')[1];
-    jsonwebtoken_1.default.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            res.status(403).send('Invalid or expired token');
-            return;
-        }
-        // Extract the user ID from the token payload
-        const { id: userId } = decoded;
-        // SQL query to join the products with user info,
-        // ensuring that only the owner of the product can view its details.
-        const query = `
+    // SQL query to join the products with user info,
+    // ensuring that only the owner of the product can view its details.
+    const query = `
         SELECT 
           products.*, 
           users.username 
         FROM products 
         JOIN users ON products.user_id = users.id 
-        WHERE products.name = ? AND users.id = ?`;
-        db.query(query, [name, userId], (err, results) => {
-            if (err) {
-                console.error('Error fetching product details:', err);
-                res.status(500).send('Database error');
-                return;
-            }
-            if (results.length === 0) {
-                res.status(404).send('Product not found or access unauthorized');
-                return;
-            }
-            // Return the first result (assuming names are unique per user)
-            res.status(200).json(results[0]);
-        });
+        WHERE TRIM(LOWER(products.name)) = LOWER(?)`;
+    db.query(query, [decodedName], (err, results) => {
+        console.log('Searching for product with name:', name);
+        if (err) {
+            console.error('Error fetching product details:', err);
+            res.status(500).send('Database error');
+            return;
+        }
+        if (results.length === 0) {
+            res.status(404).send('Product not found or access unauthorized');
+            return;
+        }
+        // Return the first result (assuming names are unique per user)
+        res.status(200).json(results[0]);
     });
 });
 // In your backend (e.g., Express.js)
@@ -252,7 +239,7 @@ app.post('/products', upload.single('image'), (req, res) => {
     });
 });
 app.get('/products', (req, res) => {
-    const query = 'SELECT * FROM products';
+    const query = 'SELECT * FROM products ORDER BY created_at DESC';
     db.query(query, (err, results) => {
         if (err) {
             return res.status(500).send(err);

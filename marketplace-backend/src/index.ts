@@ -124,25 +124,10 @@ app.get('/api/products', (req: Request, res: Response) => {
 app.get('/api/productdetail/:name', (req: Request, res: Response): void => {
     // Extract the product name from the route parameter
     const { name } = req.params;
-  
+    const decodedName = decodeURIComponent(name);
     // Extract the token from the request header
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-       res.status(401).send('Authorization header missing');
-       return;
-    }
-  
-    // The header is expected in the format: Bearer <token>
-    const token = authHeader.split(' ')[1];
-  
-    jwt.verify(token, secretKey, (err, decoded) => {
-      if (err) {
-        res.status(403).send('Invalid or expired token');
-        return;
-      }
-  
-      // Extract the user ID from the token payload
-      const { id: userId } = decoded as { id: number };
+    
+    
   
       // SQL query to join the products with user info,
       // ensuring that only the owner of the product can view its details.
@@ -152,9 +137,10 @@ app.get('/api/productdetail/:name', (req: Request, res: Response): void => {
           users.username 
         FROM products 
         JOIN users ON products.user_id = users.id 
-        WHERE products.name = ? AND users.id = ?`;
+        WHERE TRIM(LOWER(products.name)) = LOWER(?)`;
   
-      db.query(query, [name, userId], (err, results: mysql.RowDataPacket[]) => {
+      db.query(query, [decodedName], (err, results: mysql.RowDataPacket[]) => {
+        console.log('Searching for product with name:', name);
         if (err) {
           console.error('Error fetching product details:', err);
            res.status(500).send('Database error');
@@ -168,7 +154,7 @@ app.get('/api/productdetail/:name', (req: Request, res: Response): void => {
         res.status(200).json(results[0]);
       });
     });
-  });
+
 
 // In your backend (e.g., Express.js)
 app.get('/api/check-username/:username', (req, res) => {
@@ -285,7 +271,7 @@ app.post('/products', upload.single('image'), (req: Request, res: Response): voi
 
 
 app.get('/products', (req: Request, res: Response) => {
-    const query = 'SELECT * FROM products';
+    const query = 'SELECT * FROM products ORDER BY created_at DESC';
     db.query(query, (err, results) => {
         if (err) {
             return res.status(500).send(err);
