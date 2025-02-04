@@ -59,7 +59,7 @@ const SignUpPage = () => {
   return (
     <div className="h-screen flex flex-col justify-center items-center ">
       <h1 className="text-[2rem] font-bold">Sign Up</h1>
-      <form className="w-[450px] flex flex-col gap-2 " onSubmit={handleSubmit}>
+      <form className="w-full px-4 flex flex-col gap-2 " onSubmit={handleSubmit}>
         <div>
           <Input
            color="danger"

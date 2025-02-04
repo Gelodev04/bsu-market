@@ -1,33 +1,32 @@
 // filepath: src/app/login/page.tsx
 "use client";
-import { useState } from 'react';
-import { loginUser } from '../../services/api';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { loginUser } from "../../services/api";
+import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const { token, userId } = await loginUser({ username, password });
-            localStorage.setItem('token', token);
-            localStorage.setItem('userId', userId);
-            alert('Login successful!');
-            router.push('/');
-        } catch (error) {
-          
-            alert('Failed to log in.');
-        }
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { token, userId } = await loginUser({ username, password });
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+      alert("Login successful!");
+      router.push("/");
+    } catch (error) {
+      alert("Failed to log in.");
+    }
+  };
 
-    return (
-        <div className="h-screen flex flex-col justify-center items-center">
+  return (
+    <div className="h-screen flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold">Login</h1>
-      <form className="w-[450px] flex flex-col gap-2" onSubmit={handleSubmit}>
+      <form className="w-full px-4 flex flex-col gap-2" onSubmit={handleSubmit}>
         <div>
           <Input
             color="danger"
@@ -52,20 +51,22 @@ const LoginPage = () => {
           />
         </div>
 
-        <button 
-          className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3" 
+        <button
+          className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3"
           type="submit"
         >
           Login
         </button>
-        
+
         <div className="flex gap-1 justify-center">
           <span>Don't have an account?</span>
-          <a href="/signup" className="text-bsutheme">Sign up</a>
+          <a href="/signup" className="text-bsutheme">
+            Sign up
+          </a>
         </div>
       </form>
     </div>
-    );
+  );
 };
 
 export default LoginPage;
