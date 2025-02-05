@@ -9,7 +9,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 const secretKey = "your_secret_key";
 
 app.use(bodyParser.json());
@@ -23,10 +23,10 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "4545",
-  database: "marketplace",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
 });
 
 db.connect((err) => {

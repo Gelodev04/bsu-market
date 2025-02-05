@@ -21,7 +21,7 @@ const ProfilePage = () => {
         
       const fetchUserData = async () => {
         try {
-          const response = await fetch("http://localhost:3001/api/user", {
+          const response = await fetch("http://mysql.railway.internal/api/user", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ const ProfilePage = () => {
           setUsername(data.username);
           setLocation(data.location);
 
-          const productsResponse = await fetch("http://localhost:3001/api/products", {
+          const productsResponse = await fetch("http://mysql.railway.internal/api/products", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ const ProfilePage = () => {
               <div key={product.id} className="border rounded-md p-4">
                 <Image
                   className="w-full h-[200px] object-cover"
-                  src={`http://localhost:3001${product.image}`}
+                  src={`http://mysql.railway.internal${product.image}`}
                   alt={product.name}
                   width={500}
                   height={500}

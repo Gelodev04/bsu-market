@@ -40,7 +40,7 @@ export default async function ShopSection()  {
                  {product.image && 
                     <Image
                       className="object-cover w-full aspect-[4/3] rounded"
-                      src={`http://localhost:3001${product.image}`}
+                      src={`http://mysql.railway.internal${product.image}`}
                       alt={product.name}
                       width={500}
                       height={500}
