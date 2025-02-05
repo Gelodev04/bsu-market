@@ -8,7 +8,8 @@ interface SellerProfile {
   username: string;
   email: string;
   location: string;
-  products: Array<{ id: number; name: string; price: number; image: string }>;
+  
+  products: Array<{ id: number; name: string; price: number; image: string; description: string;  }>;
 }
 
 export default function SellerProfilePage() {
@@ -60,12 +61,14 @@ export default function SellerProfilePage() {
               <div key={index} className="border p-4">
                 <Image
                   className="w-full h-[200px] object-cover"
-                  src={`http://localhost:3001/${product.image}`}
+                  src={`http://localhost:3001${product.image}`}
                   alt="product"
                   width={500}
                   height={500}
                 />
                 <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
+         
+                <p>{product.description}</p>
                 <p>₱{product.price}</p>
               </div>
             ))}

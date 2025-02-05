@@ -65,7 +65,8 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
         products.name, 
         products.price,
         products.description,
-        products.location
+        products.location,
+        products.image
     FROM 
         users
     LEFT JOIN 
@@ -89,9 +90,12 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
                 username: results[0].username,
                 location: results[0].location,
                 products: results.map(result => ({
-                    product_name: result.product_name,
-                    price: result.price
-                })).filter(product => product.product_name !== null)
+                    name: result.name,
+                    price: result.price,
+                    image: result.image,
+                    location: result.location,
+                    description: result.description
+                })).filter(product => product.name !== null)
             };
             // Send the seller data as the response
             res.status(200).json(sellerInfo);
