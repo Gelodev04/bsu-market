@@ -1,10 +1,12 @@
 "use client";
-
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import PageNavbar from "@/components/PageNavbar";
 import { SaveSvg } from "@/assets/svgs/Svg";
+import Link from "next/link";
+
+
 interface ProductDetail {
   id: number;
   name: string;
@@ -96,10 +98,10 @@ export default function ProductDetailPage() {
 
           <div className="border-b border-t border-gray-300  mt-5 px-5 py-2">
             <div className="flex items-center  justify-between">
-              <div className="flex items-center gap-2">
+              <Link href={`/seller/${data.username}`} className="flex items-center gap-2">
                 <img className="w-[60px] rounded-full" src="/images/seller1.jpg" alt="" />
                 <h1 className="capitalize text-lg">{data.username}</h1>
-              </div>
+              </Link>
               <button className="bg-bsutheme text-white rounded-full px-3 text-sm py-[1px]">Follow</button>
             </div>
           </div>

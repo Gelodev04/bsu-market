@@ -4,6 +4,7 @@ import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
 import { getProducts } from '@/services/api';
 
+
 interface Product {
   id: number;
   name: string;
@@ -21,6 +22,7 @@ export default async function ShopSection()  {
     <div id="shop" className="mx-3 mt-10 relative">
       <div className="relative">
         <h2 className="text-[3rem]">Latest</h2>
+        
         <div className="absolute bottom-[12px] -left-1 h-[3px] rounded-full bg-bsutheme w-[40px]"></div>
       </div>
       
@@ -55,7 +57,7 @@ export default async function ShopSection()  {
             </div>
           ))}
         </div>
-   
+          
       
       {/* Pagination */}
      {/* <div className="py-5">
