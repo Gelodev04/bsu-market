@@ -15,7 +15,7 @@ const secretKey = "your_secret_key";
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your Next.js frontend URL
+    origin: "https://bsu-market.vercel.app/", // Your Next.js frontend URL
     methods: ["GET", "POST"],
   })
 );
