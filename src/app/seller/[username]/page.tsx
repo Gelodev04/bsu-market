@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
@@ -8,13 +8,18 @@ interface SellerProfile {
   username: string;
   email: string;
   location: string;
-  
-  products: Array<{ id: number; name: string; price: number; image: string; description: string;  }>;
+
+  products: Array<{
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+  }>;
 }
 
 export default function SellerProfilePage() {
-
-  const { username } = useParams();  // Retrieve the username from the URL query
+  const { username } = useParams(); // Retrieve the username from the URL query
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -50,10 +55,31 @@ export default function SellerProfilePage() {
     <main>
       <PageNavbar />
       {seller ? (
-        <div className="px-5 py-3">
-          <h1 className="text-2xl font-bold">{seller.username}</h1>
-          <p>Email: {seller.email}</p>
-          <p>Location: {seller.location}</p>
+        <div className="px-3">
+          <div className="flex  pt-10  gap-2 flex-col border-b border-gray-400 pb-5">
+            <div className="] rounded-full">
+              <Image
+                className="w-[150px] h-[150px] rounded-full object-cover"
+                src="/images/seller1.jpg"
+                alt="profile"
+                width={500}
+                height={500}
+              />
+            </div>
+            <div className="pl-2">
+              <div className="-space-y-2 ">
+                <p className="text-[2.5rem] font-medium capitalize ">
+                  {seller.username}
+                </p>
+                <p className="capitalize">{seller.location}</p>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <div className="w-[270px] flex items-center justify-center bg-bsutheme h-[40px] rounded">
+                  <span className="text-white font-medium">Follow</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <h2 className="text-xl font-semibold mt-5">Products</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -67,7 +93,7 @@ export default function SellerProfilePage() {
                   height={500}
                 />
                 <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
-         
+
                 <p>{product.description}</p>
                 <p>₱{product.price}</p>
               </div>
