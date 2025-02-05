@@ -29,7 +29,7 @@ export default function SellerProfilePage() {
 
     const fetchSellerData = async () => {
       try {
-        const res = await fetch(`http://mysql.railway.internal/api/seller/${username}`);
+        const res = await fetch(`http://localhost:3001/api/seller/${username}`);
         if (!res.ok) {
           setError("Failed to fetch seller profile.");
           setLoading(false);
@@ -87,7 +87,7 @@ export default function SellerProfilePage() {
               <div key={index} className="border p-4">
                 <Image
                   className="w-full h-[200px] object-cover"
-                  src={`http://mysql.railway.internal${product.image}`}
+                  src={`http://localhost:3001${product.image}`}
                   alt="product"
                   width={500}
                   height={500}

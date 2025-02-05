@@ -37,7 +37,7 @@ export default function ProductDetailPage() {
         // Retrieve the JWT token from localStorage (or another storage mechanism)
 
         const res = await fetch(
-          `http://mysql.railway.internal/api/productdetail/${encodeURIComponent(name)}`
+          `http://localhost:3001/api/productdetail/${encodeURIComponent(name)}`
         );
 
         if (!res.ok) {
@@ -70,7 +70,7 @@ export default function ProductDetailPage() {
         <div>
           <Image
           className="w-full h-[400px] object-cover"
-            src={`http://mysql.railway.internal${data.image}`}
+            src={`http://localhost:3001${data.image}`}
             alt="product"
             width={500}
             height={500}

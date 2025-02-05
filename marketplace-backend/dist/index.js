@@ -22,19 +22,22 @@ const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const app = (0, express_1.default)();
-const port = process.env.PORT || 3001;
 const secretKey = "your_secret_key";
+const port = 3001;
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)({
-    origin: "https://bsu-market.vercel.app/", // Your Next.js frontend URL
+    origin: [
+        "http://localhost:3000", // Allow HTTP for local development
+        "https://localhost:3000", // Allow HTTPS for testing with secure connection
+    ],
     methods: ["GET", "POST"],
 }));
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "uploads")));
 const db = mysql2_1.default.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    host: "localhost",
+    user: "root",
+    password: "4545",
+    database: "marketplace"
 });
 db.connect((err) => {
     if (err) {

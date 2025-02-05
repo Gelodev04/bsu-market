@@ -8,14 +8,19 @@ import path from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+
+
 const app = express();
-const port = process.env.PORT || 3001;
 const secretKey = "your_secret_key";
+const port = 3001;
 
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "https://bsu-market.vercel.app/", // Your Next.js frontend URL
+    origin: [
+        "http://localhost:3000",  // Allow HTTP for local development
+        "https://localhost:3000", // Allow HTTPS for testing with secure connection
+      ],
     methods: ["GET", "POST"],
   })
 );
@@ -23,10 +28,11 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME
+  host: "localhost",
+  user: "root",
+  password: "4545",
+  database: "marketplace"
+
 });
 
 db.connect((err) => {

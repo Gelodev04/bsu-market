@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'mysql.railway.internal',
+    baseURL: 'http://localhost:3001',
 });
 
 export const getProducts = async () => {
