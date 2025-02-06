@@ -30,7 +30,7 @@ app.use((0, cors_1.default)({
         "http://localhost:3000", // Allow HTTP for local development
         "https://localhost:3000", // Allow HTTPS for testing with secure connection
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
 }));
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "uploads")));
 const db = mysql2_1.default.createConnection({
@@ -55,6 +55,158 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
+app.delete("/api/follow/:username", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const follower_id = decoded.id;
+        const username_to_unfollow = req.params.username;
+        // Get the ID of the user being unfollowed
+        db.query("SELECT id FROM users WHERE username = ?", [username_to_unfollow], (err, results) => {
+            if (err) {
+                console.error('Error checking user:', err);
+                res.status(500).send("Error unfollowing the user");
+                return;
+            }
+            if (!results.length) {
+                res.status(404).send("User not found");
+                return;
+            }
+            const following_id = results[0].id;
+            // Begin transaction
+            db.beginTransaction((transErr) => {
+                if (transErr) {
+                    console.error('Transaction error:', transErr);
+                    res.status(500).send("Error unfollowing user");
+                    return;
+                }
+                // Delete the follow relationship
+                db.query("DELETE FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (deleteErr, deleteResult) => {
+                    if (deleteErr) {
+                        return db.rollback(() => {
+                            console.error('Delete error:', deleteErr);
+                            res.status(500).send("Error unfollowing user");
+                        });
+                    }
+                    if (deleteResult.affectedRows === 0) {
+                        return db.rollback(() => {
+                            res.status(400).send("You are not following this user");
+                        });
+                    }
+                    // Decrement the followers count
+                    db.query("UPDATE users SET followers = followers - 1 WHERE id = ?", [following_id], (updateErr) => {
+                        if (updateErr) {
+                            return db.rollback(() => {
+                                console.error('Update error:', updateErr);
+                                res.status(500).send("Error unfollowing user");
+                            });
+                        }
+                        db.commit((commitErr) => {
+                            if (commitErr) {
+                                return db.rollback(() => {
+                                    console.error('Commit error:', commitErr);
+                                    res.status(500).send("Error unfollowing user");
+                                });
+                            }
+                            res.status(200).send("User unfollowed successfully");
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+app.post("/api/follow/:username", (req, res) => {
+    // Get authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    // Verify the token and get the follower's ID
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const follower_id = decoded.id;
+        const username_to_follow = req.params.username;
+        // First, get the ID of the user being followed
+        db.query("SELECT id, followers FROM users WHERE username = ?", [username_to_follow], (err, results) => {
+            if (err) {
+                console.error('Error checking user:', err);
+                res.status(500).send("Error following the user");
+                return;
+            }
+            if (!results.length) {
+                res.status(404).send("User not found");
+                return;
+            }
+            const following_id = results[0].id;
+            // Don't allow following yourself
+            if (follower_id === following_id) {
+                res.status(400).send("You cannot follow yourself");
+                return;
+            }
+            // Check if already following
+            db.query("SELECT * FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (checkErr, checkResults) => {
+                if (checkErr) {
+                    console.error('Error checking follow status:', checkErr);
+                    res.status(500).send("Error checking follow status");
+                    return;
+                }
+                if (checkResults.length > 0) {
+                    res.status(400).send("You are already following this user");
+                    return;
+                }
+                // If not following, create the follow relationship and increment followers count
+                db.beginTransaction((transErr) => {
+                    if (transErr) {
+                        console.error('Transaction error:', transErr);
+                        res.status(500).send("Error following user");
+                        return;
+                    }
+                    // Insert into follows table
+                    db.query("INSERT INTO follows (follower_id, following_id) VALUES (?, ?)", [follower_id, following_id], (insertErr) => {
+                        if (insertErr) {
+                            return db.rollback(() => {
+                                console.error('Insert error:', insertErr);
+                                res.status(500).send("Error following user");
+                            });
+                        }
+                        // Update followers count
+                        db.query("UPDATE users SET followers = followers + 1 WHERE id = ?", [following_id], (updateErr) => {
+                            if (updateErr) {
+                                return db.rollback(() => {
+                                    console.error('Update error:', updateErr);
+                                    res.status(500).send("Error following user");
+                                });
+                            }
+                            db.commit((commitErr) => {
+                                if (commitErr) {
+                                    return db.rollback(() => {
+                                        console.error('Commit error:', commitErr);
+                                        res.status(500).send("Error following user");
+                                    });
+                                }
+                                res.status(200).send("User followed successfully");
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
 // For fetching seller profile
 app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.params;

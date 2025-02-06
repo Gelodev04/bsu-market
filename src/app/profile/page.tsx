@@ -78,10 +78,10 @@ const ProfilePage = () => {
             <p className="capitalize">{location}</p>
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
-            <div className="w-[270px] flex items-center justify-center bg-bsutheme h-[40px] rounded">
+            <div className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded">
               <span className="text-white font-medium">Edit Profile</span>
             </div>
-            <div className="w-[100px] flex items-center justify-center bg-[#cecccc] h-[40px] rounded">
+            <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded">
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>
