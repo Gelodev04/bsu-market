@@ -246,7 +246,9 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
                 username: results[0].username,
                 location: results[0].location,
                 followers: results[0].followers,
-                products: results.map(result => ({
+                products: results
+                    .filter(product => product.name !== null)
+                    .map(result => ({
                     name: result.name,
                     price: result.price,
                     image: result.image,

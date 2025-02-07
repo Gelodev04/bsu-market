@@ -8,14 +8,14 @@ interface SellerProfile {
   username: string;
   email: string;
   location: string;
-
+  followers: number;
   products: Array<{
     id: number;
     name: string;
     price: number;
     image: string;
     description: string;
-    followers: number;
+    
   }>;
 }
 

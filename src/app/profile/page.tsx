@@ -44,7 +44,7 @@ const ProfilePage = () => {
             },
           });
           if (!productsResponse.ok) {
-            throw new Error("Failed to fetch products");
+            throw new Error("nigga");
           }
           const productsData = await productsResponse.json();
           setProducts(productsData);
