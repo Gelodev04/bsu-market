@@ -33,15 +33,26 @@ export default function ProductDetailPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (res.ok) {
         const { isFollowing } = await res.json();
         setIsFollowing(isFollowing);
+        localStorage.setItem(`followStatus_${username}`, JSON.stringify(isFollowing));
       }
     } catch (error) {
       console.error("Error checking follow status:", error);
     }
   };
+  
+  useEffect(() => {
+    if (data?.username) {
+      const storedFollowStatus = localStorage.getItem(`followStatus_${data.username}`);
+      if (storedFollowStatus) {
+        setIsFollowing(JSON.parse(storedFollowStatus));
+      }
+      checkFollowStatus(data.username);
+    }
+  }, [data?.username]);
 
   const handleFollow = async () => {
     try {
@@ -107,6 +118,10 @@ export default function ProductDetailPage() {
 
         const result = await res.json();
         setData(result);
+
+        if (result.username) {
+          await checkFollowStatus(result.username);
+        }
       } catch (err: any) {
         setError(err.message);
       } finally {

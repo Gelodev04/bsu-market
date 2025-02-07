@@ -10,6 +10,7 @@ import { AddSvg } from "@/assets/svgs/Svg";
 const ProfilePage = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
+  const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const router = useRouter();
 
@@ -34,6 +35,7 @@ const ProfilePage = () => {
           const data = await response.json();
           setUsername(data.username);
           setLocation(data.location);
+          setFollowers(data.followers);
 
           const productsResponse = await fetch("http://localhost:3001/api/products", {
             method: "GET",
@@ -76,6 +78,7 @@ const ProfilePage = () => {
           <div className="-space-y-2 ">
             <p className="text-[2.5rem] font-medium capitalize ">{username}</p>
             <p className="capitalize">{location}</p>
+            <p className="capitalize">{followers}</p>
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
             <div className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded">

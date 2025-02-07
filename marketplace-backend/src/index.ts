@@ -276,6 +276,7 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
         users.id, 
         users.username, 
         users.location, 
+        users.followers,
         products.name, 
         products.price,
         products.description,
@@ -305,6 +306,7 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
         id: results[0].id,
         username: results[0].username,
         location: results[0].location,
+        followers: results[0].followers,
         products: results.map(result => ({
             name: result.name,
             price: result.price,
@@ -343,7 +345,7 @@ app.get("/api/user", (req: Request, res: Response): void => {
 
     // Query user data from the database
     const query =
-      "SELECT id, username, googleaccount, location FROM users WHERE id = ?";
+      "SELECT id, username, googleaccount, location, followers FROM users WHERE id = ?";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching user data:", err);

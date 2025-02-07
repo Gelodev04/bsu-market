@@ -15,6 +15,7 @@ interface SellerProfile {
     price: number;
     image: string;
     description: string;
+    followers: number;
   }>;
 }
 
@@ -72,6 +73,7 @@ export default function SellerProfilePage() {
                   {seller.username}
                 </p>
                 <p className="capitalize">{seller.location}</p>
+                <p className="capitalize">{seller.followers}</p>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
                 <div className="w-[270px] flex items-center justify-center bg-bsutheme h-[40px] rounded">
