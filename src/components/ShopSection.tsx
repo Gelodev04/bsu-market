@@ -14,8 +14,16 @@ interface Product {
   location: string;
 }
 
+
+
+
+
 export default async function ShopSection()  {
+
+  const itemsPerPage = 5;
+  
   const products = await getProducts();
+ 
  
 
   return (
@@ -60,14 +68,10 @@ export default async function ShopSection()  {
           
       
       {/* Pagination */}
-     {/* <div className="py-5">
-        <CustomPagination
-          currentPage={currentPage}
-          total={Math.ceil(products.length / itemsPerPage)}
-          onPageChange={handlePageChange}
-        />
+     <div className="py-5">
+        <CustomPagination/>
       </div>
-      */}
+      
     </div>
   );
   

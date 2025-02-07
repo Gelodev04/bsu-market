@@ -10,6 +10,7 @@ const ProductForm = dynamic(() => import('@/components/ProductForm'), {
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import PageNavbar from '@/components/PageNavbar';
 
 const NewProductPage = () => {
   const router = useRouter();
@@ -26,7 +27,8 @@ const NewProductPage = () => {
   }, [router]);
 
   return (
-    <div>
+    <div className='h-screen'>
+      <PageNavbar/>
       <h1>Create a New Product</h1>
       <ProductForm />
     </div>
