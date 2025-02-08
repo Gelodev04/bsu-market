@@ -41,7 +41,7 @@ export default async function ShopSection()  {
           {products.map((product: any) => (
             <div
               key={product.id}
-              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors"
+              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
             >
               <Link href={`/productdetail/${product.name}`}>
                 <div className="flex flex-col">
