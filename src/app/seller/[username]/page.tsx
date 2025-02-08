@@ -15,7 +15,6 @@ interface SellerProfile {
     price: number;
     image: string;
     description: string;
-    
   }>;
 }
 
@@ -24,13 +23,79 @@ export default function SellerProfilePage() {
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+
+  const validUsername = Array.isArray(username) ? username[0] : username || "";
+
+  const checkFollowStatus = async (validUsername: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:3001/api/follow/${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const { isFollowing } = await res.json();
+        setIsFollowing(isFollowing);
+        localStorage.setItem(
+          `followStatus_${validUsername}`,
+          JSON.stringify(isFollowing)
+        );
+      }
+    } catch (error) {
+      console.error("Error checking follow status:", error);
+    }
+  };
 
   useEffect(() => {
-    if (!username) return;
+    if (validUsername) {
+      const storedFollowStatus = localStorage.getItem(`followStatus_${validUsername}`);
+      if (storedFollowStatus) {
+        setIsFollowing(JSON.parse(storedFollowStatus));
+      }
+      checkFollowStatus(validUsername);
+    }
+  }, [validUsername]);
+
+  const handleFollow = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const method = isFollowing ? "DELETE" : "POST";
+
+      const res = await fetch(`http://localhost:3001/api/follow/${validUsername}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const newFollowStatus = !isFollowing;
+        setIsFollowing(newFollowStatus);
+        localStorage.setItem(`followStatus_${validUsername}`, JSON.stringify(newFollowStatus));
+        alert(newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!");
+      } else {
+        const errMessage = await res.text();
+        alert(`Error: ${errMessage}`);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!validUsername) return;
 
     const fetchSellerData = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/seller/${username}`);
+        const res = await fetch(`http://localhost:3001/api/seller/${validUsername}`);
         if (!res.ok) {
           setError("Failed to fetch seller profile.");
           setLoading(false);
@@ -47,7 +112,7 @@ export default function SellerProfilePage() {
     };
 
     fetchSellerData();
-  }, [username]);
+  }, [validUsername]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -76,9 +141,14 @@ export default function SellerProfilePage() {
                 <p className="capitalize">{seller.followers}</p>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
-                <div className="w-[270px] flex items-center justify-center bg-bsutheme h-[40px] rounded">
-                  <span className="text-white font-medium">Follow</span>
-                </div>
+                <button
+                  onClick={handleFollow}
+                  className={`w-[270px] flex items-center justify-center h-[40px] rounded text-white font-medium ${
+                    isFollowing ? "bg-gray-500" : "bg-bsutheme"
+                  }`}
+                >
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </button>
               </div>
             </div>
           </div>

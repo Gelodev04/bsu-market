@@ -25,6 +25,7 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
+
   const checkFollowStatus = async (username: string) => {
     try {
       const token = localStorage.getItem("token");
@@ -71,9 +72,11 @@ export default function ProductDetailPage() {
       );
 
       if (res.ok) {
-        setIsFollowing(!isFollowing);
+        const newFollowStatus = !isFollowing;
+        setIsFollowing(newFollowStatus);
+        localStorage.setItem(`followStatus_${data?.username}`, JSON.stringify(newFollowStatus));
         alert(
-          isFollowing ? "Unfollowed successfully!" : "You followed this seller!"
+          newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!"
         );
       } else {
         const errMessage = await res.text();
@@ -88,11 +91,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  useEffect(() => {
-    if (data?.username) {
-      checkFollowStatus(data.username);
-    }
-  }, [data?.username]);
+
 
   useEffect(() => {
     if (!name) {
