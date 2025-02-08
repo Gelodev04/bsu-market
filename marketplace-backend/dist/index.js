@@ -311,7 +311,7 @@ app.get("/api/products", (req, res) => {
         // Extract user ID from the token
         const { id } = decoded;
         // Query products based on user ID (if needed)
-        const query = "SELECT * FROM products WHERE user_id = ?";
+        const query = "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error("Error fetching products:", err);

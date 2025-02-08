@@ -46,7 +46,12 @@ const ProfilePage = () => {
           if (!productsResponse.ok) {
             throw new Error("Error");
           }
-          const productsData = await productsResponse.json();
+          let productsData = await productsResponse.json();
+
+          productsData = productsData.sort(
+            (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
           setProducts(productsData);
         } catch (error) {
           console.error("Error fetching user data:", error);

@@ -51,7 +51,7 @@ const SignUpPage = () => {
       
       setTimeout(() => {
       router.push("/login");
-      }, 2000);
+      }, 1000);
 
     } catch (error) {
       console.error("Error registering user:", error);
@@ -161,7 +161,7 @@ const SignUpPage = () => {
           {isSubmitting ? "Signing up..." : "Sign Up"}
         </button>
 
-        
+
         <div className="flex gap-1 justify-center">
           <span>Already have an account?</span>
           <Link  href="/login"><span className="text-bsutheme">Log in</span></Link>

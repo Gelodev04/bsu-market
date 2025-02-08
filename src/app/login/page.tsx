@@ -20,7 +20,7 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
       setMessage("Login successful!");
-      setTimeout(() => router.push("/"), 2000); 
+      setTimeout(() => router.push("/"), 1000); 
     } catch (error) {
       setMessage("Failed to log in.");
     }

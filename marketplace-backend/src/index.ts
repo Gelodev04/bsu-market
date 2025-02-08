@@ -383,7 +383,7 @@ app.get("/api/products", (req: Request, res: Response) => {
     const { id } = decoded as { id: number };
 
     // Query products based on user ID (if needed)
-    const query = "SELECT * FROM products WHERE user_id = ?";
+    const query = "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching products:", err);
