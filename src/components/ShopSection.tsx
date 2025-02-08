@@ -37,11 +37,11 @@ export default async function ShopSection()  {
     
       
       
-        <div className="product-list grid grid-cols-2 gap-2 gap-y-4 mt-4">
+        <div className="product-list grid grid-cols-2 gap-2 gap-y-4 mt-4 ">
           {products.map((product: any) => (
             <div
               key={product.id}
-              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[240px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors"
+              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors"
             >
               <Link href={`/productdetail/${product.name}`}>
                 <div className="flex flex-col">

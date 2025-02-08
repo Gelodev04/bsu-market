@@ -59,7 +59,10 @@ const ProductForm = () => {
         <input
           type="number"
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) => {
+          const inputValue = parseFloat(e.target.value); 
+          setPrice(inputValue >= 0 || e.target.value === "" ? e.target.value : "0");
+        }}
           required
         />
       </div>

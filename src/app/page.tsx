@@ -7,6 +7,7 @@ import path from "path";
 import Carousel from "@/ui/Carousel";
 import { AddSvg } from "@/assets/svgs/Svg";
 import Link from "next/link";
+import MyDropzone from "@/ui/DropDown";
 export default async function Home() {
   return (
     <>
@@ -18,6 +19,7 @@ export default async function Home() {
       <Navbar />
       <HomeSection />
       <ShopSection />
+      <MyDropzone/>
     </>
   );
 }
