@@ -115,7 +115,9 @@ export default function SellerProfilePage() {
           `followStatus_${currentUserId}_${validUsername}`,
           JSON.stringify(newFollowStatus)
         );
-        alert(newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!");
+
+        // alert(newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!");
+        
       } else {
         const errMessage = await res.text();
         alert(`Error: ${errMessage}`);

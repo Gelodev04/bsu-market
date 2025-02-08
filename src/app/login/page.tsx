@@ -8,24 +8,32 @@ import { Input } from "@heroui/input";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(null);
+    
     try {
       const { token, userId } = await loginUser({ username, password });
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
-      alert("Login successful!");
-      router.push("/");
+      setMessage("Login successful!");
+      setTimeout(() => router.push("/"), 2000); 
     } catch (error) {
-      alert("Failed to log in.");
+      setMessage("Failed to log in.");
     }
   };
 
   return (
     <div className="h-screen flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold">Login</h1>
+
+      {message && (
+          <p className="mt-2 text-center text-red-500">{message}</p>
+        )}
+
       <form className="w-full px-4 flex flex-col gap-2" onSubmit={handleSubmit}>
         <div>
           <Input
@@ -57,6 +65,9 @@ const LoginPage = () => {
         >
           Login
         </button>
+
+        
+
 
         <div className="flex gap-1 justify-center">
           <span>Don't have an account?</span>

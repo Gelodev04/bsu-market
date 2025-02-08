@@ -23,6 +23,7 @@ const ProductForm = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Check authentication on component mount
@@ -30,7 +31,7 @@ const ProductForm = () => {
     const userId = localStorage.getItem('userId');
     
     if (!token || !userId) {
-      router.push('/login'); // Redirect to login if not authenticated
+      setTimeout(() => router.push("/login"), 2000);  // Redirect to login if not authenticated
     }
   }, [router]);
 
@@ -56,7 +57,7 @@ const ProductForm = () => {
 
     if (!userId || !token) {
       setError("You must be logged in");
-      router.push('/login');
+      setTimeout(() => router.push("/login"), 2000); 
       return;
     }
 
@@ -84,12 +85,13 @@ const ProductForm = () => {
       setFiles([]);
       
       // Show success message or redirect
-      router.push('/'); // Redirect to products page after success
+      setTimeout(() => router.push("/profile"), 1000);
+      setMessage('Created Successully');  // Redirect to products page after success
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
         if (error.message.includes('not authorized')) {
-          router.push('/login');
+          setTimeout(() => router.push("/login"), 2000); 
         }
       } else {
         setError('An unexpected error occurred');
@@ -106,7 +108,11 @@ const ProductForm = () => {
           {error}
         </div>
       )}
-      
+
+      {message && (
+          <p className="mt-2 text-center text-green-500">{message}</p>
+        )}
+
       <div className="space-y-2">
         <label className="block text-sm font-medium">Name:</label>
         <input
