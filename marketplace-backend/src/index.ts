@@ -154,6 +154,7 @@ interface UserRow extends RowDataPacket {
 
 app.post("/api/follow/:username", (req: Request, res: Response): void => {
   // Get authorization header
+  
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");

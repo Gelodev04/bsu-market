@@ -9,7 +9,7 @@ import { AddSvg } from "@/assets/svgs/Svg";
 
 const ProfilePage = () => {
   const [username, setUsername] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const router = useRouter();
@@ -44,7 +44,7 @@ const ProfilePage = () => {
             },
           });
           if (!productsResponse.ok) {
-            throw new Error("nigga");
+            throw new Error("Error");
           }
           const productsData = await productsResponse.json();
           setProducts(productsData);

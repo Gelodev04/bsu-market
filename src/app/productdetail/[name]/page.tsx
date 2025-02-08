@@ -24,11 +24,32 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
 
+  const getCurrentUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch("http://localhost:3001/api/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setCurrentUserId(userData.id.toString());
+      }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    }
+  };
 
   const checkFollowStatus = async (username: string) => {
     try {
       const token = localStorage.getItem("token");
+      if (!token || !currentUserId) return;
+
       const res = await fetch(`http://localhost:3001/api/follow/${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,28 +59,45 @@ export default function ProductDetailPage() {
       if (res.ok) {
         const { isFollowing } = await res.json();
         setIsFollowing(isFollowing);
-        localStorage.setItem(`followStatus_${username}`, JSON.stringify(isFollowing));
+        // Store follow status with both the current user ID and the followed username
+        localStorage.setItem(
+          `followStatus_${currentUserId}_${username}`, 
+          JSON.stringify(isFollowing)
+        );
       }
     } catch (error) {
       console.error("Error checking follow status:", error);
     }
   };
-  
+
   useEffect(() => {
-    if (data?.username) {
-      const storedFollowStatus = localStorage.getItem(`followStatus_${data.username}`);
+    getCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    if (data?.username && currentUserId) {
+      // Get follow status using both current user ID and followed username
+      const storedFollowStatus = localStorage.getItem(
+        `followStatus_${currentUserId}_${data.username}`
+      );
       if (storedFollowStatus) {
         setIsFollowing(JSON.parse(storedFollowStatus));
       }
       checkFollowStatus(data.username);
     }
-  }, [data?.username]);
+  }, [data?.username, currentUserId]);
+
+
 
   const handleFollow = async () => {
     try {
       const token = localStorage.getItem("token");
-      const method = isFollowing ? "DELETE" : "POST";
+      if (!token || !currentUserId) {
+        alert("Please log in first");
+        return;
+      }
 
+      const method = isFollowing ? "DELETE" : "POST";
       const res = await fetch(
         `http://localhost:3001/api/follow/${data?.username}`,
         {
@@ -74,7 +112,11 @@ export default function ProductDetailPage() {
       if (res.ok) {
         const newFollowStatus = !isFollowing;
         setIsFollowing(newFollowStatus);
-        localStorage.setItem(`followStatus_${data?.username}`, JSON.stringify(newFollowStatus));
+        // Store follow status with both the current user ID and the followed username
+        localStorage.setItem(
+          `followStatus_${currentUserId}_${data?.username}`,
+          JSON.stringify(newFollowStatus)
+        );
         alert(
           newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!"
         );
@@ -90,7 +132,6 @@ export default function ProductDetailPage() {
       }
     }
   };
-
 
 
   useEffect(() => {
@@ -118,7 +159,7 @@ export default function ProductDetailPage() {
         const result = await res.json();
         setData(result);
 
-        if (result.username) {
+        if (result.username && currentUserId) {
           await checkFollowStatus(result.username);
         }
       } catch (err: any) {
@@ -129,7 +170,7 @@ export default function ProductDetailPage() {
     };
 
     fetchData();
-  }, [name]);
+  }, [name, currentUserId]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
