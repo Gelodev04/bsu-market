@@ -23,6 +23,7 @@ interface ProductDetail {
   email: string;
   image: string;
   location: string;
+  condition: string;
 }
 
 export default function ProductDetailPage() {
@@ -260,7 +261,7 @@ export default function ProductDetailPage() {
             </p>
             <p>
               <span className="font-medium">Condition: </span>
-              {data.location}
+              {data.condition}
             </p>
           </div>
         </div>

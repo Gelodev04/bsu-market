@@ -19,7 +19,7 @@ export default async function Home() {
       <Navbar />
       <HomeSection />
       <ShopSection />
-      <MyDropdown />
+    
     </>
   );
 }

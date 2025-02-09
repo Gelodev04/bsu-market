@@ -18,7 +18,8 @@ const ProductForm = () => {
     name: "",
     price: "",
     description: "",
-    location: "Alangilan"
+    location: "Alangilan",
+    condition: "Used"
   });
   const [files, setFiles] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +67,7 @@ const ProductForm = () => {
     submitData.append("price", formData.price);
     submitData.append("description", formData.description);
     submitData.append("location", formData.location);
+    submitData.append("condition", formData.condition);
     submitData.append("userId", userId);
     
     files.forEach((fileItem, index) => {
@@ -82,7 +84,8 @@ const ProductForm = () => {
         name: "",
         price: "",
         description: "",
-        location: "Alangilan"
+        location: "Alangilan",
+        condition: ""
       });
       setFiles([]);
       
@@ -175,6 +178,20 @@ const ProductForm = () => {
         >
           <option value="Alangilan">Alangilan</option>
           <option value="Pablo-Borbon">Pablo-Borbon</option>
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Condition:</label>
+        <select
+          name="condition"
+          value={formData.condition}
+          onChange={handleInputChange}
+          className="w-full p-2 border rounded"
+          required
+        >
+          <option value="Used">Used</option>
+          <option value="New">New</option>
         </select>
       </div>
 

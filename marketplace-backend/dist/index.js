@@ -427,7 +427,7 @@ app.post("/users", (req, res) => {
 });
 // Product routes
 app.post("/products", upload.array("images", 5), (req, res) => {
-    const { name, price, description, location } = req.body;
+    const { name, price, description, location, condition } = req.body;
     const files = req.files;
     const imagePaths = files ? files.map(file => `/uploads/${file.filename}`).join(',') : null;
     // Extract the token from the request header
@@ -445,8 +445,8 @@ app.post("/products", upload.array("images", 5), (req, res) => {
         // Extract user ID from the token
         const { id } = decoded;
         // Insert the product with the user ID
-        const query = "INSERT INTO products (name, price, description, image, location, user_id) VALUES (?, ?, ?, ?, ?, ?)";
-        db.query(query, [name, price, description, imagePaths, location, id], (err, results) => {
+        const query = "INSERT INTO products (name, price, description, image, location, `condition`, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        db.query(query, [name, price, description, imagePaths, location, condition, id], (err, results) => {
             if (err) {
                 console.error("Error inserting product:", err);
                 res.status(500).send(err);
