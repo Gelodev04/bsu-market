@@ -54,7 +54,12 @@ const storage = multer_1.default.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     },
 });
-const upload = (0, multer_1.default)({ storage });
+const upload = (0, multer_1.default)({
+    storage,
+    limits: {
+        files: 5 // Limit to 5 files
+    }
+});
 app.delete("/api/follow/:username", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -421,9 +426,10 @@ app.post("/users", (req, res) => {
     });
 });
 // Product routes
-app.post("/products", upload.single("image"), (req, res) => {
+app.post("/products", upload.array("images", 5), (req, res) => {
     const { name, price, description, location } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    const files = req.files;
+    const imagePaths = files ? files.map(file => `/uploads/${file.filename}`).join(',') : null;
     // Extract the token from the request header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -440,7 +446,7 @@ app.post("/products", upload.single("image"), (req, res) => {
         const { id } = decoded;
         // Insert the product with the user ID
         const query = "INSERT INTO products (name, price, description, image, location, user_id) VALUES (?, ?, ?, ?, ?, ?)";
-        db.query(query, [name, price, description, image, location, id], (err, results) => {
+        db.query(query, [name, price, description, imagePaths, location, id], (err, results) => {
             if (err) {
                 console.error("Error inserting product:", err);
                 res.status(500).send(err);

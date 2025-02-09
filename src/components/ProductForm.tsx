@@ -67,10 +67,12 @@ const ProductForm = () => {
     submitData.append("description", formData.description);
     submitData.append("location", formData.location);
     submitData.append("userId", userId);
-
-    if (files.length > 0 && files[0].file) {
-      submitData.append("image", files[0].file);
+    
+    files.forEach((fileItem, index) => {
+    if (fileItem.file) {
+      submitData.append("images", fileItem.file);
     }
+    });
 
     try {
       await createProduct(submitData);
@@ -153,10 +155,10 @@ const ProductForm = () => {
         <FilePond
           files={files}
           onupdatefiles={setFiles}
-          allowMultiple={false}
-          maxFiles={1}
-          name="image"
-          labelIdle='Drag & Drop your image or <span class="filepond--label-action">Browse</span>'
+          allowMultiple={true}
+          maxFiles={5}
+          name="images"
+          labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
           acceptedFileTypes={['image/*']}
           className="w-full"
         />

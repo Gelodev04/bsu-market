@@ -52,7 +52,12 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: {
+    files: 5 // Limit to 5 files
+  }
+});
 
 app.delete("/api/follow/:username", (req: Request, res: Response): void => {
   const authHeader = req.headers.authorization;
@@ -521,10 +526,12 @@ app.post("/users", (req: Request, res: Response) => {
 // Product routes
 app.post(
   "/products",
-  upload.single("image"),
+  upload.array("images", 5),
   (req: Request, res: Response): void => {
     const { name, price, description, location } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    const files = req.files as Express.Multer.File[]; 
+
+    const imagePaths = files ? files.map(file => `/uploads/${file.filename}`).join(',') : null;
 
     // Extract the token from the request header
     const authHeader = req.headers.authorization;
@@ -548,7 +555,7 @@ app.post(
         "INSERT INTO products (name, price, description, image, location, user_id) VALUES (?, ?, ?, ?, ?, ?)";
       db.query(
         query,
-        [name, price, description, image, location, id],
+        [name, price, description, imagePaths, location, id],
         (err, results: mysql.ResultSetHeader) => {
           if (err) {
             console.error("Error inserting product:", err);

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
 import Image from "next/image";
+import Link from "next/link";
 
 interface SellerProfile {
   username: string;
@@ -25,6 +26,10 @@ export default function SellerProfilePage() {
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+
+  const getImagePaths = (imageString: string | null) => {
+    return imageString ? imageString.split(",") : [];
+  };
 
   const validUsername = Array.isArray(username) ? username[0] : username || "";
 
@@ -89,7 +94,6 @@ export default function SellerProfilePage() {
     }
   }, [validUsername, currentUserId]);
 
-
   const handleFollow = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -99,13 +103,16 @@ export default function SellerProfilePage() {
       }
 
       const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch(`http://localhost:3001/api/follow/${validUsername}`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:3001/api/follow/${validUsername}`,
+        {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (res.ok) {
         const newFollowStatus = !isFollowing;
@@ -117,7 +124,6 @@ export default function SellerProfilePage() {
         );
 
         // alert(newFollowStatus ? "You followed this seller!" : "Unfollowed successfully!");
-        
       } else {
         const errMessage = await res.text();
         alert(`Error: ${errMessage}`);
@@ -136,7 +142,9 @@ export default function SellerProfilePage() {
 
     const fetchSellerData = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/seller/${validUsername}`);
+        const res = await fetch(
+          `http://localhost:3001/api/seller/${validUsername}`
+        );
         if (!res.ok) {
           setError("Failed to fetch seller profile.");
           setLoading(false);
@@ -196,21 +204,36 @@ export default function SellerProfilePage() {
 
           <h2 className="text-xl font-semibold mt-5">Products</h2>
           <div className="grid grid-cols-2 gap-4">
-            {seller.products.map((product, index) => (
-              <div key={index} className="border p-4">
-                <Image
-                  className="w-full h-[200px] object-cover"
-                  src={`http://localhost:3001${product.image}`}
-                  alt="product"
-                  width={500}
-                  height={500}
-                />
-                <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
+            {seller.products.map((product, index) => {
+              const imagePaths = getImagePaths(product.image);
+              return (
+                <div key={index} className="border p-4">
+                  {imagePaths.length > 0 && (
+                    <Link href={`/productdetail/${product.name}`}>
+                      <div className="relative">
+                        <Image
+                          className="object-cover w-full aspect-[4/3] rounded"
+                          src={`http://localhost:3001${imagePaths[0]}`}
+                          alt={product.name}
+                          width={500}
+                          height={500}
+                        />
+                        {/* Thumbnail indicators if there are multiple images */}
+                        {imagePaths.length > 1 && (
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+                            +{imagePaths.length - 1}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  )}
+                  <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
 
-                <p>{product.description}</p>
-                <p>₱{product.price}</p>
-              </div>
-            ))}
+                  <p>{product.description}</p>
+                  <p>₱{product.price}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (

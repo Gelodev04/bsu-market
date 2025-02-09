@@ -14,12 +14,15 @@ const ProfilePage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const router = useRouter();
 
+  const getImagePaths = (imageString: string | null) => {
+    return imageString ? imageString.split(",") : [];
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
     } else {
-        
       const fetchUserData = async () => {
         try {
           const response = await fetch("http://localhost:3001/api/user", {
@@ -37,19 +40,23 @@ const ProfilePage = () => {
           setLocation(data.location);
           setFollowers(data.followers);
 
-          const productsResponse = await fetch("http://localhost:3001/api/products", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const productsResponse = await fetch(
+            "http://localhost:3001/api/products",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
           if (!productsResponse.ok) {
             throw new Error("Error");
           }
           let productsData = await productsResponse.json();
 
           productsData = productsData.sort(
-            (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            (a: any, b: any) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
 
           setProducts(productsData);
@@ -93,17 +100,18 @@ const ProfilePage = () => {
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>
-             
             </div>
-            <Link href="/postproduct" className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer hover:outline hover:outline-2 hover:outline-white  rounded-full">
-        <AddSvg />
+            <Link
+              href="/postproduct"
+              className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer hover:outline hover:outline-2 hover:outline-white  rounded-full"
+            >
+              <AddSvg />
 
-        <div className="bg-white rounded-full w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
-      </Link>
+              <div className="bg-white rounded-full w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
+            </Link>
           </div>
         </div>
       </div>
-
 
       <div className="pt-10 px-10">
         <h2 className="text-2xl font-semibold">Your Products</h2>
@@ -111,20 +119,38 @@ const ProfilePage = () => {
           {products.length === 0 ? (
             <p>No products available.</p>
           ) : (
-            products.map((product) => (
-              <div key={product.id} className="border rounded-md p-4">
-                <Image
-                  className="w-full h-[200px] object-cover"
-                  src={`http://localhost:3001${product.image}`}
-                  alt={product.name}
-                  width={500}
-                  height={500}
-                />
-                <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
-                <p>{product.description}</p>
-                <p className="text-green-600 font-semibold">${product.price}</p>
-              </div>
-            ))
+            products.map((product) => {
+              const imagePaths = getImagePaths(product.image);
+              return (
+                <div key={product.id} className="border rounded-md p-4">
+                  {imagePaths.length > 0 && (
+                    <Link href={`/productdetail/${product.name}`}>
+                      <div className="relative">
+                        <Image
+                          className="object-cover w-full aspect-[4/3] rounded"
+                          src={`http://localhost:3001${imagePaths[0]}`}
+                          alt={product.name}
+                          width={500}
+                          height={500}
+                        />
+                        {/* Thumbnail indicators if there are multiple images */}
+                        {imagePaths.length > 1 && (
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+                            +{imagePaths.length - 1}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  )}
+
+                  <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
+                  <p>{product.description}</p>
+                  <p className="text-green-600 font-semibold">
+                    ${product.price}
+                  </p>
+                </div>
+              );
+            })
           )}
         </div>
       </div>

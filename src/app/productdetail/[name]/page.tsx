@@ -5,6 +5,13 @@ import Image from "next/image";
 import PageNavbar from "@/components/PageNavbar";
 import { SaveSvg } from "@/assets/svgs/Svg";
 import Link from "next/link";
+import Carousel from "@/ui/Carousel";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "@/styles/pagination.css";
 
 interface ProductDetail {
   id: number;
@@ -25,6 +32,11 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const getImagePaths = (imageString: string | null) => {
+    return imageString ? imageString.split(",") : [];
+  };
 
   const getCurrentUser = async () => {
     const token = localStorage.getItem("token");
@@ -55,13 +67,13 @@ export default function ProductDetailPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (res.ok) {
         const { isFollowing } = await res.json();
         setIsFollowing(isFollowing);
         // Store follow status with both the current user ID and the followed username
         localStorage.setItem(
-          `followStatus_${currentUserId}_${username}`, 
+          `followStatus_${currentUserId}_${username}`,
           JSON.stringify(isFollowing)
         );
       }
@@ -86,8 +98,6 @@ export default function ProductDetailPage() {
       checkFollowStatus(data.username);
     }
   }, [data?.username, currentUserId]);
-
-
 
   const handleFollow = async () => {
     try {
@@ -117,7 +127,6 @@ export default function ProductDetailPage() {
           `followStatus_${currentUserId}_${data?.username}`,
           JSON.stringify(newFollowStatus)
         );
-        
       } else {
         const errMessage = await res.text();
         alert(`Error: ${errMessage}`);
@@ -130,7 +139,6 @@ export default function ProductDetailPage() {
       }
     }
   };
-
 
   useEffect(() => {
     if (!name) {
@@ -179,13 +187,24 @@ export default function ProductDetailPage() {
 
       {data ? (
         <div>
-          <Image
-            className="w-full h-[400px] object-cover"
-            src={`http://localhost:3001${data.image}`}
-            alt="product"
-            width={500}
-            height={500}
-          />
+          <Swiper
+            spaceBetween={1}
+            slidesPerView={1}
+            pagination={true}
+            modules={[Pagination]}
+          >
+            {getImagePaths(data.image).map((imagePath, index) => (
+              <SwiperSlide key={index}>
+                <Image
+                  className="w-full h-[400px] object-cover"
+                  src={`http://localhost:3001${imagePath}`}
+                  alt={`${data.name} - Image ${activeImageIndex + 1}`}
+                  width={500}
+                  height={500}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
           {/* NAME SECTION */}
 
