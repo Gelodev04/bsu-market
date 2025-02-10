@@ -11,6 +11,7 @@ interface EditProfileModalProps {
   onClose: () => void;
   currentUsername: string;
   currentLocation: string;
+  currentProfile: string;
   onSave: (data: ProfileUpdateData) => void;
 }
 
@@ -25,11 +26,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onClose,
   currentUsername,
   currentLocation,
+  currentProfile,
   onSave
 }) => {
   const [username, setUsername] = useState<string>(currentUsername);
   const [location, setLocation] = useState<string>(currentLocation);
-  const [imagePreview, setImagePreview] = useState<string>('/images/seller1.jpg');
+  const [imagePreview, setImagePreview] = useState<string>(currentProfile);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +55,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-5 rounded-lg">
       <div className="bg-white rounded-lg px-2 py-2 w-full max-w-md relative">
         <button
           onClick={onClose}
@@ -112,7 +114,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
            color="danger"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
+            
             label="Username"
             type="Text"
             variant="faded"

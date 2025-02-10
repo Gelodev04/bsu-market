@@ -214,7 +214,7 @@ export default function ProductDetailPage() {
               <p>
                 <span className="text-bsutheme font-medium">₱</span>
                 <span className="text-[1.7rem] font-semibold text-bsutheme">
-                  {data.price}
+                {Number(data.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}
                 </span>
               </p>
               <h2 className="text-[1.4rem] font-medium">{data.name}</h2>

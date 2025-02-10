@@ -21,6 +21,7 @@ const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const secretKey = "your_secret_key";
 const port = 3001;
@@ -81,6 +82,11 @@ const profileUpload = (0, multer_1.default)({
         }
     },
 }).single('profileImage');
+const uploadPath = path_1.default.join(__dirname, 'uploads/profiles');
+if (!fs_1.default.existsSync(uploadPath)) {
+    fs_1.default.mkdirSync(uploadPath, { recursive: true });
+    console.log('Upload directory created:', uploadPath);
+}
 app.put("/api/user/update", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -116,7 +122,7 @@ app.put("/api/user/update", (req, res) => {
             }
             // Add profile image if uploaded
             if (req.file) {
-                updateFields.push(" profile_image = ?");
+                updateFields.push(" profile_picture = ?");
                 values.push(`/uploads/profiles/${req.file.filename}`);
             }
             // Add WHERE clause
@@ -371,7 +377,7 @@ app.get("/api/user", (req, res) => {
         // Extract user ID from the token
         const { id } = decoded;
         // Query user data from the database
-        const query = "SELECT id, username, googleaccount, location, followers FROM users WHERE id = ?";
+        const query = "SELECT id, username, googleaccount, location, followers, profile_picture FROM users WHERE id = ?";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error("Error fetching user data:", err);

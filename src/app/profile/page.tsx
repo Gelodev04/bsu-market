@@ -21,6 +21,7 @@ interface UserData {
   username: string;
   location: string;
   followers: string;
+  profile_picture: string;
 }
 
 const ProfilePage = () => {
@@ -28,6 +29,7 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
+  const [profileImage, setProfileImage] = useState<string>("/images/seller1.jpg"); 
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
@@ -62,6 +64,10 @@ const ProfilePage = () => {
       const updatedData = await response.json();
       setUsername(data.username);
       setLocation(data.location);
+
+      if (updatedData.profile_picture) {
+        setProfileImage(`http://localhost:3001${updatedData.profile_picture}`);
+      }
       // Update profile image if your API returns the new image URL
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -90,6 +96,9 @@ const ProfilePage = () => {
           setUsername(data.username);
           setLocation(data.location);
           setFollowers(data.followers);
+          if (data.profile_picture) {
+            setProfileImage(`http://localhost:3001${data.profile_picture}`);
+          }
 
           const productsResponse = await fetch(
             "http://localhost:3001/api/products",
@@ -131,7 +140,7 @@ const ProfilePage = () => {
         <div className="] rounded-full">
           <Image
             className="w-[150px] h-[150px] rounded-full object-cover"
-            src="/images/seller1.jpg"
+            src={profileImage}
             alt="profile"
             width={500}
             height={500}
@@ -205,7 +214,7 @@ const ProfilePage = () => {
                   <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
                   <p>{product.description}</p>
                   <p className="text-bsutheme font-semibold">
-                    ₱{product.price}
+                    ₱{Number(product.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}
                   </p>
                 </div>
               );
@@ -219,6 +228,7 @@ const ProfilePage = () => {
         onClose={() => setIsEditModalOpen(false)}
         currentUsername={username}
         currentLocation={location}
+        currentProfile={profileImage}
         onSave={handleProfileUpdate}
       />
     </div>

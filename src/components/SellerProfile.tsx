@@ -232,7 +232,7 @@ export default function SellerProfilePage() {
                   <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
 
                   <p>{product.description}</p>
-                  <p>₱{product.price}</p>
+                  <p>₱{Number(product.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}</p>
                 </div>
               );
             })}

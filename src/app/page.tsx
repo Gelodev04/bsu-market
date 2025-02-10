@@ -2,12 +2,10 @@ import React from "react";
 import ShopSection from "@/components/ShopSection";
 import Navbar from "@/components/Navbar";
 import HomeSection from "@/components/HomeSection";
-import fs from "fs";
-import path from "path";
-import Carousel from "@/ui/Carousel";
 import { AddSvg } from "@/assets/svgs/Svg";
 import Link from "next/link";
-import MyDropdown from "@/hooks/Dropdownhook";
+import ShopSectionWrapper from "@/components/ShopSectionWrapper";
+
 export default async function Home() {
   return (
     <>
@@ -18,7 +16,7 @@ export default async function Home() {
       </Link>
       <Navbar />
       <HomeSection />
-      <ShopSection />
+      <ShopSectionWrapper />
     
     </>
   );

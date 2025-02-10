@@ -8,7 +8,7 @@ import path from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { RowDataPacket } from "mysql2";
-
+import fs from 'fs';
 
 const app = express();
 const secretKey = "your_secret_key";
@@ -90,6 +90,13 @@ interface UpdateProfileRequest extends Request {
   };
 }
 
+const uploadPath = path.join(__dirname, 'uploads/profiles');
+
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+  console.log('Upload directory created:', uploadPath);
+}
+
 app.put("/api/user/update", (req: UpdateProfileRequest, res: Response): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -133,7 +140,7 @@ app.put("/api/user/update", (req: UpdateProfileRequest, res: Response): void => 
 
       // Add profile image if uploaded
       if (req.file) {
-        updateFields.push(" profile_image = ?");
+        updateFields.push(" profile_picture = ?");
         values.push(`/uploads/profiles/${req.file.filename}`);
       }
 
@@ -469,7 +476,7 @@ app.get("/api/user", (req: Request, res: Response): void => {
 
     // Query user data from the database
     const query =
-      "SELECT id, username, googleaccount, location, followers FROM users WHERE id = ?";
+      "SELECT id, username, googleaccount, location, followers, profile_picture FROM users WHERE id = ?";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching user data:", err);
