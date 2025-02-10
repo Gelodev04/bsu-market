@@ -6,16 +6,68 @@ import PageNavbar from "@/components/PageNavbar";
 import Image from "next/image";
 import Link from "next/link";
 import { AddSvg } from "@/assets/svgs/Svg";
+import EditProfileModal, { ProfileUpdateData } from "@/ui/ProfileEdit";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string | null;
+  createdAt: string;
+}
+
+interface UserData {
+  username: string;
+  location: string;
+  followers: string;
+}
 
 const ProfilePage = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
   const getImagePaths = (imageString: string | null) => {
     return imageString ? imageString.split(",") : [];
+  };
+
+  const handleProfileUpdate = async (data: ProfileUpdateData) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    
+    try {
+      const formData = new FormData();
+      formData.append('username', data.username);
+      formData.append('location', data.location);
+      if (data.imageFile) {
+        formData.append('profileImage', data.imageFile);
+      }
+
+      const response = await fetch('http://localhost:3001/api/user/update', {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedData = await response.json();
+      setUsername(data.username);
+      setLocation(data.location);
+      // Update profile image if your API returns the new image URL
+
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      // Handle error appropriately
+    }
   };
 
   useEffect(() => {
@@ -93,7 +145,7 @@ const ProfilePage = () => {
             <p className="capitalize">{followers}</p>
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
-            <div className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded">
+            <div onClick={() => setIsEditModalOpen(true)} className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded">
               <span className="text-white font-medium">Edit Profile</span>
             </div>
             <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded">
@@ -154,6 +206,14 @@ const ProfilePage = () => {
           )}
         </div>
       </div>
+
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        currentUsername={username}
+        currentLocation={location}
+        onSave={handleProfileUpdate}
+      />
     </div>
   );
 };

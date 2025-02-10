@@ -30,7 +30,7 @@ app.use((0, cors_1.default)({
         "http://localhost:3000", // Allow HTTP for local development
         "https://localhost:3000", // Allow HTTPS for testing with secure connection
     ],
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
 }));
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "uploads")));
 const db = mysql2_1.default.createConnection({
@@ -59,6 +59,92 @@ const upload = (0, multer_1.default)({
     limits: {
         files: 5 // Limit to 5 files
     }
+});
+const profileUpload = (0, multer_1.default)({
+    storage: multer_1.default.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, path_1.default.join(__dirname, "uploads/profiles"));
+        },
+        filename: (req, file, cb) => {
+            cb(null, `profile-${Date.now()}${path_1.default.extname(file.originalname)}`);
+        },
+    }),
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        }
+        else {
+            cb(new Error('Only image files are allowed'));
+        }
+    },
+}).single('profileImage');
+app.put("/api/user/update", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        profileUpload(req, res, (uploadErr) => __awaiter(void 0, void 0, void 0, function* () {
+            if (uploadErr) {
+                console.error('Error uploading file:', uploadErr);
+                return res.status(400).send(uploadErr.message);
+            }
+            const { id } = decoded;
+            const { username, location } = req.body;
+            // Start with base query
+            let query = "UPDATE users SET";
+            const updateFields = [];
+            const values = [];
+            // Add username if provided
+            if (username) {
+                updateFields.push(" username = ?");
+                values.push(username);
+            }
+            // Add location if provided
+            if (location) {
+                updateFields.push(" location = ?");
+                values.push(location);
+            }
+            // Add profile image if uploaded
+            if (req.file) {
+                updateFields.push(" profile_image = ?");
+                values.push(`/uploads/profiles/${req.file.filename}`);
+            }
+            // Add WHERE clause
+            query += updateFields.join(",") + " WHERE id = ?";
+            values.push(id);
+            // Only proceed if there are fields to update
+            if (updateFields.length === 0) {
+                return res.status(400).send("No fields to update");
+            }
+            db.query(query, values, (queryErr, result) => {
+                if (queryErr) {
+                    console.error('Error updating user:', queryErr);
+                    return res.status(500).send("Error updating profile");
+                }
+                if (result.affectedRows === 0) {
+                    return res.status(404).send("User not found");
+                }
+                // Query the updated user data to send back
+                db.query("SELECT id, username, location, profile_picture FROM users WHERE id = ?", [id], (selectErr, results) => {
+                    if (selectErr) {
+                        console.error('Error fetching updated user:', selectErr);
+                        return res.status(500).send("Error fetching updated profile");
+                    }
+                    res.status(200).json(results[0]);
+                });
+            });
+        }));
+    });
 });
 app.delete("/api/follow/:username", (req, res) => {
     const authHeader = req.headers.authorization;
