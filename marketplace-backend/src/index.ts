@@ -517,12 +517,9 @@ app.get("/api/products", (req: Request, res: Response) => {
         console.error("Error fetching products:", err);
         return res.status(500).send(err);
       }
-      console.log("Query Results:", results);
-      if (results.length === 0) {
-        res.status(404).send("No products found for the user");
-        return;
-      }
-      res.status(200).json(results); // Return the products belonging to the authenticated user
+      
+      
+      res.status(200).json(results); 
     });
   });
 });

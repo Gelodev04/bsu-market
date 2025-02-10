@@ -110,8 +110,11 @@ const ProfilePage = () => {
             }
           );
           if (!productsResponse.ok) {
-            throw new Error("Error");
+            console.warn("No products available.");
+            setProducts([]); // Set empty products array instead of throwing an error
+            return;
           }
+          
           let productsData = await productsResponse.json();
 
           productsData = productsData.sort(
