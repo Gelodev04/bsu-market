@@ -485,7 +485,7 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
-    const query = "SELECT * FROM users WHERE username = ?";
+    const query = "SELECT * FROM users WHERE BINARY username = ?";
     db.query(query, [username], (err, results) => __awaiter(void 0, void 0, void 0, function* () {
         if (err) {
             console.error("Error logging in:", err);

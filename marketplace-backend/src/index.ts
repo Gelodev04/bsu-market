@@ -602,7 +602,7 @@ app.post("/register", async (req: Request, res: Response) => {
 
 app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
-  const query = "SELECT * FROM users WHERE username = ?";
+  const query = "SELECT * FROM users WHERE BINARY username = ?";
   db.query(query, [username], async (err, results) => {
     if (err) {
       console.error("Error logging in:", err);
