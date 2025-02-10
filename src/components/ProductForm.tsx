@@ -201,7 +201,7 @@ const ProductForm = () => {
         className={`w-full py-2 px-4 rounded transition-colors ${
           isLoading 
             ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
+            : 'bg-bsutheme hover:bg-[hsl(358,84%,57%)] text-white'
         }`}
       >
         {isLoading ? 'Creating Product...' : 'Create Product'}

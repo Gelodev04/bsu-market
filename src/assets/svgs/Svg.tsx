@@ -7,7 +7,7 @@ interface MenuProps {
 
 export const AddSvg = () => {
   return (
-    <svg className="rounded-full" width={60} height={60} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg  className="rounded-full " width={60} height={60} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
       <g
         id="SVGRepo_tracerCarrier"

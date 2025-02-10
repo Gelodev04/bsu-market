@@ -202,7 +202,9 @@ export default function SellerProfilePage() {
             </div>
           </div>
 
-          <h2 className="text-xl font-semibold mt-5">Products</h2>
+          <h2 className="text-xl font-semibold mt-5">Products({seller.products.length})</h2>
+          
+
           <div className="grid grid-cols-2 gap-4">
             {seller.products.map((product, index) => {
               const imagePaths = getImagePaths(product.image);

@@ -242,7 +242,7 @@ export default function ProductDetailPage() {
               </Link>
               <button
                 onClick={handleFollow}
-                className={`rounded-full px-3 text-sm py-[1px] text-white ${
+                className={`rounded-full hover:bg-[hsl(358,84%,62%)] px-3 text-sm py-[1px] text-white ${
                   isFollowing ? "bg-gray-500" : "bg-bsutheme"
                 }`}
               >

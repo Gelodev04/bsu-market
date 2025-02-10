@@ -29,7 +29,7 @@ const NewProductPage = () => {
   return (
     <div className='h-screen'>
       <PageNavbar/>
-      <h1>Create a New Product</h1>
+      <h1 className='text-center pt-1'>Create a New Product</h1>
       <ProductForm />
     </div>
   );

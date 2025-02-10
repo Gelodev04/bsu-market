@@ -38,17 +38,17 @@ const ProfilePage = () => {
   const handleProfileUpdate = async (data: ProfileUpdateData) => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    
+
     try {
       const formData = new FormData();
-      formData.append('username', data.username);
-      formData.append('location', data.location);
+      formData.append("username", data.username);
+      formData.append("location", data.location);
       if (data.imageFile) {
-        formData.append('profileImage', data.imageFile);
+        formData.append("profileImage", data.imageFile);
       }
 
-      const response = await fetch('http://localhost:3001/api/user/update', {
-        method: 'PUT',
+      const response = await fetch("http://localhost:3001/api/user/update", {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,16 +56,15 @@ const ProfilePage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        throw new Error("Failed to update profile");
       }
 
       const updatedData = await response.json();
       setUsername(data.username);
       setLocation(data.location);
       // Update profile image if your API returns the new image URL
-
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
       // Handle error appropriately
     }
   };
@@ -139,26 +138,32 @@ const ProfilePage = () => {
           />
         </div>
         <div className="pl-2">
+          
           <div className="-space-y-2 ">
             <p className="text-[2.5rem] font-medium capitalize ">{username}</p>
             <p className="capitalize">{location}</p>
             <p className="capitalize">{followers}</p>
           </div>
+            
           <div className="flex flex-wrap gap-2 pt-1">
-            <div onClick={() => setIsEditModalOpen(true)} className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded">
-              <span className="text-white font-medium">Edit Profile</span>
+            <div
+              onClick={() => setIsEditModalOpen(true)}
+              className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded hover:bg-[hsl(358,84%,62%)] duration-75"
+            >
+              <span className="text-white font-medium ">Edit Profile</span>
             </div>
-            <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded">
+            
+            <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>
             </div>
+            
             <Link
               href="/postproduct"
-              className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer hover:outline hover:outline-2 hover:outline-white  rounded-full"
+              className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer    "
             >
               <AddSvg />
-
               <div className="bg-white rounded-full w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
             </Link>
           </div>
@@ -166,7 +171,9 @@ const ProfilePage = () => {
       </div>
 
       <div className="pt-10 px-10">
-        <h2 className="text-2xl font-semibold">Your Products</h2>
+        <h2 className="text-2xl font-semibold">
+          Your Products({products.length})
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-5">
           {products.length === 0 ? (
             <p>No products available.</p>
@@ -197,8 +204,8 @@ const ProfilePage = () => {
 
                   <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
                   <p>{product.description}</p>
-                  <p className="text-green-600 font-semibold">
-                    ${product.price}
+                  <p className="text-bsutheme font-semibold">
+                    ₱{product.price}
                   </p>
                 </div>
               );

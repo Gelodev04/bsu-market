@@ -131,7 +131,7 @@ const SignUpPage = () => {
         <div>
           <Select
             className=""
-            label="Location"
+            label="Campus"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
