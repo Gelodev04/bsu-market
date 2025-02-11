@@ -12,7 +12,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "@/styles/pagination.css";
-import {Spinner} from "@heroui/react";
+import { Spinner } from "@heroui/react";
 
 interface ProductDetail {
   id: number;
@@ -22,6 +22,7 @@ interface ProductDetail {
   // user fields
   user_id: number;
   username: string;
+  profile_picture: string;
   email: string;
   image: string;
   location: string;
@@ -186,11 +187,12 @@ export default function ProductDetailPage() {
     fetchData();
   }, [name, currentUserId]);
 
-  if (loading) return  (
-    <main className="h-screen flex justify-center items-center">
-      <Spinner  color="default"  />
-    </main>
-  );
+  if (loading)
+    return (
+      <main className="h-screen flex justify-center items-center">
+        <Spinner color="default" />
+      </main>
+    );
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -225,7 +227,9 @@ export default function ProductDetailPage() {
               <p>
                 <span className="text-bsutheme font-medium">₱</span>
                 <span className="text-[1.7rem] font-semibold text-bsutheme">
-                {Number(data.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}
+                  {Number(data.price).toLocaleString("fil-PH", {
+                    maximumFractionDigits: 0,
+                  })}
                 </span>
               </p>
               <h2 className="text-[1.4rem] font-medium">{data.name}</h2>
@@ -244,17 +248,21 @@ export default function ProductDetailPage() {
                 href={`/seller/${data.username}`}
                 className="flex items-center gap-2"
               >
-                <img
-                  className="w-[60px] rounded-full"
-                  src="/images/seller1.jpg"
-                  alt=""
+                <Image
+                  width={60}
+                  height={60}
+                  className=" rounded-full"
+                  src={data.profile_picture}
+                  alt="profile"
                 />
                 <h1 className="capitalize text-lg">{data.username}</h1>
               </Link>
               <button
                 onClick={handleFollow}
                 className={`rounded-full  px-3 text-sm py-[1px] text-white ${
-                  isFollowing ? "bg-gray-500" : "bg-bsutheme hover:bg-[hsl(358,84%,62%)]"
+                  isFollowing
+                    ? "bg-gray-500"
+                    : "bg-bsutheme hover:bg-[hsl(358,84%,62%)]"
                 }`}
               >
                 {isFollowing ? "Unfollow" : "Follow"}

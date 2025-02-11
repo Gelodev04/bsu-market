@@ -343,6 +343,7 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
         users.username, 
         users.location, 
         users.followers,
+        users.profile_picture,
         products.name, 
         products.price,
         products.description,
@@ -370,6 +371,9 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
                 id: results[0].id,
                 username: results[0].username,
                 location: results[0].location,
+                profile_picture: results[0].profile_picture
+                    ? `http://localhost:3001${results[0].profile_picture}` // Use your actual API base URL
+                    : null,
                 followers: results[0].followers,
                 products: results
                     .filter(product => product.name !== null)
@@ -457,7 +461,8 @@ app.get("/api/productdetail/:name", (req, res) => {
         SELECT 
           products.*, 
           users.id as user_id,
-          users.username 
+          users.username,
+           CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture
         FROM products 
         JOIN users ON products.user_id = users.id 
         WHERE TRIM(LOWER(products.name)) = LOWER(?)`;

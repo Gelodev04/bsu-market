@@ -11,6 +11,7 @@ interface SellerProfile {
   email: string;
   location: string;
   followers: number;
+  profile_picture: string;
   products: Array<{
     id: number;
     name: string;
@@ -178,7 +179,7 @@ export default function SellerProfilePage() {
             <div className="] rounded-full">
               <Image
                 className="w-[150px] h-[150px] rounded-full object-cover"
-                src="/images/seller1.jpg"
+                src={seller?.profile_picture}
                 alt="profile"
                 width={500}
                 height={500}

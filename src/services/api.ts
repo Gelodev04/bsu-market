@@ -15,6 +15,11 @@ export const getProductById = async (id: number) => {
     return response.data;
 };
 
+export const getUsers = async () => {
+    const response = await api.get(`/api/user`);
+    return response.data;
+};
+
 export const createUser = async (user: { username: string; googleaccount: string; password: string, location: string  }) => {
     const response = await api.post('/users', user);
     return response.data;

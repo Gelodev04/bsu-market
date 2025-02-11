@@ -7,12 +7,37 @@ import { useState, useEffect } from "react";
 
 export default function MyNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState<{
+    profile_picture?: string;
+  } | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
-  }, []);
 
+    if (token) {
+      fetchUserProfile(token);
+    }
+  }, []);
+  
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const response = await fetch("http://localhost:3001/api/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const userData = await response.json();
+      setUserProfile(userData);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
   return (
     <>
       <CustomNavbarComponent>
@@ -40,7 +65,13 @@ export default function MyNavbar() {
             <>
               <li>
                 <Link href="/profile">
-                  <p className="">Profile</p>
+                <Image
+                    className="rounded-full"
+                    src={userProfile?.profile_picture || "/images/seller1.jpg"}
+                    alt="profile"
+                    width={40}
+                    height={40}
+                  />
                 </Link>
               </li>
             </>

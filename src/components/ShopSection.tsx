@@ -74,7 +74,9 @@ export default function ShopSection({ products }: ShopSectionProps) {
 
                   <div className="-space-y-1 mt-1">
                     <span className="text-lg text-bsutheme font-medium">
-                      ₱{product.price}
+                      ₱{Number(product.price).toLocaleString("fil-PH", {
+                      maximumFractionDigits: 0,
+                    })}
                     </span>
                     <h3 className="text-sm truncate capitalize">
                       {product.name}
