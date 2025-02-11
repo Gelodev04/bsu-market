@@ -19,6 +19,7 @@ interface ProductDetail {
   price: number;
   description?: string;
   // user fields
+  user_id: number;
   username: string;
   email: string;
   image: string;
@@ -58,12 +59,12 @@ export default function ProductDetailPage() {
     }
   };
 
-  const checkFollowStatus = async (username: string) => {
+  const checkFollowStatus = async (userId: number) => {
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/follow/${username}`, {
+      const res = await fetch(`http://localhost:3001/api/follow/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,7 +75,7 @@ export default function ProductDetailPage() {
         setIsFollowing(isFollowing);
         // Store follow status with both the current user ID and the followed username
         localStorage.setItem(
-          `followStatus_${currentUserId}_${username}`,
+          `followStatus_${currentUserId}_${userId}`,
           JSON.stringify(isFollowing)
         );
       }
@@ -88,17 +89,17 @@ export default function ProductDetailPage() {
   }, []);
 
   useEffect(() => {
-    if (data?.username && currentUserId) {
+    if (data?.user_id && currentUserId) {
       // Get follow status using both current user ID and followed username
       const storedFollowStatus = localStorage.getItem(
-        `followStatus_${currentUserId}_${data.username}`
+        `followStatus_${currentUserId}_${data.user_id}`
       );
       if (storedFollowStatus) {
         setIsFollowing(JSON.parse(storedFollowStatus));
       }
-      checkFollowStatus(data.username);
+      checkFollowStatus(data.user_id);
     }
-  }, [data?.username, currentUserId]);
+  }, [data?.user_id, currentUserId]);
 
   const handleFollow = async () => {
     try {
@@ -108,9 +109,14 @@ export default function ProductDetailPage() {
         return;
       }
 
+      if (!data?.user_id) {
+        alert("User information not available");
+        return;
+      }
+
       const method = isFollowing ? "DELETE" : "POST";
       const res = await fetch(
-        `http://localhost:3001/api/follow/${data?.username}`,
+        `http://localhost:3001/api/follow/${data?.user_id}`,
         {
           method,
           headers: {
@@ -125,7 +131,7 @@ export default function ProductDetailPage() {
         setIsFollowing(newFollowStatus);
         // Store follow status with both the current user ID and the followed username
         localStorage.setItem(
-          `followStatus_${currentUserId}_${data?.username}`,
+          `followStatus_${currentUserId}_${data?.user_id}`,
           JSON.stringify(newFollowStatus)
         );
       } else {

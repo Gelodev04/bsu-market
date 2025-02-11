@@ -181,8 +181,7 @@ app.put("/api/user/update", (req: UpdateProfileRequest, res: Response): void => 
   });
 });
 
-
-app.delete("/api/follow/:username", (req: Request, res: Response): void => {
+app.get("/api/follow/status/:userId", (req: Request, res: Response): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");
@@ -198,12 +197,46 @@ app.delete("/api/follow/:username", (req: Request, res: Response): void => {
     }
 
     const follower_id = (decoded as { id: number }).id;
-    const username_to_unfollow = req.params.username;
+    const following_id = parseInt(req.params.userId);
+
+    db.query(
+      "SELECT * FROM follows WHERE follower_id = ? AND following_id = ?",
+      [follower_id, following_id],
+      (err, results: RowDataPacket[]) => {
+        if (err) {
+          console.error('Error checking follow status:', err);
+          res.status(500).send("Error checking follow status");
+          return;
+        }
+
+        res.status(200).json({ isFollowing: results.length > 0 });
+      }
+    );
+  });
+});
+
+app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).send("Authorization header missing");
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+  
+  jwt.verify(token, secretKey, (verifyErr, decoded) => {
+    if (verifyErr) {
+      res.status(403).send("Invalid or expired token");
+      return;
+    }
+
+    const follower_id = (decoded as { id: number }).id;
+    const following_id = parseInt(req.params.userId);
 
     // Get the ID of the user being unfollowed
     db.query<UserRow[]>(
-      "SELECT id FROM users WHERE username = ?",
-      [username_to_unfollow],
+      "SELECT id FROM users WHERE id = ?",
+      [following_id],
       (err, results) => {
         if (err) {
           console.error('Error checking user:', err);
@@ -280,7 +313,7 @@ interface UserRow extends RowDataPacket {
   followers: number;
 }
 
-app.post("/api/follow/:username", (req: Request, res: Response): void => {
+app.post("/api/follow/:userId", (req: Request, res: Response): void => {
   // Get authorization header
   
   const authHeader = req.headers.authorization;
@@ -299,12 +332,18 @@ app.post("/api/follow/:username", (req: Request, res: Response): void => {
     }
 
     const follower_id = (decoded as { id: number }).id;
-    const username_to_follow = req.params.username;
+    const following_id = parseInt(req.params.userId);
+
+    if (follower_id === following_id) {
+      res.status(400).send("You cannot follow yourself");
+      return;
+    }
+
 
     // First, get the ID of the user being followed
     db.query<UserRow[]>(
-      "SELECT id, followers FROM users WHERE username = ?",
-      [username_to_follow],
+      "SELECT id, followers FROM users WHERE id = ?",
+      [following_id],
       (err, results) => {
         if (err) {
           console.error('Error checking user:', err);
@@ -535,6 +574,7 @@ app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
   const query = `
         SELECT 
           products.*, 
+          users.id as user_id,
           users.username 
         FROM products 
         JOIN users ON products.user_id = users.id 

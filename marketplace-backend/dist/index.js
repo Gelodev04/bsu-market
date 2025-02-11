@@ -152,7 +152,7 @@ app.put("/api/user/update", (req, res) => {
         }));
     });
 });
-app.delete("/api/follow/:username", (req, res) => {
+app.get("/api/follow/status/:userId", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.status(401).send("Authorization header missing");
@@ -165,9 +165,33 @@ app.delete("/api/follow/:username", (req, res) => {
             return;
         }
         const follower_id = decoded.id;
-        const username_to_unfollow = req.params.username;
+        const following_id = parseInt(req.params.userId);
+        db.query("SELECT * FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (err, results) => {
+            if (err) {
+                console.error('Error checking follow status:', err);
+                res.status(500).send("Error checking follow status");
+                return;
+            }
+            res.status(200).json({ isFollowing: results.length > 0 });
+        });
+    });
+});
+app.delete("/api/follow/:userId", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const follower_id = decoded.id;
+        const following_id = parseInt(req.params.userId);
         // Get the ID of the user being unfollowed
-        db.query("SELECT id FROM users WHERE username = ?", [username_to_unfollow], (err, results) => {
+        db.query("SELECT id FROM users WHERE id = ?", [following_id], (err, results) => {
             if (err) {
                 console.error('Error checking user:', err);
                 res.status(500).send("Error unfollowing the user");
@@ -221,7 +245,7 @@ app.delete("/api/follow/:username", (req, res) => {
         });
     });
 });
-app.post("/api/follow/:username", (req, res) => {
+app.post("/api/follow/:userId", (req, res) => {
     // Get authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -236,9 +260,13 @@ app.post("/api/follow/:username", (req, res) => {
             return;
         }
         const follower_id = decoded.id;
-        const username_to_follow = req.params.username;
+        const following_id = parseInt(req.params.userId);
+        if (follower_id === following_id) {
+            res.status(400).send("You cannot follow yourself");
+            return;
+        }
         // First, get the ID of the user being followed
-        db.query("SELECT id, followers FROM users WHERE username = ?", [username_to_follow], (err, results) => {
+        db.query("SELECT id, followers FROM users WHERE id = ?", [following_id], (err, results) => {
             if (err) {
                 console.error('Error checking user:', err);
                 res.status(500).send("Error following the user");
@@ -428,6 +456,7 @@ app.get("/api/productdetail/:name", (req, res) => {
     const query = `
         SELECT 
           products.*, 
+          users.id as user_id,
           users.username 
         FROM products 
         JOIN users ON products.user_id = users.id 
