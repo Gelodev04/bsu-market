@@ -151,7 +151,7 @@ const SignUpPage = () => {
           className={`w-full mt-2 font-medium rounded-xl text-white py-3 ${
             isSubmitting || usernameTaken 
               ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-bsutheme hover:bg-bsutheme/90'
+              : 'bg-bsutheme hover:bg-[hsl(358,84%,55%)] active:bg-[hsl(358,84%,58%)] '
           }`} 
           type="submit" 
           disabled={isSubmitting || usernameTaken}

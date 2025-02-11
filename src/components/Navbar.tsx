@@ -69,8 +69,8 @@ export default function MyNavbar() {
                     className="rounded-full"
                     src={userProfile?.profile_picture || "/images/user.png"}
                     alt="profile"
-                    width={40}
-                    height={40}
+                    width={30}
+                    height={30}
                   />
                 </Link>
               </li>

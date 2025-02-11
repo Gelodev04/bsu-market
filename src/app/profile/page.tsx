@@ -30,7 +30,7 @@ const ProfilePage = () => {
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [profileImage, setProfileImage] = useState<string>(
-    "/images/user.jpg"
+    "/images/user.png"
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const router = useRouter();

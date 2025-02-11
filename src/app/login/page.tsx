@@ -82,7 +82,7 @@ const LoginPage = () => {
           </div>
 
           <button
-          className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3 relative flex justify-center items-center"
+          className="w-full mt-2 bg-bsutheme hover:bg-[hsl(358,84%,55%)] active:bg-[hsl(358,84%,58%)] font-medium rounded-xl text-white py-3 relative flex justify-center items-center"
           type="submit"
           disabled={isLoading}
         >

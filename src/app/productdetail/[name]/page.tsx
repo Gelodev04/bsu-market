@@ -5,7 +5,6 @@ import Image from "next/image";
 import PageNavbar from "@/components/PageNavbar";
 import { SaveSvg } from "@/assets/svgs/Svg";
 import Link from "next/link";
-import Carousel from "@/ui/Carousel";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import "swiper/css";
@@ -13,6 +12,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "@/styles/pagination.css";
 import { Spinner } from "@heroui/react";
+import { useRouter } from "next/navigation";
+
 
 interface ProductDetail {
   id: number;
@@ -37,6 +38,8 @@ export default function ProductDetailPage() {
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const router = useRouter();
 
   const getImagePaths = (imageString: string | null) => {
     return imageString ? imageString.split(",") : [];
@@ -107,7 +110,7 @@ export default function ProductDetailPage() {
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) {
-        alert("Please log in first");
+        router.push("/login");
         return;
       }
 
@@ -235,7 +238,7 @@ export default function ProductDetailPage() {
               <h2 className="text-[1.4rem] font-medium">{data.name}</h2>
               {data.description && <p className="">{data.description}</p>}
             </div>
-            <div>
+            <div className="cursor-pointer">
               <SaveSvg />
             </div>
           </div>
@@ -261,7 +264,7 @@ export default function ProductDetailPage() {
                 onClick={handleFollow}
                 className={`rounded-full  px-3 text-sm py-[1px] text-white ${
                   isFollowing
-                    ? "bg-gray-500"
+                    ? "bg-gray-500 hover:bg-[hsl(220,9%,42%)]"
                     : "bg-bsutheme hover:bg-[hsl(358,84%,62%)]"
                 }`}
               >

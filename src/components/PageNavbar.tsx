@@ -130,7 +130,7 @@ export default function PageNavbar() {
         "
     >
      
-        <div className="flex gap-3 duration-200 " onClick={() => router.back()}>
+        <div className="flex gap-3 duration-200 cursor-pointer" onClick={() => router.back()}>
           <CloseSvg/>
         </div>
      

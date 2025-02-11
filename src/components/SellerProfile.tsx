@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 interface SellerProfile {
   id: number;
   username: string;
@@ -28,6 +28,8 @@ export default function SellerProfilePage() {
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+
+  const router = useRouter();
 
   const getImagePaths = (imageString: string | null) => {
     return imageString ? imageString.split(",") : [];
@@ -100,7 +102,7 @@ export default function SellerProfilePage() {
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) {
-        alert("Please log in first");
+       router.push("/login")
         return;
       }
 
@@ -206,7 +208,7 @@ export default function SellerProfilePage() {
                 <button
                   onClick={handleFollow}
                   className={`w-[270px] flex items-center justify-center h-[40px] rounded text-white font-medium ${
-                    isFollowing ? "bg-gray-500" : "bg-bsutheme"
+                    isFollowing ? "bg-gray-500 hover:bg-[hsl(220,9%,50%)]" : "bg-bsutheme hover:bg-[hsl(358,84%,62%)] active:bg-[hsl(358,84%, 70%)]"
                   }`}
                 >
                   {isFollowing ? "Unfollow" : "Follow"}
