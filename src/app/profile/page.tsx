@@ -30,7 +30,7 @@ const ProfilePage = () => {
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [profileImage, setProfileImage] = useState<string>(
-    "/images/seller1.jpg"
+    "/images/user.jpg"
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const router = useRouter();
@@ -99,7 +99,7 @@ const ProfilePage = () => {
           setLocation(data.location);
           setFollowers(data.followers);
           if (data.profile_picture) {
-            setProfileImage(`http://localhost:3001${data.profile_picture}`);
+            setProfileImage(data.profile_picture);
           }
 
           const productsResponse = await fetch(

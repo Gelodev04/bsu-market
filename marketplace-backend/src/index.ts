@@ -8,7 +8,7 @@ import path from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { RowDataPacket } from "mysql2";
-import fs from 'fs';
+import fs from "fs";
 
 const app = express();
 const secretKey = "your_secret_key";
@@ -18,9 +18,9 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
-        "http://localhost:3000",  // Allow HTTP for local development
-        "https://localhost:3000", // Allow HTTPS for testing with secure connection
-      ],
+      "http://localhost:3000", // Allow HTTP for local development
+      "https://localhost:3000", // Allow HTTPS for testing with secure connection
+    ],
     methods: ["GET", "POST", "DELETE", "PUT"],
   })
 );
@@ -31,8 +31,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "4545",
-  database: "marketplace"
-
+  database: "marketplace",
 });
 
 db.connect((err) => {
@@ -52,14 +51,12 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage,
   limits: {
-    files: 5 // Limit to 5 files
-  }
+    files: 5, // Limit to 5 files
+  },
 });
-
-
 
 const profileUpload = multer({
   storage: multer.diskStorage({
@@ -74,13 +71,13 @@ const profileUpload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
+    if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error("Only image files are allowed"));
     }
   },
-}).single('profileImage');
+}).single("profileImage");
 
 interface UpdateProfileRequest extends Request {
   file?: Express.Multer.File;
@@ -90,96 +87,99 @@ interface UpdateProfileRequest extends Request {
   };
 }
 
-const uploadPath = path.join(__dirname, 'uploads/profiles');
+const uploadPath = path.join(__dirname, "uploads/profiles");
 
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
-  console.log('Upload directory created:', uploadPath);
+  console.log("Upload directory created:", uploadPath);
 }
 
-app.put("/api/user/update", (req: UpdateProfileRequest, res: Response): void => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    res.status(401).send("Authorization header missing");
-    return;
-  }
-
-  const token = authHeader.split(" ")[1];
-  
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) {
-      res.status(403).send("Invalid or expired token");
+app.put(
+  "/api/user/update",
+  (req: UpdateProfileRequest, res: Response): void => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      res.status(401).send("Authorization header missing");
       return;
     }
 
-    profileUpload(req, res, async (uploadErr) => {
-      if (uploadErr) {
-        console.error('Error uploading file:', uploadErr);
-        return res.status(400).send(uploadErr.message);
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        res.status(403).send("Invalid or expired token");
+        return;
       }
 
-      const { id } = decoded as { id: number };
-      const { username, location } = req.body;
-      
-      // Start with base query
-      let query = "UPDATE users SET";
-      const updateFields = [];
-      const values = [];
-
-      // Add username if provided
-      if (username) {
-        updateFields.push(" username = ?");
-        values.push(username);
-      }
-
-      // Add location if provided
-      if (location) {
-        updateFields.push(" location = ?");
-        values.push(location);
-      }
-
-      // Add profile image if uploaded
-      if (req.file) {
-        updateFields.push(" profile_picture = ?");
-        values.push(`/uploads/profiles/${req.file.filename}`);
-      }
-
-      // Add WHERE clause
-      query += updateFields.join(",") + " WHERE id = ?";
-      values.push(id);
-
-      // Only proceed if there are fields to update
-      if (updateFields.length === 0) {
-        return res.status(400).send("No fields to update");
-      }
-
-      db.query(query, values, (queryErr, result: mysql.ResultSetHeader) => {
-        if (queryErr) {
-          console.error('Error updating user:', queryErr);
-          return res.status(500).send("Error updating profile");
+      profileUpload(req, res, async (uploadErr) => {
+        if (uploadErr) {
+          console.error("Error uploading file:", uploadErr);
+          return res.status(400).send(uploadErr.message);
         }
 
-        if (result.affectedRows === 0) {
-          return res.status(404).send("User not found");
+        const { id } = decoded as { id: number };
+        const { username, location } = req.body;
+
+        // Start with base query
+        let query = "UPDATE users SET";
+        const updateFields = [];
+        const values = [];
+
+        // Add username if provided
+        if (username) {
+          updateFields.push(" username = ?");
+          values.push(username);
         }
 
-        // Query the updated user data to send back
-        db.query(
-          "SELECT id, username, location, profile_picture FROM users WHERE id = ?",
-          [id],
-          (selectErr, results: mysql.RowDataPacket[]) => {
-            if (selectErr) {
-              console.error('Error fetching updated user:', selectErr);
-              return res.status(500).send("Error fetching updated profile");
-            }
+        // Add location if provided
+        if (location) {
+          updateFields.push(" location = ?");
+          values.push(location);
+        }
 
-            res.status(200).json(results[0]);
+        // Add profile image if uploaded
+        if (req.file) {
+          updateFields.push(" profile_picture = ?");
+          values.push(`/uploads/profiles/${req.file.filename}`);
+        }
+
+        // Add WHERE clause
+        query += updateFields.join(",") + " WHERE id = ?";
+        values.push(id);
+
+        // Only proceed if there are fields to update
+        if (updateFields.length === 0) {
+          return res.status(400).send("No fields to update");
+        }
+
+        db.query(query, values, (queryErr, result: mysql.ResultSetHeader) => {
+          if (queryErr) {
+            console.error("Error updating user:", queryErr);
+            return res.status(500).send("Error updating profile");
           }
-        );
+
+          if (result.affectedRows === 0) {
+            return res.status(404).send("User not found");
+          }
+
+          // Query the updated user data to send back
+          db.query(
+            "SELECT id, username, location, profile_picture FROM users WHERE id = ?",
+            [id],
+            (selectErr, results: mysql.RowDataPacket[]) => {
+              if (selectErr) {
+                console.error("Error fetching updated user:", selectErr);
+                return res.status(500).send("Error fetching updated profile");
+              }
+
+              res.status(200).json(results[0]);
+            }
+          );
+        });
       });
     });
-  });
-});
+  }
+);
 
 app.get("/api/follow/status/:userId", (req: Request, res: Response): void => {
   const authHeader = req.headers.authorization;
@@ -189,7 +189,7 @@ app.get("/api/follow/status/:userId", (req: Request, res: Response): void => {
   }
 
   const token = authHeader.split(" ")[1];
-  
+
   jwt.verify(token, secretKey, (verifyErr, decoded) => {
     if (verifyErr) {
       res.status(403).send("Invalid or expired token");
@@ -204,7 +204,7 @@ app.get("/api/follow/status/:userId", (req: Request, res: Response): void => {
       [follower_id, following_id],
       (err, results: RowDataPacket[]) => {
         if (err) {
-          console.error('Error checking follow status:', err);
+          console.error("Error checking follow status:", err);
           res.status(500).send("Error checking follow status");
           return;
         }
@@ -223,7 +223,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
   }
 
   const token = authHeader.split(" ")[1];
-  
+
   jwt.verify(token, secretKey, (verifyErr, decoded) => {
     if (verifyErr) {
       res.status(403).send("Invalid or expired token");
@@ -239,7 +239,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
       [following_id],
       (err, results) => {
         if (err) {
-          console.error('Error checking user:', err);
+          console.error("Error checking user:", err);
           res.status(500).send("Error unfollowing the user");
           return;
         }
@@ -254,7 +254,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
         // Begin transaction
         db.beginTransaction((transErr) => {
           if (transErr) {
-            console.error('Transaction error:', transErr);
+            console.error("Transaction error:", transErr);
             res.status(500).send("Error unfollowing user");
             return;
           }
@@ -266,7 +266,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
             (deleteErr, deleteResult: any) => {
               if (deleteErr) {
                 return db.rollback(() => {
-                  console.error('Delete error:', deleteErr);
+                  console.error("Delete error:", deleteErr);
                   res.status(500).send("Error unfollowing user");
                 });
               }
@@ -284,7 +284,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
                 (updateErr) => {
                   if (updateErr) {
                     return db.rollback(() => {
-                      console.error('Update error:', updateErr);
+                      console.error("Update error:", updateErr);
                       res.status(500).send("Error unfollowing user");
                     });
                   }
@@ -292,7 +292,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
                   db.commit((commitErr) => {
                     if (commitErr) {
                       return db.rollback(() => {
-                        console.error('Commit error:', commitErr);
+                        console.error("Commit error:", commitErr);
                         res.status(500).send("Error unfollowing user");
                       });
                     }
@@ -315,7 +315,7 @@ interface UserRow extends RowDataPacket {
 
 app.post("/api/follow/:userId", (req: Request, res: Response): void => {
   // Get authorization header
-  
+
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");
@@ -323,7 +323,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
   }
 
   const token = authHeader.split(" ")[1];
-  
+
   // Verify the token and get the follower's ID
   jwt.verify(token, secretKey, (verifyErr, decoded) => {
     if (verifyErr) {
@@ -339,14 +339,13 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
       return;
     }
 
-
     // First, get the ID of the user being followed
     db.query<UserRow[]>(
       "SELECT id, followers FROM users WHERE id = ?",
       [following_id],
       (err, results) => {
         if (err) {
-          console.error('Error checking user:', err);
+          console.error("Error checking user:", err);
           res.status(500).send("Error following the user");
           return;
         }
@@ -370,7 +369,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
           [follower_id, following_id],
           (checkErr, checkResults: RowDataPacket[]) => {
             if (checkErr) {
-              console.error('Error checking follow status:', checkErr);
+              console.error("Error checking follow status:", checkErr);
               res.status(500).send("Error checking follow status");
               return;
             }
@@ -383,7 +382,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
             // If not following, create the follow relationship and increment followers count
             db.beginTransaction((transErr) => {
               if (transErr) {
-                console.error('Transaction error:', transErr);
+                console.error("Transaction error:", transErr);
                 res.status(500).send("Error following user");
                 return;
               }
@@ -395,7 +394,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
                 (insertErr) => {
                   if (insertErr) {
                     return db.rollback(() => {
-                      console.error('Insert error:', insertErr);
+                      console.error("Insert error:", insertErr);
                       res.status(500).send("Error following user");
                     });
                   }
@@ -407,7 +406,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
                     (updateErr) => {
                       if (updateErr) {
                         return db.rollback(() => {
-                          console.error('Update error:', updateErr);
+                          console.error("Update error:", updateErr);
                           res.status(500).send("Error following user");
                         });
                       }
@@ -415,7 +414,7 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
                       db.commit((commitErr) => {
                         if (commitErr) {
                           return db.rollback(() => {
-                            console.error('Commit error:', commitErr);
+                            console.error("Commit error:", commitErr);
                             res.status(500).send("Error following user");
                           });
                         }
@@ -476,19 +475,20 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
         username: results[0].username,
         location: results[0].location,
         profile_picture: results[0].profile_picture
-        ? `http://localhost:3001${results[0].profile_picture}` // Use your actual API base URL
-        : null,
+          ? `http://localhost:3001${results[0].profile_picture}` // Use your actual API base URL
+          : null,
         followers: results[0].followers,
         products: results
-        .filter(product => product.name !== null)
-        .map(result => ({
+          .filter((product) => product.name !== null)
+          .map((result) => ({
             name: result.name,
             price: result.price,
             image: result.image,
             location: result.location,
-            description: result.description
-        })).filter(product => product.name !== null)
-    };
+            description: result.description,
+          }))
+          .filter((product) => product.name !== null),
+      };
 
       // Send the seller data as the response
       res.status(200).json(sellerInfo);
@@ -497,7 +497,6 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
     res.status(500).send("Error processing request");
   }
 });
-
 
 app.get("/api/user", (req: Request, res: Response): void => {
   // Extract the token from the request header
@@ -519,7 +518,7 @@ app.get("/api/user", (req: Request, res: Response): void => {
 
     // Query user data from the database
     const query =
-      "SELECT id, username, googleaccount, location, followers, profile_picture FROM users WHERE id = ?";
+      "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching user data:", err);
@@ -554,15 +553,15 @@ app.get("/api/products", (req: Request, res: Response) => {
     const { id } = decoded as { id: number };
 
     // Query products based on user ID (if needed)
-    const query = "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
+    const query =
+      "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching products:", err);
         return res.status(500).send(err);
       }
-      
-      
-      res.status(200).json(results); 
+
+      res.status(200).json(results);
     });
   });
 });
@@ -694,9 +693,11 @@ app.post(
   upload.array("images", 5),
   (req: Request, res: Response): void => {
     const { name, price, description, location, condition } = req.body;
-    const files = req.files as Express.Multer.File[]; 
+    const files = req.files as Express.Multer.File[];
 
-    const imagePaths = files ? files.map(file => `/uploads/${file.filename}`).join(',') : null;
+    const imagePaths = files
+      ? files.map((file) => `/uploads/${file.filename}`).join(",")
+      : null;
 
     // Extract the token from the request header
     const authHeader = req.headers.authorization;

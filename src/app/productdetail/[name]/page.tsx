@@ -22,7 +22,7 @@ interface ProductDetail {
   // user fields
   user_id: number;
   username: string;
-  profile_picture: string;
+  profile_picture: string | null;
   email: string;
   image: string;
   location: string;
@@ -252,7 +252,7 @@ export default function ProductDetailPage() {
                   width={60}
                   height={60}
                   className=" rounded-full"
-                  src={data.profile_picture}
+                  src={data.profile_picture || "/images/user.png"}
                   alt="profile"
                 />
                 <h1 className="capitalize text-lg">{data.username}</h1>

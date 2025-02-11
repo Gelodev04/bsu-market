@@ -67,7 +67,7 @@ export default function MyNavbar() {
                 <Link href="/profile">
                 <Image
                     className="rounded-full"
-                    src={userProfile?.profile_picture || "/images/seller1.jpg"}
+                    src={userProfile?.profile_picture || "/images/user.png"}
                     alt="profile"
                     width={40}
                     height={40}

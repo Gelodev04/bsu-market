@@ -179,7 +179,7 @@ export default function SellerProfilePage() {
             <div className="] rounded-full">
               <Image
                 className="w-[150px] h-[150px] rounded-full object-cover"
-                src={seller?.profile_picture}
+                src={seller?.profile_picture || "/images/user.png"}
                 alt="profile"
                 width={500}
                 height={500}

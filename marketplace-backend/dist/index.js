@@ -38,7 +38,7 @@ const db = mysql2_1.default.createConnection({
     host: "localhost",
     user: "root",
     password: "4545",
-    database: "marketplace"
+    database: "marketplace",
 });
 db.connect((err) => {
     if (err) {
@@ -58,8 +58,8 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({
     storage,
     limits: {
-        files: 5 // Limit to 5 files
-    }
+        files: 5, // Limit to 5 files
+    },
 });
 const profileUpload = (0, multer_1.default)({
     storage: multer_1.default.diskStorage({
@@ -74,18 +74,18 @@ const profileUpload = (0, multer_1.default)({
         fileSize: 5 * 1024 * 1024, // 5MB limit
     },
     fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
+        if (file.mimetype.startsWith("image/")) {
             cb(null, true);
         }
         else {
-            cb(new Error('Only image files are allowed'));
+            cb(new Error("Only image files are allowed"));
         }
     },
-}).single('profileImage');
-const uploadPath = path_1.default.join(__dirname, 'uploads/profiles');
+}).single("profileImage");
+const uploadPath = path_1.default.join(__dirname, "uploads/profiles");
 if (!fs_1.default.existsSync(uploadPath)) {
     fs_1.default.mkdirSync(uploadPath, { recursive: true });
-    console.log('Upload directory created:', uploadPath);
+    console.log("Upload directory created:", uploadPath);
 }
 app.put("/api/user/update", (req, res) => {
     const authHeader = req.headers.authorization;
@@ -101,7 +101,7 @@ app.put("/api/user/update", (req, res) => {
         }
         profileUpload(req, res, (uploadErr) => __awaiter(void 0, void 0, void 0, function* () {
             if (uploadErr) {
-                console.error('Error uploading file:', uploadErr);
+                console.error("Error uploading file:", uploadErr);
                 return res.status(400).send(uploadErr.message);
             }
             const { id } = decoded;
@@ -134,7 +134,7 @@ app.put("/api/user/update", (req, res) => {
             }
             db.query(query, values, (queryErr, result) => {
                 if (queryErr) {
-                    console.error('Error updating user:', queryErr);
+                    console.error("Error updating user:", queryErr);
                     return res.status(500).send("Error updating profile");
                 }
                 if (result.affectedRows === 0) {
@@ -143,7 +143,7 @@ app.put("/api/user/update", (req, res) => {
                 // Query the updated user data to send back
                 db.query("SELECT id, username, location, profile_picture FROM users WHERE id = ?", [id], (selectErr, results) => {
                     if (selectErr) {
-                        console.error('Error fetching updated user:', selectErr);
+                        console.error("Error fetching updated user:", selectErr);
                         return res.status(500).send("Error fetching updated profile");
                     }
                     res.status(200).json(results[0]);
@@ -168,7 +168,7 @@ app.get("/api/follow/status/:userId", (req, res) => {
         const following_id = parseInt(req.params.userId);
         db.query("SELECT * FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (err, results) => {
             if (err) {
-                console.error('Error checking follow status:', err);
+                console.error("Error checking follow status:", err);
                 res.status(500).send("Error checking follow status");
                 return;
             }
@@ -193,7 +193,7 @@ app.delete("/api/follow/:userId", (req, res) => {
         // Get the ID of the user being unfollowed
         db.query("SELECT id FROM users WHERE id = ?", [following_id], (err, results) => {
             if (err) {
-                console.error('Error checking user:', err);
+                console.error("Error checking user:", err);
                 res.status(500).send("Error unfollowing the user");
                 return;
             }
@@ -205,7 +205,7 @@ app.delete("/api/follow/:userId", (req, res) => {
             // Begin transaction
             db.beginTransaction((transErr) => {
                 if (transErr) {
-                    console.error('Transaction error:', transErr);
+                    console.error("Transaction error:", transErr);
                     res.status(500).send("Error unfollowing user");
                     return;
                 }
@@ -213,7 +213,7 @@ app.delete("/api/follow/:userId", (req, res) => {
                 db.query("DELETE FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (deleteErr, deleteResult) => {
                     if (deleteErr) {
                         return db.rollback(() => {
-                            console.error('Delete error:', deleteErr);
+                            console.error("Delete error:", deleteErr);
                             res.status(500).send("Error unfollowing user");
                         });
                     }
@@ -226,14 +226,14 @@ app.delete("/api/follow/:userId", (req, res) => {
                     db.query("UPDATE users SET followers = followers - 1 WHERE id = ?", [following_id], (updateErr) => {
                         if (updateErr) {
                             return db.rollback(() => {
-                                console.error('Update error:', updateErr);
+                                console.error("Update error:", updateErr);
                                 res.status(500).send("Error unfollowing user");
                             });
                         }
                         db.commit((commitErr) => {
                             if (commitErr) {
                                 return db.rollback(() => {
-                                    console.error('Commit error:', commitErr);
+                                    console.error("Commit error:", commitErr);
                                     res.status(500).send("Error unfollowing user");
                                 });
                             }
@@ -268,7 +268,7 @@ app.post("/api/follow/:userId", (req, res) => {
         // First, get the ID of the user being followed
         db.query("SELECT id, followers FROM users WHERE id = ?", [following_id], (err, results) => {
             if (err) {
-                console.error('Error checking user:', err);
+                console.error("Error checking user:", err);
                 res.status(500).send("Error following the user");
                 return;
             }
@@ -285,7 +285,7 @@ app.post("/api/follow/:userId", (req, res) => {
             // Check if already following
             db.query("SELECT * FROM follows WHERE follower_id = ? AND following_id = ?", [follower_id, following_id], (checkErr, checkResults) => {
                 if (checkErr) {
-                    console.error('Error checking follow status:', checkErr);
+                    console.error("Error checking follow status:", checkErr);
                     res.status(500).send("Error checking follow status");
                     return;
                 }
@@ -296,7 +296,7 @@ app.post("/api/follow/:userId", (req, res) => {
                 // If not following, create the follow relationship and increment followers count
                 db.beginTransaction((transErr) => {
                     if (transErr) {
-                        console.error('Transaction error:', transErr);
+                        console.error("Transaction error:", transErr);
                         res.status(500).send("Error following user");
                         return;
                     }
@@ -304,7 +304,7 @@ app.post("/api/follow/:userId", (req, res) => {
                     db.query("INSERT INTO follows (follower_id, following_id) VALUES (?, ?)", [follower_id, following_id], (insertErr) => {
                         if (insertErr) {
                             return db.rollback(() => {
-                                console.error('Insert error:', insertErr);
+                                console.error("Insert error:", insertErr);
                                 res.status(500).send("Error following user");
                             });
                         }
@@ -312,14 +312,14 @@ app.post("/api/follow/:userId", (req, res) => {
                         db.query("UPDATE users SET followers = followers + 1 WHERE id = ?", [following_id], (updateErr) => {
                             if (updateErr) {
                                 return db.rollback(() => {
-                                    console.error('Update error:', updateErr);
+                                    console.error("Update error:", updateErr);
                                     res.status(500).send("Error following user");
                                 });
                             }
                             db.commit((commitErr) => {
                                 if (commitErr) {
                                     return db.rollback(() => {
-                                        console.error('Commit error:', commitErr);
+                                        console.error("Commit error:", commitErr);
                                         res.status(500).send("Error following user");
                                     });
                                 }
@@ -376,14 +376,15 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
                     : null,
                 followers: results[0].followers,
                 products: results
-                    .filter(product => product.name !== null)
-                    .map(result => ({
+                    .filter((product) => product.name !== null)
+                    .map((result) => ({
                     name: result.name,
                     price: result.price,
                     image: result.image,
                     location: result.location,
-                    description: result.description
-                })).filter(product => product.name !== null)
+                    description: result.description,
+                }))
+                    .filter((product) => product.name !== null),
             };
             // Send the seller data as the response
             res.status(200).json(sellerInfo);
@@ -409,7 +410,7 @@ app.get("/api/user", (req, res) => {
         // Extract user ID from the token
         const { id } = decoded;
         // Query user data from the database
-        const query = "SELECT id, username, googleaccount, location, followers, profile_picture FROM users WHERE id = ?";
+        const query = "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error("Error fetching user data:", err);
@@ -550,7 +551,9 @@ app.post("/users", (req, res) => {
 app.post("/products", upload.array("images", 5), (req, res) => {
     const { name, price, description, location, condition } = req.body;
     const files = req.files;
-    const imagePaths = files ? files.map(file => `/uploads/${file.filename}`).join(',') : null;
+    const imagePaths = files
+        ? files.map((file) => `/uploads/${file.filename}`).join(",")
+        : null;
     // Extract the token from the request header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
