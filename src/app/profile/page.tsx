@@ -29,7 +29,9 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
-  const [profileImage, setProfileImage] = useState<string>("/images/seller1.jpg"); 
+  const [profileImage, setProfileImage] = useState<string>(
+    "/images/seller1.jpg"
+  );
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
@@ -114,7 +116,7 @@ const ProfilePage = () => {
             setProducts([]); // Set empty products array instead of throwing an error
             return;
           }
-          
+
           let productsData = await productsResponse.json();
 
           productsData = productsData.sort(
@@ -150,13 +152,21 @@ const ProfilePage = () => {
           />
         </div>
         <div className="pl-2">
-          
-          <div className="-space-y-2 ">
+          <div className="-space-y-1 ">
             <p className="text-[2.5rem] font-medium capitalize ">{username}</p>
             <p className="capitalize">{location}</p>
-            <p className="capitalize">{followers}</p>
+            <p className="capitalize">
+              {" "}
+              {Number(followers) === 0 ? (
+                <span className="font-semibold">No followers</span>
+              ) : (
+                <>
+                  {followers} <span className="font-semibold">followers</span>
+                </>
+              )}
+            </p>
           </div>
-            
+
           <div className="flex flex-wrap gap-2 pt-1">
             <div
               onClick={() => setIsEditModalOpen(true)}
@@ -164,13 +174,13 @@ const ProfilePage = () => {
             >
               <span className="text-white font-medium ">Edit Profile</span>
             </div>
-            
+
             <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>
             </div>
-            
+
             <Link
               href="/postproduct"
               className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer    "
@@ -182,18 +192,21 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <div className="pt-10 px-10">
+      <div className="pt-10 px-6">
         <h2 className="text-2xl font-semibold">
           Your Products({products.length})
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-5">
+        <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
           {products.length === 0 ? (
             <p>No products available.</p>
           ) : (
             products.map((product) => {
               const imagePaths = getImagePaths(product.image);
               return (
-                <div key={product.id} className="border rounded-md p-4">
+                <div
+                  key={product.id}
+                  className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
+                >
                   {imagePaths.length > 0 && (
                     <Link href={`/productdetail/${product.name}`}>
                       <div className="relative">
@@ -217,7 +230,10 @@ const ProfilePage = () => {
                   <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
                   <p>{product.description}</p>
                   <p className="text-bsutheme font-semibold">
-                    ₱{Number(product.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}
+                    ₱
+                    {Number(product.price).toLocaleString("fil-PH", {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
               );

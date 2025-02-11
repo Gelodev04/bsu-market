@@ -12,6 +12,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "@/styles/pagination.css";
+import {Spinner} from "@heroui/react";
 
 interface ProductDetail {
   id: number;
@@ -185,7 +186,11 @@ export default function ProductDetailPage() {
     fetchData();
   }, [name, currentUserId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return  (
+    <main className="h-screen flex justify-center items-center">
+      <Spinner  color="default"  />
+    </main>
+  );
   if (error) return <p>Error: {error}</p>;
 
   return (

@@ -4,18 +4,21 @@ import { useState } from "react";
 import { loginUser } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
+import {Spinner} from "@heroui/react";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess(null);
     setError(null);
+    setIsLoading(true);
 
     try {
       const { token, userId } = await loginUser({ username, password });
@@ -27,6 +30,7 @@ const LoginPage = () => {
       setError("Failed to log in.");
       setUsername("");
       setPassword("");
+      setIsLoading(false);
     }
   };
 
@@ -36,7 +40,7 @@ const LoginPage = () => {
       className="h-screen flex flex-col justify-center items-center "
     >
      
-
+    
      
         <h1 className="text-[2rem] font-bold ">Login</h1>
         {(success || error) && (
@@ -78,11 +82,18 @@ const LoginPage = () => {
           </div>
 
           <button
-            className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3"
-            type="submit"
-          >
-            Login
-          </button>
+          className="w-full mt-2 bg-bsutheme font-medium rounded-xl text-white py-3 relative flex justify-center items-center"
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+           
+              <Spinner className="z-[999]"  color="default" size="sm" />
+            
+          ) : (
+            "Login"
+          )}
+        </button>
 
           <div className="flex gap-1 justify-center">
             <span className="">Don't have an account?</span>

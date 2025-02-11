@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface SellerProfile {
+  id: number;
   username: string;
   email: string;
   location: string;
@@ -52,12 +53,12 @@ export default function SellerProfilePage() {
     }
   };
 
-  const checkFollowStatus = async (username: string) => {
+  const checkFollowStatus = async (userId: number) => {
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/follow/${username}`, {
+      const res = await fetch(`http://localhost:3001/api/follow/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +69,7 @@ export default function SellerProfilePage() {
         setIsFollowing(isFollowing);
         // Store follow status with both the current user ID and the followed username
         localStorage.setItem(
-          `followStatus_${currentUserId}_${username}`,
+          `followStatus_${currentUserId}_${userId}`,
           JSON.stringify(isFollowing)
         );
       }
@@ -82,17 +83,17 @@ export default function SellerProfilePage() {
   }, []);
 
   useEffect(() => {
-    if (validUsername && currentUserId) {
+    if (seller?.id && currentUserId) {
       // Get follow status using both current user ID and followed username
       const storedFollowStatus = localStorage.getItem(
-        `followStatus_${currentUserId}_${validUsername}`
+        `followStatus_${currentUserId}_${seller.id}`
       );
       if (storedFollowStatus) {
         setIsFollowing(JSON.parse(storedFollowStatus));
       }
-      checkFollowStatus(validUsername);
+      checkFollowStatus(seller.id);
     }
-  }, [validUsername, currentUserId]);
+  }, [seller?.id, currentUserId]);
 
   const handleFollow = async () => {
     try {
@@ -102,24 +103,26 @@ export default function SellerProfilePage() {
         return;
       }
 
+      if (!seller?.id) {
+        alert("Seller information not available");
+        return;
+      }
+
       const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch(
-        `http://localhost:3001/api/follow/${validUsername}`,
-        {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`http://localhost:3001/api/follow/${seller.id}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (res.ok) {
         const newFollowStatus = !isFollowing;
         setIsFollowing(newFollowStatus);
         // Store follow status with both the current user ID and the followed username
         localStorage.setItem(
-          `followStatus_${currentUserId}_${validUsername}`,
+          `followStatus_${currentUserId}_${seller.id}`,
           JSON.stringify(newFollowStatus)
         );
 
@@ -182,12 +185,21 @@ export default function SellerProfilePage() {
               />
             </div>
             <div className="pl-2">
-              <div className="-space-y-2 ">
+              <div className="-space-y-1 ">
                 <p className="text-[2.5rem] font-medium capitalize ">
                   {seller.username}
                 </p>
                 <p className="capitalize">{seller.location}</p>
-                <p className="capitalize">{seller.followers}</p>
+                <p className="capitalize font-semibold">
+                  {Number(seller.followers) === 0 ? (
+                    <span className="font-semibold">No followers</span>
+                  ) : (
+                    <>
+                      {seller.followers}{" "}
+                      <span className="font-semibold">followers</span>
+                    </>
+                  )}
+                </p>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
                 <button
@@ -202,14 +214,18 @@ export default function SellerProfilePage() {
             </div>
           </div>
 
-          <h2 className="text-xl font-semibold mt-5">Products({seller.products.length})</h2>
-          
+          <h2 className="text-xl font-semibold mt-5 px-3">
+            Products({seller.products.length})
+          </h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4 px-3">
             {seller.products.map((product, index) => {
               const imagePaths = getImagePaths(product.image);
               return (
-                <div key={index} className="border p-4">
+                <div
+                  key={index}
+                  className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
+                >
                   {imagePaths.length > 0 && (
                     <Link href={`/productdetail/${product.name}`}>
                       <div className="relative">
@@ -232,7 +248,12 @@ export default function SellerProfilePage() {
                   <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
 
                   <p>{product.description}</p>
-                  <p>₱{Number(product.price).toLocaleString('fil-PH', { maximumFractionDigits: 0 })}</p>
+                  <p>
+                    ₱
+                    {Number(product.price).toLocaleString("fil-PH", {
+                      maximumFractionDigits: 0,
+                    })}
+                  </p>
                 </div>
               );
             })}

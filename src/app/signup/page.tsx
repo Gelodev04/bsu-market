@@ -4,7 +4,7 @@ import { useState } from "react";
 import { registerUser } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem, Spinner } from "@heroui/react";
 import Link from "next/link";
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
@@ -56,9 +56,7 @@ const SignUpPage = () => {
     } catch (error) {
       console.error("Error registering user:", error);
       setError("Failed to register user.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    } 
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +156,14 @@ const SignUpPage = () => {
           type="submit" 
           disabled={isSubmitting || usernameTaken}
         >
-          {isSubmitting ? "Signing up..." : "Sign Up"}
+          {isSubmitting ? (
+            <div className="flex items-center justify-center gap-2">
+              <Spinner color="default" size="sm" />
+            
+            </div>
+          ) : (
+            "Sign Up"
+          )}
         </button>
 
 
