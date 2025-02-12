@@ -1,4 +1,3 @@
-// filepath: src/index.ts
 import express, { Application, Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -18,8 +17,8 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
-      "http://localhost:3000", // Allow HTTP for local development
-      "https://localhost:3000", // Allow HTTPS for testing with secure connection
+      "http://localhost:3000", 
+      "https://localhost:3000", 
     ],
     methods: ["GET", "POST", "DELETE", "PUT"],
   })
@@ -123,34 +122,29 @@ app.put(
         const { id } = decoded as { id: number };
         const { username, location } = req.body;
 
-        // Start with base query
         let query = "UPDATE users SET";
         const updateFields = [];
         const values = [];
 
-        // Add username if provided
         if (username) {
           updateFields.push(" username = ?");
           values.push(username);
         }
 
-        // Add location if provided
         if (location) {
           updateFields.push(" location = ?");
           values.push(location);
         }
 
-        // Add profile image if uploaded
         if (req.file) {
           updateFields.push(" profile_picture = ?");
           values.push(`/uploads/profiles/${req.file.filename}`);
         }
 
-        // Add WHERE clause
+       
         query += updateFields.join(",") + " WHERE id = ?";
         values.push(id);
 
-        // Only proceed if there are fields to update
         if (updateFields.length === 0) {
           return res.status(400).send("No fields to update");
         }
@@ -165,7 +159,6 @@ app.put(
             return res.status(404).send("User not found");
           }
 
-          // Query the updated user data to send back
           db.query(
             "SELECT id, username, location, profile_picture FROM users WHERE id = ?",
             [id],
@@ -236,7 +229,6 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
     const follower_id = (decoded as { id: number }).id;
     const following_id = parseInt(req.params.userId);
 
-    // Get the ID of the user being unfollowed
     db.query<UserRow[]>(
       "SELECT id FROM users WHERE id = ?",
       [following_id],
@@ -254,7 +246,6 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
 
         const following_id = results[0].id;
 
-        // Begin transaction
         db.beginTransaction((transErr) => {
           if (transErr) {
             console.error("Transaction error:", transErr);
@@ -262,7 +253,6 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
             return;
           }
 
-          // Delete the follow relationship
           db.query(
             "DELETE FROM follows WHERE follower_id = ? AND following_id = ?",
             [follower_id, following_id],
@@ -280,7 +270,6 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
                 });
               }
 
-              // Decrement the followers count
               db.query(
                 "UPDATE users SET followers = followers - 1 WHERE id = ?",
                 [following_id],
@@ -317,7 +306,6 @@ interface UserRow extends RowDataPacket {
 }
 
 app.post("/api/follow/:userId", (req: Request, res: Response): void => {
-  // Get authorization header
 
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -327,7 +315,6 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
 
   const token = authHeader.split(" ")[1];
 
-  // Verify the token and get the follower's ID
   jwt.verify(token, secretKey, (verifyErr, decoded) => {
     if (verifyErr) {
       res.status(403).send("Invalid or expired token");
@@ -342,7 +329,6 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
       return;
     }
 
-    // First, get the ID of the user being followed
     db.query<UserRow[]>(
       "SELECT id, followers FROM users WHERE id = ?",
       [following_id],
@@ -360,13 +346,11 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
 
         const following_id = results[0].id;
 
-        // Don't allow following yourself
         if (follower_id === following_id) {
           res.status(400).send("You cannot follow yourself");
           return;
         }
 
-        // Check if already following
         db.query(
           "SELECT * FROM follows WHERE follower_id = ? AND following_id = ?",
           [follower_id, following_id],
@@ -382,7 +366,6 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
               return;
             }
 
-            // If not following, create the follow relationship and increment followers count
             db.beginTransaction((transErr) => {
               if (transErr) {
                 console.error("Transaction error:", transErr);
@@ -390,7 +373,6 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
                 return;
               }
 
-              // Insert into follows table
               db.query(
                 "INSERT INTO follows (follower_id, following_id) VALUES (?, ?)",
                 [follower_id, following_id],
@@ -402,7 +384,6 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
                     });
                   }
 
-                  // Update followers count
                   db.query(
                     "UPDATE users SET followers = followers + 1 WHERE id = ?",
                     [following_id],
@@ -435,12 +416,10 @@ app.post("/api/follow/:userId", (req: Request, res: Response): void => {
   });
 });
 
-// For fetching seller profile
 app.get("/api/seller/:username", async (req: Request, res: Response) => {
   const { username } = req.params;
 
   try {
-    // Query seller data from the database by username
     const query = `
     SELECT 
         users.id, 
@@ -478,7 +457,7 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
         username: results[0].username,
         location: results[0].location,
         profile_picture: results[0].profile_picture
-          ? `http://localhost:3001${results[0].profile_picture}` // Use your actual API base URL
+          ? `http://localhost:3001${results[0].profile_picture}` 
           : null,
         followers: results[0].followers,
         products: results
@@ -493,7 +472,6 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
           .filter((product) => product.name !== null),
       };
 
-      // Send the seller data as the response
       res.status(200).json(sellerInfo);
     });
   } catch (err) {
@@ -502,7 +480,6 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
 });
 
 app.get("/api/user", (req: Request, res: Response): void => {
-  // Extract the token from the request header
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");
@@ -516,10 +493,8 @@ app.get("/api/user", (req: Request, res: Response): void => {
       return;
     }
 
-    // Extract user ID from the token
     const { id } = decoded as { id: number };
 
-    // Query user data from the database
     const query =
       "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
@@ -538,7 +513,6 @@ app.get("/api/user", (req: Request, res: Response): void => {
 });
 
 app.get("/api/products", (req: Request, res: Response) => {
-  // Extract the token from the request header
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");
@@ -552,10 +526,8 @@ app.get("/api/products", (req: Request, res: Response) => {
       return;
     }
 
-    // Extract user ID from the token
     const { id } = decoded as { id: number };
 
-    // Query products based on user ID (if needed)
     const query =
       "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
@@ -570,13 +542,9 @@ app.get("/api/products", (req: Request, res: Response) => {
 });
 
 app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
-  // Extract the product name from the route parameter
   const { name } = req.params;
   const decodedName = decodeURIComponent(name);
-  // Extract the token from the request header
 
-  // SQL query to join the products with user info,
-  // ensuring that only the owner of the product can view its details.
   const query = `
         SELECT 
           products.*, 
@@ -598,12 +566,11 @@ app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
       res.status(404).send("Product not found or access unauthorized");
       return;
     }
-    // Return the first result (assuming names are unique per user)
+
     res.status(200).json(results[0]);
   });
 });
 
-// In your backend (e.g., Express.js)
 app.get("/api/check-username/:username", (req, res) => {
   const { username } = req.params;
 
@@ -615,11 +582,9 @@ app.get("/api/check-username/:username", (req, res) => {
     }
 
     if (results.length > 0) {
-      // Username exists
       return res.status(409).send("Username already taken");
     }
 
-    // Username is available
     return res.status(200).send("Username available");
   });
 });
@@ -690,7 +655,6 @@ app.post("/users", (req: Request, res: Response) => {
   );
 });
 
-// Product routes
 app.post(
   "/products",
   upload.array("images", 5),
@@ -702,24 +666,21 @@ app.post(
       ? files.map((file) => `/uploads/${file.filename}`).join(",")
       : null;
 
-    // Extract the token from the request header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       res.status(401).send("Authorization header missing");
       return;
     }
 
-    const token = authHeader.split(" ")[1]; // Bearer <token>
+    const token = authHeader.split(" ")[1];
     jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         res.status(403).send("Invalid or expired token");
         return;
       }
 
-      // Extract user ID from the token
       const { id } = decoded as { id: number };
 
-      // Insert the product with the user ID
       const query =
         "INSERT INTO products (name, price, description, image, location, `condition`, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
       db.query(
