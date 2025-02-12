@@ -94,6 +94,9 @@ if (!fs.existsSync(uploadPath)) {
   console.log("Upload directory created:", uploadPath);
 }
 
+
+
+
 app.put(
   "/api/user/update",
   (req: UpdateProfileRequest, res: Response): void => {

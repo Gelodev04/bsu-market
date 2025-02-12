@@ -167,15 +167,15 @@ const ProfilePage = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex- gap-1 pt-1">
             <div
               onClick={() => setIsEditModalOpen(true)}
-              className="w-[270px] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded hover:bg-[hsl(358,84%,62%)] duration-75"
+              className="w-[70%] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded hover:bg-[hsl(358,84%,62%)] duration-75"
             >
               <span className="text-white font-medium ">Edit Profile</span>
             </div>
 
-            <div className="w-[100px] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
+            <div className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
               <span onClick={handleLogout} className="text-black font-medium">
                 Log out
               </span>

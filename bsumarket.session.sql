@@ -1,5 +1,4 @@
-ALTER TABLE products
-MODIFY COLUMN image VARCHAR(255);
+DROP TABLE pending_products;
 
 
 
