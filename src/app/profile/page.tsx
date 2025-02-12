@@ -18,6 +18,7 @@ interface Product {
 }
 
 interface UserData {
+  id:number;
   username: string;
   location: string;
   followers: string;
@@ -29,11 +30,46 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
-  const [profileImage, setProfileImage] = useState<string>(
-    "/images/user.png"
-  );
+  const [profileImage, setProfileImage] = useState<string>("/images/user.png");
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [following, setFollowing] = useState<UserData[]>([]);
+  const [showFollowing, setShowFollowing] = useState(false);
+
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      const token = localStorage.getItem("token");
+      if (!token){ 
+        console.error("No token found");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/following",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch following list");
+        }
+
+        const data = await response.json();
+        setFollowing(data);
+      } catch (error) {
+        console.error("Error fetching following list:", error);
+      }
+    };
+
+    fetchFollowing();
+  }, []);
 
   const getImagePaths = (imageString: string | null) => {
     return imageString ? imageString.split(",") : [];
@@ -165,6 +201,45 @@ const ProfilePage = () => {
                 </>
               )}
             </p>
+            <p
+              className="cursor-pointer"
+              onClick={() => setShowFollowing(!showFollowing)}
+            >
+              View Following
+            </p>
+
+            {showFollowing && (
+              <div className="mt-4">
+                <h3 className="text-xl font-semibold">Following:</h3>
+                <ul className="mt-2 space-y-2">
+                  {following.length === 0 ? (
+                    <p>You are not following anyone yet.</p>
+                  ) : (
+                    following.map((seller) => (
+                      <li key={seller.id} className="flex items-center gap-2">
+                        <Image
+                          src={
+                            seller.profile_picture
+                              ? `http://localhost:3001${seller.profile_picture}`
+                              : "/images/user.png"
+                          }
+                          alt={seller.username}
+                          className="w-10 h-10 rounded-full object-cover"
+                          width={40}
+                          height={40}
+                        />
+                        <Link
+                          href={`/seller/${seller.username}`}
+                          className="text-bsutheme hover:underline"
+                        >
+                          {seller.username}
+                        </Link>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
 
           <div className="flex flex- gap-1 pt-1">
