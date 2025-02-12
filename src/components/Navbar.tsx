@@ -4,12 +4,16 @@ import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function MyNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState<{
     profile_picture?: string;
+    role?: string;
   } | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -34,6 +38,10 @@ export default function MyNavbar() {
 
       const userData = await response.json();
       setUserProfile(userData);
+
+      if(userData.role ==- "admin"){
+        router.push("/admin-dashboard");
+      }
     } catch (error) {
       console.error("Error fetching user profile:", error);
     }
@@ -63,6 +71,13 @@ export default function MyNavbar() {
 
           {isLoggedIn ? (
             <>
+            {userProfile?.role === "admin" ? (
+                <li>
+                  <Link href="/admin-dashboard">
+                    <p className="text-red-500">Admin Dashboard</p>
+                  </Link>
+                </li>
+              ): (
               <li>
                 <Link href="/profile">
                 <Image
@@ -71,9 +86,10 @@ export default function MyNavbar() {
                     alt="profile"
                     width={30}
                     height={30}
-                  />
+                    />
                 </Link>
               </li>
+              )}
             </>
           ) : (
             <>

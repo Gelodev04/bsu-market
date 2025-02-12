@@ -21,6 +21,8 @@ const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fs_1 = __importDefault(require("fs"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const secretKey = "your_secret_key";
 const port = 3001;
@@ -86,6 +88,81 @@ if (!fs_1.default.existsSync(uploadPath)) {
     fs_1.default.mkdirSync(uploadPath, { recursive: true });
     console.log("Upload directory created:", uploadPath);
 }
+const adminCredentials = {
+    username: "admin",
+    password: "admin"
+};
+const verifyAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, secretKey);
+        // Check if user is admin
+        if (decoded.role !== 'admin') {
+            res.status(403).send("Unauthorized");
+            return;
+        }
+        next();
+    }
+    catch (err) {
+        res.status(403).send("Invalid token");
+        return;
+    }
+});
+//ROUTES
+app.get("/api/check-admin", verifyAdmin, (req, res) => {
+    res.status(200).json({ isAdmin: true });
+});
+app.get("/admin/products/pending", verifyAdmin, (req, res) => {
+    const query = "SELECT * FROM products WHERE status = 'Pending'";
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error fetching pending products:", err);
+            res.status(500).send(err);
+            return;
+        }
+        res.status(200).json(results);
+    });
+});
+app.put("/admin/products/:id/status", verifyAdmin, (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    // Ensure status is either 'Approved' or 'Rejected'
+    if (status !== "Approved" && status !== "Rejected") {
+        res.status(400).send("Invalid status");
+        return;
+    }
+    const query = "UPDATE products SET status = ? WHERE id = ?";
+    db.query(query, [status, id], (err, results) => {
+        if (err) {
+            console.error("Error updating product status:", err);
+            res.status(500).send(err);
+            return;
+        }
+        if (results.affectedRows === 0) {
+            res.status(404).send("Product not found");
+            return;
+        }
+        if (status === "Rejected") {
+            const deleteQuery = "DELETE FROM products WHERE id = ?";
+            db.query(deleteQuery, [id], (deleteErr) => {
+                if (deleteErr) {
+                    console.error("Error deleting product:", deleteErr);
+                    res.status(500).send(deleteErr);
+                    return;
+                }
+                res.status(200).send("Product rejected and deleted successfully");
+            });
+        }
+        else {
+            res.status(200).send("Product status updated successfully");
+        }
+    });
+});
 app.get("/api/following", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -363,7 +440,9 @@ app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0,
     ON 
         users.id = products.user_id
     WHERE 
-        users.username = ?`;
+        users.username = ?
+    AND
+        (products.status = 'Approved' OR products.status IS NULL)`;
         db.query(query, [username], (err, results) => {
             if (err) {
                 console.error("Error fetching seller data:", err);
@@ -412,7 +491,14 @@ app.get("/api/user", (req, res) => {
             res.status(403).send("Invalid or expired token");
             return;
         }
-        const { id } = decoded;
+        const { id, username, role } = decoded;
+        if (role === "admin") {
+            res.status(200).json({
+                username,
+                role: "admin",
+            });
+            return;
+        }
         const query = "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
         db.query(query, [id], (err, results) => {
             if (err) {
@@ -441,7 +527,7 @@ app.get("/api/products", (req, res) => {
             return;
         }
         const { id } = decoded;
-        const query = "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
+        const query = "SELECT * FROM products WHERE user_id = ? AND status = 'Approved' ORDER BY created_at DESC";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error("Error fetching products:", err);
@@ -505,27 +591,40 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).send({ id: result.insertId });
     });
 }));
-app.post("/login", (req, res) => {
+app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
+    if (username === adminCredentials.username && password === adminCredentials.password) {
+        const token = jsonwebtoken_1.default.sign({ username: adminCredentials.username, role: "admin" }, secretKey, { expiresIn: "1h" });
+        res.status(200).json({
+            token,
+            username: adminCredentials.username,
+            isAdmin: true
+        });
+        return;
+    }
+    // Regular user authentication
     const query = "SELECT * FROM users WHERE BINARY username = ?";
     db.query(query, [username], (err, results) => __awaiter(void 0, void 0, void 0, function* () {
-        if (err) {
-            console.error("Error logging in:", err);
-            return res.status(500).send(err);
+        if (err || results.length === 0) {
+            return res.status(401).send("Invalid credentials");
         }
-        const users = results;
-        if (users.length === 0) {
-            return res.status(401).send("Invalid username or password");
-        }
-        const user = users[0];
+        const user = results[0];
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).send("Invalid username or password");
+            return res.status(401).send("Invalid credentials");
         }
-        const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: "1h" });
-        res.status(200).send({ token, username: user.username });
+        const token = jsonwebtoken_1.default.sign({
+            id: user.id,
+            username: user.username,
+            role: 'user'
+        }, secretKey, { expiresIn: "1h" });
+        res.status(200).json({
+            token,
+            username: user.username,
+            isAdmin: false
+        });
     }));
-});
+}));
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
@@ -557,7 +656,11 @@ app.post("/products", upload.array("images", 5), (req, res) => {
             return;
         }
         const { id } = decoded;
-        const query = "INSERT INTO products (name, price, description, image, location, `condition`, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Update the query to include status as 'Pending'
+        const query = `
+        INSERT INTO products (name, price, description, image, location, \`condition\`, user_id, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+      `;
         db.query(query, [name, price, description, imagePaths, location, condition, id], (err, results) => {
             if (err) {
                 console.error("Error inserting product:", err);
@@ -569,7 +672,7 @@ app.post("/products", upload.array("images", 5), (req, res) => {
     });
 });
 app.get("/products", (req, res) => {
-    const query = "SELECT * FROM products ORDER BY created_at DESC";
+    const query = "SELECT * FROM products WHERE status = 'Approved' ORDER BY created_at DESC";
     db.query(query, (err, results) => {
         if (err) {
             return res.status(500).send(err);

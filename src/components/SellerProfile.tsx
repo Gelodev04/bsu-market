@@ -49,7 +49,8 @@ export default function SellerProfilePage() {
       });
       if (res.ok) {
         const userData = await res.json();
-        setCurrentUserId(userData.id.toString());
+        console.log("userData:", userData);
+        setCurrentUserId(userData.id?.toString() || "");
       }
     } catch (error) {
       console.error("Error fetching current user:", error);

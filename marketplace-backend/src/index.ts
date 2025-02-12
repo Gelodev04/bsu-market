@@ -1,13 +1,17 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import mysql from "mysql2";
+import mysql, { QueryResult, ResultSetHeader } from "mysql2";
 import multer from "multer";
 import path from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { RowDataPacket } from "mysql2";
 import fs from "fs";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const app = express();
 const secretKey = "your_secret_key";
@@ -92,6 +96,110 @@ if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
   console.log("Upload directory created:", uploadPath);
 }
+
+interface UserRow extends RowDataPacket {
+  id: number;
+  followers: number;
+}
+
+
+const adminCredentials = {
+  username: "admin",
+  password: "admin" 
+};
+
+const verifyAdmin = async (req: Request, res: Response, next: Function) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).send("Authorization header missing");
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, secretKey) as { username: string; role?: string };
+    
+    // Check if user is admin
+    if (decoded.role !== 'admin') {
+       res.status(403).send("Unauthorized");
+       return;
+    }
+    
+    next();
+  } catch (err) {
+     res.status(403).send("Invalid token");
+     return;
+  }
+};
+
+
+
+//ROUTES
+
+app.get("/api/check-admin", verifyAdmin, (req: Request, res: Response) => {
+  res.status(200).json({ isAdmin: true });
+});
+
+app.get("/admin/products/pending", verifyAdmin, (req: Request, res: Response): void => {
+ 
+
+    const query = "SELECT * FROM products WHERE status = 'Pending'";
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching pending products:", err);
+        res.status(500).send(err);
+        return;
+      }
+      res.status(200).json(results);
+    });
+  });
+
+  app.put("/admin/products/:id/status", verifyAdmin, (req: Request, res: Response): void => {
+    const { id } = req.params;
+    const { status } = req.body;
+  
+  
+      // Ensure status is either 'Approved' or 'Rejected'
+      if (status !== "Approved" && status !== "Rejected") {
+        res.status(400).send("Invalid status");
+        return;
+      }
+  
+      const query = "UPDATE products SET status = ? WHERE id = ?";
+      db.query(query, [status, id], (err, results: ResultSetHeader) => {
+        if (err) {
+          console.error("Error updating product status:", err);
+          res.status(500).send(err);
+          return;
+        }
+  
+        if (results.affectedRows === 0) {
+          res.status(404).send("Product not found");
+          return;
+        }
+  
+        if (status === "Rejected") {
+          const deleteQuery = "DELETE FROM products WHERE id = ?";
+          db.query(deleteQuery, [id], (deleteErr) => {
+            if (deleteErr) {
+              console.error("Error deleting product:", deleteErr);
+              res.status(500).send(deleteErr);
+              return;
+            }
+            res.status(200).send("Product rejected and deleted successfully");
+          });
+        } else {
+          res.status(200).send("Product status updated successfully");
+        }
+      });
+      });
+
+  
+  
+
+
+
+
 
 
 app.get("/api/following", (req: Request, res: Response): void => {
@@ -336,10 +444,7 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
   });
 });
 
-interface UserRow extends RowDataPacket {
-  id: number;
-  followers: number;
-}
+
 
 app.post("/api/follow/:userId", (req: Request, res: Response): void => {
   const { userId } = req.params;
@@ -475,7 +580,11 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
     ON 
         users.id = products.user_id
     WHERE 
-        users.username = ?`;
+        users.username = ?
+    AND
+        (products.status = 'Approved' OR products.status IS NULL)`;
+        
+        
     db.query(query, [username], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching seller data:", err);
@@ -530,7 +639,20 @@ app.get("/api/user", (req: Request, res: Response): void => {
       return;
     }
 
-    const { id } = decoded as { id: number };
+    const { id, username, role } = decoded as {
+      id?: number;
+      username: string;
+      role?: string;
+    };
+
+    if (role === "admin") {
+      res.status(200).json({
+        username,
+        role: "admin",
+       
+      });
+      return;
+    }
 
     const query =
       "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
@@ -566,7 +688,7 @@ app.get("/api/products", (req: Request, res: Response) => {
     const { id } = decoded as { id: number };
 
     const query =
-      "SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC";
+      "SELECT * FROM products WHERE user_id = ? AND status = 'Approved' ORDER BY created_at DESC";
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching products:", err);
@@ -646,31 +768,65 @@ app.post("/register", async (req: Request, res: Response) => {
   );
 });
 
-app.post("/login", (req: Request, res: Response) => {
+app.post("/login", async (req: Request, res: Response) => {
   const { username, password } = req.body;
+
+
+  if (username === adminCredentials.username && password === adminCredentials.password) {
+   
+    
+     
+      
+     
+        const token = jwt.sign(
+          { username: adminCredentials.username, role: "admin" },
+          secretKey,
+          { expiresIn: "1h" }
+        );
+        
+         res.status(200).json({ 
+          token,
+          username: adminCredentials.username,
+          isAdmin: true
+        });
+        return;
+     
+   
+  }
+
+  // Regular user authentication
   const query = "SELECT * FROM users WHERE BINARY username = ?";
-  db.query(query, [username], async (err, results) => {
-    if (err) {
-      console.error("Error logging in:", err);
-      return res.status(500).send(err);
+  db.query(query, [username], async (err, results: RowDataPacket[]) => {
+    if (err || results.length === 0) {
+      return res.status(401).send("Invalid credentials");
     }
-    const users = results as mysql.RowDataPacket[];
-    if (users.length === 0) {
-      return res.status(401).send("Invalid username or password");
-    }
-    const user = users[0];
+
+    const user = results[0] as RowDataPacket;
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    
     if (!isPasswordValid) {
-      return res.status(401).send("Invalid username or password");
+      return res.status(401).send("Invalid credentials");
     }
+
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      { 
+        id: user.id, 
+        username: user.username,
+        role: 'user'
+      },
       secretKey,
       { expiresIn: "1h" }
     );
-    res.status(200).send({ token, username: user.username });
+
+    res.status(200).json({ 
+      token,
+      username: user.username,
+      isAdmin: false
+    });
   });
 });
+
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
@@ -718,8 +874,11 @@ app.post(
 
       const { id } = decoded as { id: number };
 
-      const query =
-        "INSERT INTO products (name, price, description, image, location, `condition`, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      // Update the query to include status as 'Pending'
+      const query = `
+        INSERT INTO products (name, price, description, image, location, \`condition\`, user_id, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+      `;
       db.query(
         query,
         [name, price, description, imagePaths, location, condition, id],
@@ -736,8 +895,9 @@ app.post(
   }
 );
 
+
 app.get("/products", (req: Request, res: Response) => {
-  const query = "SELECT * FROM products ORDER BY created_at DESC";
+  const query = "SELECT * FROM products WHERE status = 'Approved' ORDER BY created_at DESC";
   db.query(query, (err, results) => {
     if (err) {
       return res.status(500).send(err);

@@ -57,7 +57,7 @@ export default function ProductDetailPage() {
       });
       if (res.ok) {
         const userData = await res.json();
-        setCurrentUserId(userData.id.toString());
+        setCurrentUserId(userData.id?.toString() || "");
       }
     } catch (error) {
       console.error("Error fetching current user:", error);
