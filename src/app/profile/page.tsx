@@ -16,7 +16,7 @@ import {
   Button,
   useDisclosure,
 } from "@heroui/react";
-
+import Checkbox from "@/ui/Checkbox";
 interface Product {
   id: string;
   name: string;
@@ -45,8 +45,12 @@ const ProfilePage = () => {
   const [showFollowing, setShowFollowing] = useState(false);
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
   const [showSaves, setShowSaves] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [showSelect, setShowSelect] = useState<boolean>(false);
   const router = useRouter();
+
+  const handleShowSelect = () => {
+    setShowSelect((prev) => !prev);
+  }
 
   useEffect(() => {
     const fetchFollowing = async () => {
@@ -232,7 +236,7 @@ const ProfilePage = () => {
             <div className="-space-y-1 ">
               <p className="text-[2.5rem] font-medium  ">@{username}</p>
               <p className="capitalize font-medium text-gray-800">{location}</p>
-          
+
               {/* FOLLOWING */}
               <div className="flex items-center justify-center gap-3 py-5">
                 <div className="">
@@ -255,7 +259,9 @@ const ProfilePage = () => {
                           </ModalHeader>
                           <ModalBody>
                             <div className="mt-4">
-                              <h3 className="text-xl font-semibold">Following:</h3>
+                              <h3 className="text-xl font-semibold">
+                                Following:
+                              </h3>
                               <ul className="mt-2 space-y-2">
                                 {following.length === 0 ? (
                                   <p>You are not following anyone yet.</p>
@@ -356,7 +362,13 @@ const ProfilePage = () => {
                                           {product.description}
                                         </p>
                                         <p className="text-bsutheme font-semibold">
-                                          ${product.price}
+                                          ₱
+                                          {Number(product.price).toLocaleString(
+                                            "fil-PH",
+                                            {
+                                              maximumFractionDigits: 0,
+                                            }
+                                          )}
                                         </p>
                                       </div>
                                     </li>
@@ -387,6 +399,7 @@ const ProfilePage = () => {
                   <p>{followers}</p>
                 </div>
               </div>
+
               <div className="flex flex- gap-1 pt-1">
                 <div
                   onClick={() => setIsEditModalOpen(true)}
@@ -395,7 +408,10 @@ const ProfilePage = () => {
                   <span className="text-white font-medium ">Edit Profile</span>
                 </div>
                 <div className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
-                  <span onClick={handleLogout} className="text-black font-medium">
+                  <span
+                    onClick={handleLogout}
+                    className="text-black font-medium"
+                  >
                     Log out
                   </span>
                 </div>
@@ -417,6 +433,7 @@ const ProfilePage = () => {
           <h2 className="text-2xl font-semibold">
             Your Products({products.length})
           </h2>
+          <button onClick={handleShowSelect}>{showSelect ? "Hide Select" : "Show Select"}</button>
           <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
             {products.length === 0 ? (
               <p>No products available.</p>
@@ -424,40 +441,45 @@ const ProfilePage = () => {
               products.map((product) => {
                 const imagePaths = getImagePaths(product.image);
                 return (
-                  <div
-                    key={product.id}
-                    className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
-                  >
-                    {imagePaths.length > 0 && (
-                      <Link href={`/productdetail/${product.name}`}>
-                        <div className="relative">
-                          <Image
-                            className="object-cover w-full aspect-[4/3] rounded"
-                            src={`http://localhost:3001${imagePaths[0]}`}
-                            alt={product.name}
-                            width={500}
-                            height={500}
-                          />
-                          {/* Thumbnail indicators if there are multiple images */}
-                          {imagePaths.length > 1 && (
-                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
-                              +{imagePaths.length - 1}
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-                    )}
-
-                    <h3 className="mt-3 text-lg font-medium">{product.name}</h3>
-                    <p>{product.description}</p>
-                    <p className="text-bsutheme font-semibold">
-                      ₱
-                      {Number(product.price).toLocaleString("fil-PH", {
-                        maximumFractionDigits: 0,
-                      })}
-                    </p>
+                  <div key={product.id} className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1">
+                    { showSelect && (
+                  <div className="absolute z-[9999] pt-1 pl-1">
+                    <Checkbox />
                   </div>
-                );
+                    )}
+                      {imagePaths.length > 0 && (
+                        <Link href={`/productdetail/${product.name}`}>
+                          <div className="relative">
+                            <Image
+                              className="object-cover w-full aspect-[4/3] rounded"
+                              src={`http://localhost:3001${imagePaths[0]}`}
+                              alt={product.name}
+                              width={500}
+                              height={500}
+                            />
+                            {/* Thumbnail indicators if there are multiple images */}
+                            {imagePaths.length > 1 && (
+                              <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+                                +{imagePaths.length - 1}
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      )}
+                      <h3 className="mt-3 text-lg font-medium">
+                        {product.name}
+                      </h3>
+                      <p>{product.description}</p>
+                      <p className="text-bsutheme font-semibold">
+                        ₱
+                        {Number(product.price).toLocaleString("fil-PH", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </p>
+                    
+                    
+                    </div>
+                  );
               })
             )}
           </div>
