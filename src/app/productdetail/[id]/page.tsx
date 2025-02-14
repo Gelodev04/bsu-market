@@ -32,7 +32,8 @@ interface ProductDetail {
 }
 
 export default function ProductDetailPage() {
-  const { name } = useParams() as { name: string };
+  const params = useParams();
+  const id = params.id;
   const [data, setData] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -241,31 +242,37 @@ useEffect(() => {
   
 
   useEffect(() => {
-    if (!name) {
-      setError("Product name is missing in the URL.");
+    if (!id) {
+      setError("Product ID is missing in the URL");
       setLoading(false);
       return;
     }
 
+
     const fetchData = async () => {
       try {
-        // Retrieve the JWT token from localStorage (or another storage mechanism)
 
         const res = await fetch(
-          `http://localhost:3001/api/productdetail/${encodeURIComponent(name)}`
+          `http://localhost:3001/api/productdetail/${id}`
         );
+
+
 
         if (!res.ok) {
           const errMessage = await res.text();
+       
+
           setError(errMessage || "Failed to fetch product details");
           setLoading(false);
           return;
         }
 
         const result = await res.json();
+       
+
         setData(result);
 
-        if (result.username && currentUserId) {
+        if (result.id && currentUserId) {
           await checkFollowStatus(result.username);
         }
 
@@ -280,7 +287,7 @@ useEffect(() => {
     };
 
     fetchData();
-  }, [name, currentUserId]);
+  }, [id, currentUserId]);
 
   if (loading)
     return (

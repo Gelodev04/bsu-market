@@ -975,9 +975,10 @@ app.get("/api/products", (req: Request, res: Response) => {
   });
 });
 
-app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
-  const { name } = req.params;
-  const decodedName = decodeURIComponent(name);
+app.get("/api/productdetail/:id", (req: Request, res: Response): void => {
+  const { id } = req.params;
+
+
 
   const query = `
         SELECT 
@@ -987,11 +988,12 @@ app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
            CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture
         FROM products 
         JOIN users ON products.user_id = users.id 
-        WHERE TRIM(LOWER(products.name)) = LOWER(?)
+        WHERE products.id = ?
         AND products.status = 'Approved'`;
 
-  db.query(query, [decodedName], (err, results: mysql.RowDataPacket[]) => {
-    console.log("Searching for product with name:", name);
+        
+
+  db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
     if (err) {
       console.error("Error fetching product details:", err);
       res.status(500).send("Database error");

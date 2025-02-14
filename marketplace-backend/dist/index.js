@@ -731,9 +731,9 @@ app.get("/api/products", (req, res) => {
         });
     });
 });
-app.get("/api/productdetail/:name", (req, res) => {
-    const { name } = req.params;
-    const decodedName = decodeURIComponent(name);
+app.get("/api/productdetail/:id", (req, res) => {
+    const { id } = req.params;
+    console.log("Received ID:", id);
     const query = `
         SELECT 
           products.*, 
@@ -742,10 +742,11 @@ app.get("/api/productdetail/:name", (req, res) => {
            CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture
         FROM products 
         JOIN users ON products.user_id = users.id 
-        WHERE TRIM(LOWER(products.name)) = LOWER(?)
+        WHERE products.id = ?
         AND products.status = 'Approved'`;
-    db.query(query, [decodedName], (err, results) => {
-        console.log("Searching for product with name:", name);
+    console.log("Executing query:", query); // Add this
+    console.log("With params:", [id]); // Add this
+    db.query(query, [id], (err, results) => {
         if (err) {
             console.error("Error fetching product details:", err);
             res.status(500).send("Database error");
