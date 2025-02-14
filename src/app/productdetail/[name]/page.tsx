@@ -212,11 +212,27 @@ const handleFollow = async () => {
 };
 
 useEffect(() => {
-  if (data?.user_id && currentUserId) {
-    checkFollowStatus(data.user_id);
-  }
-  if (data?.id && currentUserId) {
-    checkSaveStatus(data.id);
+  // Restore follow and save status from localStorage when the component mounts
+  if (currentUserId) {
+    if (data?.user_id) {
+      const storedFollowStatus = localStorage.getItem(
+        `followStatus_${currentUserId}_${data.user_id}`
+      );
+      if (storedFollowStatus) {
+        setIsFollowing(JSON.parse(storedFollowStatus));
+      }
+      checkFollowStatus(data.user_id); // Re-check follow status from the server
+    }
+
+    if (data?.id) {
+      const storedSaveStatus = localStorage.getItem(
+        `saveStatus_${currentUserId}_${data.id}`
+      );
+      if (storedSaveStatus) {
+        setIsSaved(JSON.parse(storedSaveStatus));
+      }
+      checkSaveStatus(data.id); // Re-check save status from the server
+    }
   }
 }, [data?.user_id, data?.id, currentUserId]);
 
@@ -315,7 +331,7 @@ useEffect(() => {
               {data.description && <p className="">{data.description}</p>}
             </div>
             <div className="cursor-pointer" onClick={handleSave}>
-              <SaveSvg />
+              <SaveSvg isSaved={isSaved} />
             </div>
           </div>
 

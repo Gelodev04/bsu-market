@@ -129,11 +129,7 @@ app.post("/api/save/:productId", (req, res) => {
         }
         const saver_id = decoded.id;
         const saving_id = parseInt(req.params.productId);
-        if (saver_id === saving_id) {
-            res.status(400).send("You cannot save your own product");
-            return;
-        }
-        db.query("SELECT id, saves FROM products WHERE id = ?", [saving_id], (err, results) => {
+        db.query("SELECT user_id, saves FROM products WHERE id = ?", [saving_id], (err, results) => {
             if (err) {
                 console.error("Error checking product:", err);
                 res.status(500).send("Error saving the product");
@@ -143,8 +139,8 @@ app.post("/api/save/:productId", (req, res) => {
                 res.status(404).send("Product not found");
                 return;
             }
-            const saving_id = results[0].id;
-            if (saver_id === saving_id) {
+            const productOwnerId = results[0].user_id;
+            if (saver_id === productOwnerId) {
                 res.status(400).send("You cannot save your own product");
                 return;
             }
@@ -207,8 +203,8 @@ app.delete("/api/save/:productId", (req, res) => {
             return;
         }
         const saver_id = decoded.id;
-        const saving_id = parseInt(req.params.productId);
-        db.query("SELECT id FROM products WHERE id = ?", [saving_id], (err, results) => {
+        const product_id = parseInt(req.params.productId);
+        db.query("SELECT id FROM products WHERE id = ?", [product_id], (err, results) => {
             if (err) {
                 console.error("Error checking product:", err);
                 res.status(500).send("Error unsaving product");
@@ -218,14 +214,13 @@ app.delete("/api/save/:productId", (req, res) => {
                 res.status(404).send("Product not found");
                 return;
             }
-            const saving_id = results[0].id;
             db.beginTransaction((transErr) => {
                 if (transErr) {
                     console.error("Transaction error:", transErr);
                     res.status(500).send("Error unsaving product");
                     return;
                 }
-                db.query("DELETE FROM saved_products WHERE user_id = ? AND product_id = ?", [saver_id, saving_id], (deleteErr, deleteResult) => {
+                db.query("DELETE FROM saved_products WHERE user_id = ? AND product_id = ?", [saver_id, product_id], (deleteErr, deleteResult) => {
                     if (deleteErr) {
                         return db.rollback(() => {
                             console.error("Delete error:", deleteErr);
@@ -237,7 +232,7 @@ app.delete("/api/save/:productId", (req, res) => {
                             res.status(400).send("You didn't save the product");
                         });
                     }
-                    db.query("UPDATE products SET saves = saves - 1 WHERE id = ?", [saving_id], (updateErr) => {
+                    db.query("UPDATE products SET saves = saves - 1 WHERE id = ?", [product_id], (updateErr) => {
                         if (updateErr) {
                             return db.rollback(() => {
                                 console.error("Update error:", updateErr);
@@ -251,7 +246,7 @@ app.delete("/api/save/:productId", (req, res) => {
                                     res.status(500).send("Error unsaving product");
                                 });
                             }
-                            res.status(200).send("Product saved sucessfully");
+                            res.status(200).send("Product unsaved sucessfully");
                         });
                     });
                 });

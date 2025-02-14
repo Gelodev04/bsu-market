@@ -7,7 +7,14 @@ interface MenuProps {
 
 export const AddSvg = () => {
   return (
-    <svg  className="rounded-full " width={60} height={60} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className="rounded-full "
+      width={60}
+      height={60}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
       <g
         id="SVGRepo_tracerCarrier"
@@ -78,13 +85,14 @@ export const ProfileSvg = () => {
   );
 };
 
-export const SaveSvg = () => {
+export const SaveSvg = ({isSaved}: { isSaved: boolean}) => {
   return (
     <svg
-      width={50}
+    width={40}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      stroke="#eb1c24"
     >
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
       <g
@@ -93,13 +101,11 @@ export const SaveSvg = () => {
         strokeLinejoin="round"
       ></g>
       <g id="SVGRepo_iconCarrier">
-        {" "}
         <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M6.75 6L7.5 5.25H16.5L17.25 6V19.3162L12 16.2051L6.75 19.3162V6ZM8.25 6.75V16.6838L12 14.4615L15.75 16.6838V6.75H8.25Z"
-          fill="#eb1c24"
-        ></path>{" "}
+          d="M5 6c0-1.4 0-2.1.272-2.635a2.5 2.5 0 0 1 1.093-1.093C6.9 2 7.6 2 9 2h6c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C19 3.9 19 4.6 19 6v13.208c0 1.056 0 1.583-.217 1.856a1 1 0 0 1-.778.378c-.349.002-.764-.324-1.593-.976L12 17l-4.411 3.466c-.83.652-1.245.978-1.594.976a1 1 0 0 1-.778-.378C5 20.791 5 20.264 5 19.208V6z"
+          fill={isSaved ? "#eb1c24" : "#ffffff"}
+          style={{ transition: "fill 0.3s ease" }}
+        ></path>
       </g>
     </svg>
   );

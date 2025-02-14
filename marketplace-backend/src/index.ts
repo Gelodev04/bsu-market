@@ -156,13 +156,10 @@ app.post("/api/save/:productId", (req: Request, res: Response): void => {
     const saver_id = (decoded as { id: number }).id;
     const saving_id = parseInt(req.params.productId);
 
-    if (saver_id === saving_id) {
-      res.status(400).send("You cannot save your own product");
-      return;
-    }
+  
 
     db.query<UserRow[]>(
-      "SELECT id, saves FROM products WHERE id = ?",
+      "SELECT user_id, saves FROM products WHERE id = ?",
       [saving_id],
       (err, results) => {
         if (err) {
@@ -176,9 +173,9 @@ app.post("/api/save/:productId", (req: Request, res: Response): void => {
           return;
         }
 
-        const saving_id = results[0].id;
+        const productOwnerId = results[0].user_id;
 
-        if (saver_id === saving_id) {
+        if (saver_id === productOwnerId) {
           res.status(400).send("You cannot save your own product");
           return;
         }
@@ -265,11 +262,11 @@ app.delete("/api/save/:productId", (req: Request, res: Response): void => {
     }
 
     const saver_id = (decoded as { id: number }).id;
-    const saving_id = parseInt(req.params.productId);
+    const product_id = parseInt(req.params.productId);
 
     db.query<UserRow[]>(
       "SELECT id FROM products WHERE id = ?",
-      [saving_id],
+      [product_id],
       (err, results) => {
         if (err) {
           console.error("Error checking product:", err);
@@ -282,7 +279,7 @@ app.delete("/api/save/:productId", (req: Request, res: Response): void => {
           return;
         }
 
-        const saving_id = results[0].id;
+       
 
         db.beginTransaction((transErr) => {
           if (transErr) {
@@ -293,7 +290,7 @@ app.delete("/api/save/:productId", (req: Request, res: Response): void => {
 
           db.query(
             "DELETE FROM saved_products WHERE user_id = ? AND product_id = ?",
-            [saver_id, saving_id],
+            [saver_id, product_id],
             (deleteErr, deleteResult: any) => {
               if (deleteErr) {
                 return db.rollback(() => {
@@ -310,7 +307,7 @@ app.delete("/api/save/:productId", (req: Request, res: Response): void => {
 
               db.query(
                 "UPDATE products SET saves = saves - 1 WHERE id = ?",
-                [saving_id],
+                [product_id],
                 (updateErr) => {
                   if (updateErr) {
                     return db.rollback(() => {
@@ -326,7 +323,7 @@ app.delete("/api/save/:productId", (req: Request, res: Response): void => {
                         res.status(500).send("Error unsaving product");
                       });
                     }
-                    res.status(200).send("Product saved sucessfully");
+                    res.status(200).send("Product unsaved sucessfully");
                   });
                 }
               );
