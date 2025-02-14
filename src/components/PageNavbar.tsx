@@ -135,12 +135,7 @@ export default function PageNavbar() {
         </div>
      
 
-      <ul className="flex items-center gap-3">
-        <li className="cursor-pointer">
-          <SearchSvg/>
-          
-        </li>
-      </ul>
+     
     </nav>
   );
 }

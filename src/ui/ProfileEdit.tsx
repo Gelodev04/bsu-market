@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { Select, SelectItem } from "@heroui/react";
@@ -34,6 +34,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [imagePreview, setImagePreview] = useState<string>(currentProfile);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+  useEffect(() => {
+    if (isOpen) {
+      setUsername(currentUsername);
+      setLocation(currentLocation);
+      setImagePreview(currentProfile);
+      setImageFile(null);
+    }
+  }, [isOpen, currentUsername, currentLocation, currentProfile]);
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -52,13 +61,22 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     onClose();
   };
 
+  const handleClose = () => {
+    // Reset form state when closing
+    setUsername(currentUsername);
+    setLocation(currentLocation);
+    setImagePreview(currentProfile);
+    setImageFile(null);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-5 rounded-lg">
       <div className="bg-white rounded-lg px-2 py-2 w-full max-w-md relative">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
           type="button"
         >
@@ -146,7 +164,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           <div className="flex justify-end gap-2 mt-6">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
             >
               Cancel
