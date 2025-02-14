@@ -13,6 +13,7 @@ import "swiper/css/pagination";
 import "@/styles/pagination.css";
 import { Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import MessageSeller from "@/components/MessageSeller";
 
 
 interface ProductDetail {
@@ -272,6 +273,10 @@ export default function ProductDetailPage() {
               </button>
             </div>
           </div>
+          
+          {/* MESSAGE SECTION */}
+          
+          <MessageSeller/>
 
           {/* DETAILS SECTION */}
 
