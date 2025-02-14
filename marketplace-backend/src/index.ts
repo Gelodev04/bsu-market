@@ -447,7 +447,6 @@ app.delete("/api/follow/:userId", (req: Request, res: Response): void => {
 
 
 app.post("/api/follow/:userId", (req: Request, res: Response): void => {
-  const { userId } = req.params;
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).send("Authorization header missing");

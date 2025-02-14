@@ -90,7 +90,7 @@ const ProductForm = () => {
       setFiles([]);
       
       // Show success message or redirect
-      setTimeout(() => router.push("/profile"), 1000);
+      setTimeout(() => router.push("/"), 1000);
       setMessage('Created Successully');  // Redirect to products page after success
     } catch (error) {
       if (error instanceof Error) {

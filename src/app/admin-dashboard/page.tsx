@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import PageNavbar from "@/components/PageNavbar";
 
 interface Product {
-    id: number;
-    name: string;
-    description: string;
-    status: "Pending" | "Approved" | "Rejected";
-    image: string;
-  }
-  
+  id: number;
+  name: string;
+  description: string;
+  status: "Pending" | "Approved" | "Rejected";
+  image: string;
+}
 
 const PendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,16 +33,22 @@ const PendingProducts = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         setIsAdmin(true);
-        
+
         // Fetch products only if admin
-        const res = await axios.get("http://localhost:3001/admin/products/pending", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setProducts(res.data);
+        const res = await axios.get(
+          "http://localhost:3001/admin/products/pending",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const sortedProducts = res.data.sort((a: Product, b: Product) => b.id - a.id);
+
+        setProducts(sortedProducts);
       } catch (error) {
         console.error("Access denied:", error);
         router.push("/login");
@@ -57,7 +63,10 @@ const PendingProducts = () => {
     return null;
   }
 
-  const updateProductStatus = async (id: number, status: "Approved" | "Rejected"): Promise<void> => {
+  const updateProductStatus = async (
+    id: number,
+    status: "Approved" | "Rejected"
+  ): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
@@ -82,27 +91,45 @@ const PendingProducts = () => {
   };
 
   return (
-    <div>
-      <h1>Pending Products</h1>
-      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>
-        Logout
-      </button>
-      <ul>
-        {products.map((product: any) => (
-          <li key={product.id}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p>Status: {product.status}</p>
-            <Image src={`http://localhost:3001${product.image}`} alt={product.name} width={200} height={200}/>
-            <button onClick={() => updateProductStatus(product.id, "Approved")}>
-              Approve
-            </button>
-            <button onClick={() => updateProductStatus(product.id, "Rejected")}>
-              Reject
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen ">
+      <PageNavbar />
+      <div className="px-3">
+        <h1 className="text-center">Pending Products</h1>
+        <button onClick={handleLogout} style={{ marginBottom: "20px" }}>
+          Logout
+        </button>
+        <ul className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
+          {products.map((product: any) => (
+            <li
+              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
+              key={product.id}
+            >
+              <Image
+                className="object-cover w-full aspect-[4/3] rounded"
+                src={`http://localhost:3001${product.image}`}
+                alt={product.name}
+                width={500}
+                height={500}
+              />
+              <h2>{product.name}</h2>
+              <p>{product.description}</p>
+              <p>Status: {product.status}</p>
+              <div className="flex items-center justify-center gap-5 font-semibold">
+                <button className="hover:underline decoration-bsutheme decoration-2"
+                  onClick={() => updateProductStatus(product.id, "Approved")}
+                >
+                  Approve
+                </button>
+                <button className="hover:underline decoration-bsutheme decoration-2"
+                  onClick={() => updateProductStatus(product.id, "Rejected")}
+                >
+                  Reject
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
