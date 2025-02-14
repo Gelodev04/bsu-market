@@ -37,6 +37,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -65,6 +66,11 @@ export default function ProductDetailPage() {
     }
   };
 
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
+  //FOLLOW STATUS
   const checkFollowStatus = async (userId: number) => {
     try {
       const token = localStorage.getItem("token");
@@ -90,68 +96,133 @@ export default function ProductDetailPage() {
     }
   };
 
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  useEffect(() => {
-    if (data?.user_id && currentUserId) {
-      // Get follow status using both current user ID and followed username
-      const storedFollowStatus = localStorage.getItem(
-        `followStatus_${currentUserId}_${data.user_id}`
-      );
-      if (storedFollowStatus) {
-        setIsFollowing(JSON.parse(storedFollowStatus));
-      }
-      checkFollowStatus(data.user_id);
-    }
-  }, [data?.user_id, currentUserId]);
-
-  const handleFollow = async () => {
+  const checkSaveStatus = async (productId: number) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token || !currentUserId) {
+      if (!token || !currentUserId) return;
+
+      const res = await fetch(`http://localhost:3001/api/save/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const { isSaved } = await res.json();
+        setIsSaved(isSaved);
+        // Store follow status with both the current user ID and the followed username
+        localStorage.setItem(
+          `saveStatus_${currentUserId}_${productId}`,
+          JSON.stringify(isSaved)
+        );
+      }
+    } catch (error) {
+      console.error("Error checking save status:", error);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if(!token || !currentUserId) {
         router.push("/login");
         return;
       }
 
-      if (!data?.user_id) {
-        alert("User information not available");
+      if (!data?.id) {
+        alert("Product information not available");
         return;
       }
 
-      const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch(
-        `http://localhost:3001/api/follow/${data?.user_id}`,
-        {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const method = isSaved ? "DELETE" : "POST";
+      const res = await fetch(`http://localhost:3001/api/save/${data?.id}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      if (res.ok) {
-        const newFollowStatus = !isFollowing;
-        setIsFollowing(newFollowStatus);
-        // Store follow status with both the current user ID and the followed username
-        localStorage.setItem(
-          `followStatus_${currentUserId}_${data?.user_id}`,
-          JSON.stringify(newFollowStatus)
-        );
-      } else {
-        const errMessage = await res.text();
-        alert(`Error: ${errMessage}`);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert(`Error: ${error.message}`);
-      } else {
-        alert("An unexpected error occurred.");
-      }
+    if(res.ok) {
+      const newSaveStatus = !isSaved;
+      setIsSaved(newSaveStatus);
+      localStorage.setItem(
+        `saveStatus_${currentUserId}_${data?.id}`,
+        JSON.stringify(newSaveStatus)
+      );
+    } else {
+      const errMessage = await res.text();
+      alert(`Error: ${errMessage}`);
     }
-  };
+  } catch (error: unknown){
+    if(error instanceof Error) {
+      alert(`Error: ${error.message}`);
+    } else{
+      alert("An unexpected error occured");
+    }
+  }
+};
+
+const handleFollow = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token || !currentUserId) {
+      router.push("/login");
+      return;
+    }
+
+    if (!data?.user_id) {
+      alert("User information not available");
+      return;
+    }
+
+    const method = isFollowing ? "DELETE" : "POST";
+    const res = await fetch(
+      `http://localhost:3001/api/follow/${data?.user_id}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (res.ok) {
+      const newFollowStatus = !isFollowing;
+      setIsFollowing(newFollowStatus);
+      // Store follow status with both the current user ID and the followed username
+      localStorage.setItem(
+        `followStatus_${currentUserId}_${data?.user_id}`,
+        JSON.stringify(newFollowStatus)
+      );
+    } else {
+      const errMessage = await res.text();
+      alert(`Error: ${errMessage}`);
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      alert(`Error: ${error.message}`);
+    } else {
+      alert("An unexpected error occurred.");
+    }
+  }
+};
+
+useEffect(() => {
+  if (data?.user_id && currentUserId) {
+    checkFollowStatus(data.user_id);
+  }
+  if (data?.id && currentUserId) {
+    checkSaveStatus(data.id);
+  }
+}, [data?.user_id, data?.id, currentUserId]);
+
+
+
+  
 
   useEffect(() => {
     if (!name) {
@@ -180,6 +251,10 @@ export default function ProductDetailPage() {
 
         if (result.username && currentUserId) {
           await checkFollowStatus(result.username);
+        }
+
+        if (result.id && currentUserId) {
+          await checkSaveStatus(result.id);
         }
       } catch (err: any) {
         setError(err.message);
@@ -239,7 +314,7 @@ export default function ProductDetailPage() {
               <h2 className="text-[1.4rem] font-medium">{data.name}</h2>
               {data.description && <p className="">{data.description}</p>}
             </div>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" onClick={handleSave}>
               <SaveSvg />
             </div>
           </div>

@@ -114,6 +114,204 @@ const verifyAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 //ROUTES
+//SAVE PRODUCT
+app.post("/api/save/:productId", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const saver_id = decoded.id;
+        const saving_id = parseInt(req.params.productId);
+        if (saver_id === saving_id) {
+            res.status(400).send("You cannot save your own product");
+            return;
+        }
+        db.query("SELECT id, saves FROM products WHERE id = ?", [saving_id], (err, results) => {
+            if (err) {
+                console.error("Error checking product:", err);
+                res.status(500).send("Error saving the product");
+                return;
+            }
+            if (!results.length) {
+                res.status(404).send("Product not found");
+                return;
+            }
+            const saving_id = results[0].id;
+            if (saver_id === saving_id) {
+                res.status(400).send("You cannot save your own product");
+                return;
+            }
+            db.query("SELECT * FROM saved_products WHERE user_id = ? AND product_id = ?", [saver_id, saving_id], (checkErr, checkResults) => {
+                if (checkErr) {
+                    console.error("Error checking save status:", checkErr);
+                    res.status(500).send("Error checking save status");
+                    return;
+                }
+                if (checkResults.length > 0) {
+                    res.status(400).send("You already saved this product");
+                    return;
+                }
+                db.beginTransaction((transErr) => {
+                    if (transErr) {
+                        console.error("Transaction error:", transErr);
+                        res.status(500).send("Error following user");
+                        return;
+                    }
+                    db.query("INSERT INTO saved_products (user_id, product_id) VALUES (?, ?)", [saver_id, saving_id], (insertErr) => {
+                        if (insertErr) {
+                            return db.rollback(() => {
+                                console.error("Insert error:", insertErr);
+                                res.status(500).send("Error saving product");
+                            });
+                        }
+                        db.query("UPDATE products SET saves = saves + 1 WHERE id = ?", [saving_id], (updateErr) => {
+                            if (updateErr) {
+                                return db.rollback(() => {
+                                    console.error("Update error:", updateErr);
+                                    res.status(500).send("Error following user");
+                                });
+                            }
+                            db.commit((commitErr) => {
+                                if (commitErr) {
+                                    return db.rollback(() => {
+                                        console.error("Commit error:", commitErr);
+                                        res.status(500).send("Error following user");
+                                    });
+                                }
+                                res.status(200).send("Product saved successfully");
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+app.delete("/api/save/:productId", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const saver_id = decoded.id;
+        const saving_id = parseInt(req.params.productId);
+        db.query("SELECT id FROM products WHERE id = ?", [saving_id], (err, results) => {
+            if (err) {
+                console.error("Error checking product:", err);
+                res.status(500).send("Error unsaving product");
+                return;
+            }
+            if (!results.length) {
+                res.status(404).send("Product not found");
+                return;
+            }
+            const saving_id = results[0].id;
+            db.beginTransaction((transErr) => {
+                if (transErr) {
+                    console.error("Transaction error:", transErr);
+                    res.status(500).send("Error unsaving product");
+                    return;
+                }
+                db.query("DELETE FROM saved_products WHERE user_id = ? AND product_id = ?", [saver_id, saving_id], (deleteErr, deleteResult) => {
+                    if (deleteErr) {
+                        return db.rollback(() => {
+                            console.error("Delete error:", deleteErr);
+                            res.status(500).send("Error unsaving product");
+                        });
+                    }
+                    if (deleteResult.affectedRows === 0) {
+                        return db.rollback(() => {
+                            res.status(400).send("You didn't save the product");
+                        });
+                    }
+                    db.query("UPDATE products SET saves = saves - 1 WHERE id = ?", [saving_id], (updateErr) => {
+                        if (updateErr) {
+                            return db.rollback(() => {
+                                console.error("Update error:", updateErr);
+                                res.status(500).send("Error unsaving product");
+                            });
+                        }
+                        db.commit((commitErr) => {
+                            if (commitErr) {
+                                return db.rollback(() => {
+                                    console.error("Commit error:", commitErr);
+                                    res.status(500).send("Error unsaving product");
+                                });
+                            }
+                            res.status(200).send("Product saved sucessfully");
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+app.get("/api/save/status/:productId", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const saver_id = decoded.id;
+        const saving_id = parseInt(req.params.productId);
+        db.query("SELECT * FROM saved_products WHERE user_id = ? AND product_id = ?", [saver_id, saving_id], (err, results) => {
+            if (err) {
+                console.error("Error checking save status:", err);
+                res.status(500).send("Error checking save status");
+                return;
+            }
+            res.status(200).json({ isSaved: results.length > 0 });
+        });
+    });
+});
+app.get("/api/saved", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const saver_id = decoded.id;
+        db.query(`
+      SELECT p.id, p.name, p.image 
+      FROM saved_products s 
+      JOIN products p ON s.product_id = p.id 
+      WHERE s.user_id = ?
+      `, [saver_id], (err, results) => {
+            if (err) {
+                console.error("Error fetching save list:", err);
+                res.status(500).send("Error fetching save list");
+                return;
+            }
+            res.status(200).json(results);
+        });
+    });
+});
+//ADMIN
 app.get("/api/check-admin", verifyAdmin, (req, res) => {
     res.status(200).json({ isAdmin: true });
 });
@@ -163,6 +361,7 @@ app.put("/admin/products/:id/status", verifyAdmin, (req, res) => {
         }
     });
 });
+//FOLOWERS
 app.get("/api/following", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -339,7 +538,6 @@ app.delete("/api/follow/:userId", (req, res) => {
     });
 });
 app.post("/api/follow/:userId", (req, res) => {
-    const { userId } = req.params;
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.status(401).send("Authorization header missing");
@@ -418,6 +616,7 @@ app.post("/api/follow/:userId", (req, res) => {
         });
     });
 });
+//USERS
 app.get("/api/seller/:username", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.params;
     try {
