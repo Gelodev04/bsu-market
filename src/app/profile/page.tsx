@@ -430,10 +430,14 @@ const ProfilePage = () => {
         {/* PRODUCTS SECTION */}
 
         <div className="pt-10 px-6">
-          <h2 className="text-2xl font-semibold">
-            Your Products({products.length})
-          </h2>
-          <button onClick={handleShowSelect}>{showSelect ? "Hide Select" : "Show Select"}</button>
+
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">
+              Your Products({products.length})
+            </h2>
+            <button className="bg-bsutheme text-sm text-white px-2 py-1 rounded-full" onClick={handleShowSelect}>{showSelect ? "Hide Select" : "Show Select"}</button>
+          </div>
+
           <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
             {products.length === 0 ? (
               <p>No products available.</p>

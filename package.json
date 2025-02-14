@@ -19,7 +19,6 @@
     "@heroui/select": "^2.4.10",
     "@heroui/system": "^2.4.7",
     "@heroui/theme": "^2.4.6",
-    "@mui/material": "^6.4.1",
     "@radix-ui/react-checkbox": "^1.1.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.8",
