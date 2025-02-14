@@ -4,6 +4,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PageNavbar from "@/components/PageNavbar";
+import Link from "next/link";
 
 interface Product {
   id: number;
@@ -100,33 +101,35 @@ const PendingProducts = () => {
         </button>
         <ul className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
           {products.map((product: any) => (
-            <li
-              className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
-              key={product.id}
-            >
-              <Image
-                className="object-cover w-full aspect-[4/3] rounded"
-                src={`http://localhost:3001${product.image}`}
-                alt={product.name}
-                width={500}
-                height={500}
-              />
-              <h2>{product.name}</h2>
-              <p>{product.description}</p>
-              <p>Status: {product.status}</p>
-              <div className="flex items-center justify-center gap-5 font-semibold">
-                <button className="hover:underline decoration-bsutheme decoration-2"
-                  onClick={() => updateProductStatus(product.id, "Approved")}
-                >
-                  Approve
-                </button>
-                <button className="hover:underline decoration-bsutheme decoration-2"
-                  onClick={() => updateProductStatus(product.id, "Rejected")}
-                >
-                  Reject
-                </button>
-              </div>
-            </li>
+            <Link  key={product.id} href={`/productdetail/${product.name}`}>
+              <li
+                className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
+               
+              >
+                <Image
+                  className="object-cover w-full aspect-[4/3] rounded"
+                  src={`http://localhost:3001${product.image}`}
+                  alt={product.name}
+                  width={500}
+                  height={500}
+                />
+                <h2>{product.name}</h2>
+                <p>{product.description}</p>
+                <p>Status: {product.status}</p>
+                <div className="flex items-center justify-center gap-5 font-semibold">
+                  <button className="hover:underline decoration-bsutheme decoration-2"
+                    onClick={() => updateProductStatus(product.id, "Approved")}
+                  >
+                    Approve
+                  </button>
+                  <button className="hover:underline decoration-bsutheme decoration-2"
+                    onClick={() => updateProductStatus(product.id, "Rejected")}
+                  >
+                    Reject
+                  </button>
+                </div>
+              </li>
+            </Link>
           ))}
         </ul>
       </div>

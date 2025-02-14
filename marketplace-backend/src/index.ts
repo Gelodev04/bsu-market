@@ -388,7 +388,7 @@ app.get("/api/saved", (req: Request, res: Response): void => {
 
     db.query(
       `
-      SELECT p.id, p.name, p.image 
+      SELECT p.id, p.name, p.image, p.price, p.description 
       FROM saved_products s 
       JOIN products p ON s.product_id = p.id 
       WHERE s.user_id = ?
@@ -987,7 +987,8 @@ app.get("/api/productdetail/:name", (req: Request, res: Response): void => {
            CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture
         FROM products 
         JOIN users ON products.user_id = users.id 
-        WHERE TRIM(LOWER(products.name)) = LOWER(?)`;
+        WHERE TRIM(LOWER(products.name)) = LOWER(?)
+        AND products.status = 'Approved'`;
 
   db.query(query, [decodedName], (err, results: mysql.RowDataPacket[]) => {
     console.log("Searching for product with name:", name);

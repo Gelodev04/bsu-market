@@ -38,7 +38,6 @@ export default function ShopSection({ products }: ShopSectionProps) {
     <div id="shop" className="mx-3 mt-10 relative">
       <div className="relative">
         <h2 className="text-[3rem]">Latest</h2>
-
         <div className="absolute bottom-[12px] -left-1 h-[3px] rounded-full bg-bsutheme w-[40px]"></div>
       </div>
 
@@ -74,11 +73,12 @@ export default function ShopSection({ products }: ShopSectionProps) {
 
                   <div className="-space-y-1 mt-1">
                     <span className="text-lg text-bsutheme font-medium">
-                      ₱{Number(product.price).toLocaleString("fil-PH", {
-                      maximumFractionDigits: 0,
-                    })}
+                      ₱
+                      {Number(product.price).toLocaleString("fil-PH", {
+                        maximumFractionDigits: 0,
+                      })}
                     </span>
-                    <h3 className="text-sm truncate capitalize">
+                    <h3 className="text-sm truncate ">
                       {product.name}
                     </h3>
                     <p className="text-gray-700 text-xs">{product.location}</p>

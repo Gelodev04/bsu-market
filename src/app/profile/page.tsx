@@ -43,6 +43,8 @@ const ProfilePage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [following, setFollowing] = useState<UserData[]>([]);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [savedProducts, setSavedProducts] = useState<Product[]>([]);
+  const [showSaves, setShowSaves] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
 
@@ -75,6 +77,38 @@ const ProfilePage = () => {
     };
 
     fetchFollowing();
+  }, []);
+
+  useEffect(() => {
+    const fetchSavedProducts = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3001/api/saved", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch following list");
+        }
+
+        const data = await response.json();
+
+        setSavedProducts(data);
+      } catch (error) {
+        console.error("Error fetching following list:", error);
+      }
+    };
+
+    fetchSavedProducts();
   }, []);
 
   const getImagePaths = (imageString: string | null) => {
@@ -183,114 +217,201 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen">
       <PageNavbar />
-      <div className="flex  pt-10 px-3 gap-2 flex-col border-b border-gray-400 pb-5">
-        <div className="] rounded-full">
-          <Image
-            className="w-[150px] h-[150px] rounded-full object-cover"
-            src={profileImage}
-            alt="profile"
-            width={500}
-            height={500}
-          />
-        </div>
-        <div className="pl-2">
-          <div className="-space-y-1 ">
-            <p className="text-[2.5rem] font-medium capitalize ">{username}</p>
-            <p className="capitalize">{location}</p>
-            <p className="capitalize">
-              {" "}
-              {Number(followers) === 0 ? (
-                <span className="font-semibold">No followers</span>
-              ) : (
-                <>
-                  {followers} <span className="font-semibold">followers</span>
-                </>
-              )}
-            </p>  
-            <button className="rounded-md " onClick={() => setShowFollowing(!showFollowing)}>
-              View Following
-            </button>
-
-            <Modal className="my-10 z-[9999]" isOpen={showFollowing} onOpenChange={setShowFollowing}>
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader className="flex flex-col gap-1 text-center">
-                      Following
-                    </ModalHeader>
-                    <ModalBody>
-                      <div className="mt-4">
-                        <h3 className="text-xl font-semibold">Following:</h3>
-                        <ul className="mt-2 space-y-2">
-                          {following.length === 0 ? (
-                            <p>You are not following anyone yet.</p>
-                          ) : (
-                            following.map((seller) => (
-                              <li
-                                key={seller.id}
-                                className="flex items-center gap-2"
-                              >
-                                <Image
-                                  src={
-                                    seller.profile_picture
-                                      ? `http://localhost:3001${seller.profile_picture}`
-                                      : "/images/user.png"
-                                  }
-                                  alt={seller.username}
-                                  className="w-10 h-10 rounded-full object-cover"
-                                  width={40}
-                                  height={40}
-                                />
-                                <Link
-                                  href={`/seller/${seller.username}`}
-                                  className="text-bsutheme hover:underline capitalize"
-                                >
-                                  {seller.username}
-                                </Link>
-                              </li>
-                            ))
-                          )}
-                        </ul>
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button
-                        color="danger"
-                        variant="light"
-                        onPress={() => setShowFollowing(false)}
-                      >
-                        Close
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-
-            <div className="flex flex- gap-1 pt-1">
-              <div
-                onClick={() => setIsEditModalOpen(true)}
-                className="w-[70%] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded hover:bg-[hsl(358,84%,62%)] duration-75"
-              >
-                <span className="text-white font-medium ">Edit Profile</span>
+      <div className="flex   pt-10  gap-2 flex-col pb-5">
+        <div className="border-b border-gray-400 flex flex-col items-center pb-7 px-6">
+          <div className=" rounded-full">
+            <Image
+              className="w-[150px] h-[150px] rounded-full object-cover"
+              src={profileImage}
+              alt="profile"
+              width={500}
+              height={500}
+            />
+          </div>
+          <div className=" w-full text-center">
+            <div className="-space-y-1 ">
+              <p className="text-[2.5rem] font-medium  ">@{username}</p>
+              <p className="capitalize font-medium text-gray-800">{location}</p>
+          
+              {/* FOLLOWING */}
+              <div className="flex items-center justify-center gap-3 py-5">
+                <div className="">
+                  <button
+                    className="rounded-md text-sm"
+                    onClick={() => setShowFollowing(!showFollowing)}
+                  >
+                    View Following
+                  </button>
+                  <Modal
+                    className="my-10 z-[9999]"
+                    isOpen={showFollowing}
+                    onOpenChange={setShowFollowing}
+                  >
+                    <ModalContent>
+                      {(onClose) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1 text-center">
+                            Following
+                          </ModalHeader>
+                          <ModalBody>
+                            <div className="mt-4">
+                              <h3 className="text-xl font-semibold">Following:</h3>
+                              <ul className="mt-2 space-y-2">
+                                {following.length === 0 ? (
+                                  <p>You are not following anyone yet.</p>
+                                ) : (
+                                  following.map((seller) => (
+                                    <li
+                                      key={seller.id}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <Image
+                                        src={
+                                          seller.profile_picture
+                                            ? `http://localhost:3001${seller.profile_picture}`
+                                            : "/images/user.png"
+                                        }
+                                        alt="seller"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                        width={40}
+                                        height={40}
+                                      />
+                                      <Link
+                                        href={`/seller/${seller.username}`}
+                                        className="text-bsutheme hover:underline capitalize"
+                                      >
+                                        {seller.username}
+                                      </Link>
+                                    </li>
+                                  ))
+                                )}
+                              </ul>
+                            </div>
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button
+                              color="danger"
+                              variant="light"
+                              onPress={() => setShowFollowing(false)}
+                            >
+                              Close
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                  <p>{following.length}</p>
+                </div>
+                <div className="w-[1px] h-[2rem] bg-black"></div>
+                {/* SAVES */}
+                <div>
+                  <button
+                    className="rounded-md text-sm"
+                    onClick={() => setShowSaves(!showSaves)}
+                  >
+                    View Save Products
+                  </button>
+                  <Modal
+                    className="my-10 z-[9999]"
+                    isOpen={showSaves}
+                    onOpenChange={setShowSaves}
+                  >
+                    <ModalContent>
+                      {(onClose) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1 text-center">
+                            Following
+                          </ModalHeader>
+                          <ModalBody>
+                            <div className="mt-4">
+                              <h3 className="text-xl font-semibold">
+                                Saved Products:
+                              </h3>
+                              <ul className="mt-2 space-y-2">
+                                {savedProducts.length === 0 ? (
+                                  <p>You have no saved products.</p>
+                                ) : (
+                                  savedProducts.map((product) => (
+                                    <li
+                                      key={product.id}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <Image
+                                        src={
+                                          product.image
+                                            ? `http://localhost:3001${product.image}`
+                                            : "/images/user.png"
+                                        }
+                                        alt={product.name}
+                                        className="w-10 h-10 rounded-full object-cover"
+                                        width={40}
+                                        height={40}
+                                      />
+                                      <div>
+                                        <p className="text-lg font-semibold">
+                                          {product.name}
+                                        </p>
+                                        <p className="text-gray-600">
+                                          {product.description}
+                                        </p>
+                                        <p className="text-bsutheme font-semibold">
+                                          ${product.price}
+                                        </p>
+                                      </div>
+                                    </li>
+                                  ))
+                                )}
+                              </ul>
+                            </div>
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button
+                              color="danger"
+                              variant="light"
+                              onPress={() => setShowSaves(false)}
+                            >
+                              Close
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                  <p>{savedProducts.length}</p>
+                </div>
+                {/* FOLLOWERS */}
+                <div className="w-[1px] h-[2rem] bg-black"></div>
+                <div>
+                  <h1 className="text-sm">Followers</h1>
+                  <p>{followers}</p>
+                </div>
               </div>
-
-              <div className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
-                <span onClick={handleLogout} className="text-black font-medium">
-                  Log out
-                </span>
+              <div className="flex flex- gap-1 pt-1">
+                <div
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="w-[70%] cursor-pointer flex items-center justify-center bg-bsutheme h-[40px] rounded hover:bg-[hsl(358,84%,62%)] duration-75"
+                >
+                  <span className="text-white font-medium ">Edit Profile</span>
+                </div>
+                <div className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
+                  <span onClick={handleLogout} className="text-black font-medium">
+                    Log out
+                  </span>
+                </div>
+                <Link
+                  href="/postproduct"
+                  className="fixed bottom-0 right-0 z-[99] m-4 cursor-pointer    "
+                >
+                  <AddSvg />
+                  <div className="bg-white rounded-full w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
+                </Link>
               </div>
-
-              <Link
-                href="/postproduct"
-                className="fixed bottom-0 right-0 z-[99] m-4 cursor-pointer    "
-              >
-                <AddSvg />
-                <div className="bg-white rounded-full w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></div>
-              </Link>
             </div>
           </div>
         </div>
+
+        {/* PRODUCTS SECTION */}
 
         <div className="pt-10 px-6">
           <h2 className="text-2xl font-semibold">
