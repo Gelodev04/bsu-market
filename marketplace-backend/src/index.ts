@@ -4,13 +4,14 @@ import cors from "cors";
 import mysql, { QueryResult, ResultSetHeader } from "mysql2";
 import multer from "multer";
 import path from "path";
-import bcrypt from "bcrypt";
+
 import jwt from "jsonwebtoken";
 import { RowDataPacket } from "mysql2";
 import fs from "fs";
 import dotenv from 'dotenv';
 
 dotenv.config();
+const bcrypt = require('bcryptjs');
 
 
 const app = express();
