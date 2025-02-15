@@ -72,7 +72,7 @@ const ProfilePage = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    setIsDeleting(true);
+    setIsDeleting(true); //added
     
     try {
       const response = await fetch("http://localhost:3001/api/products/delete", {
