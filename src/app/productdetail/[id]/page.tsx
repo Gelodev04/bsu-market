@@ -77,7 +77,7 @@ export default function ProductDetailPage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/follow/${userId}`, {
+      const res = await fetch(`http://localhost:3001/api/follow/status/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/save/${productId}`, {
+      const res = await fetch(`http://localhost:3001/api/save/status/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -273,7 +273,7 @@ useEffect(() => {
         setData(result);
 
         if (result.id && currentUserId) {
-          await checkFollowStatus(result.username);
+          await checkFollowStatus(result.user_id);
         }
 
         if (result.id && currentUserId) {

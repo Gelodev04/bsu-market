@@ -476,45 +476,6 @@ app.get("/admin/products/pending", verifyAdmin, (req: Request, res: Response): v
 
 //FOLOWERS
 
-app.get("/api/following", (req: Request, res: Response): void => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    res.status(401).send("Authorization header missing");
-    return;
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  jwt.verify(token, secretKey, (verifyErr, decoded) => {
-    if (verifyErr) {
-      res.status(403).send("Invalid or expired token");
-      return;
-    }
-
-    const follower_id = (decoded as { id: number }).id;
-
-    db.query(
-      `
-      SELECT u.id, u.username, u.profile_picture 
-      FROM follows f 
-      JOIN users u ON f.following_id = u.id 
-      WHERE f.follower_id = ?
-      `,
-      [follower_id],
-      (err, results: RowDataPacket[]) => {
-        if (err) {
-          console.error("Error fetching following list:", err);
-          res.status(500).send("Error fetching following list");
-          return;
-        }
-
-        res.status(200).json(results);
-      }
-    );
-  });
-});
-
-
 app.put("/api/user/update",
   (req: UpdateProfileRequest, res: Response): void => {
     const authHeader = req.headers.authorization;
@@ -594,6 +555,46 @@ app.put("/api/user/update",
     });
   }
 );
+
+app.get("/api/following", (req: Request, res: Response): void => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).send("Authorization header missing");
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, secretKey, (verifyErr, decoded) => {
+    if (verifyErr) {
+      res.status(403).send("Invalid or expired token");
+      return;
+    }
+
+    const follower_id = (decoded as { id: number }).id;
+
+    db.query(
+      `
+      SELECT u.id, u.username, u.profile_picture 
+      FROM follows f 
+      JOIN users u ON f.following_id = u.id 
+      WHERE f.follower_id = ?
+      `,
+      [follower_id],
+      (err, results: RowDataPacket[]) => {
+        if (err) {
+          console.error("Error fetching following list:", err);
+          res.status(500).send("Error fetching following list");
+          return;
+        }
+
+        res.status(200).json(results);
+      }
+    );
+  });
+});
+
+
 
 app.get("/api/follow/status/:userId", (req: Request, res: Response): void => {
   const authHeader = req.headers.authorization;

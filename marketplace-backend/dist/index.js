@@ -733,7 +733,6 @@ app.get("/api/products", (req, res) => {
 });
 app.get("/api/productdetail/:id", (req, res) => {
     const { id } = req.params;
-    console.log("Received ID:", id);
     const query = `
         SELECT 
           products.*, 
@@ -744,8 +743,6 @@ app.get("/api/productdetail/:id", (req, res) => {
         JOIN users ON products.user_id = users.id 
         WHERE products.id = ?
         AND products.status = 'Approved'`;
-    console.log("Executing query:", query); // Add this
-    console.log("With params:", [id]); // Add this
     db.query(query, [id], (err, results) => {
         if (err) {
             console.error("Error fetching product details:", err);
