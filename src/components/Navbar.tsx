@@ -26,7 +26,7 @@ export default function MyNavbar() {
   
   const fetchUserProfile = async (token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/api/user", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

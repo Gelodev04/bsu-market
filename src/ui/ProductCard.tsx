@@ -28,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className="relative">
               <Image
                 className="object-cover w-full aspect-[4/3] rounded"
-                src={`http://localhost:3001${imagePaths[0]}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${imagePaths[0]}`}
                 alt={name}
                 width={500}
                 height={500}

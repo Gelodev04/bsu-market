@@ -75,7 +75,7 @@ const ProfilePage = () => {
     setIsDeleting(true); //added
     
     try {
-      const response = await fetch("http://localhost:3001/api/products/delete", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/delete`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -111,7 +111,7 @@ const ProfilePage = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:3001/api/following", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/following`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -142,7 +142,7 @@ const ProfilePage = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:3001/api/saved", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/saved`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -181,7 +181,7 @@ const ProfilePage = () => {
         formData.append("profileImage", data.imageFile);
       }
 
-      const response = await fetch("http://localhost:3001/api/user/update", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -198,7 +198,7 @@ const ProfilePage = () => {
       setLocation(data.location);
 
       if (updatedData.profile_picture) {
-        setProfileImage(`http://localhost:3001${updatedData.profile_picture}`);
+        setProfileImage(`${process.env.NEXT_PUBLIC_API_URL}${updatedData.profile_picture}`);
       }
       // Update profile image if your API returns the new image URL
     } catch (error) {
@@ -214,7 +214,7 @@ const ProfilePage = () => {
     } else {
       const fetchUserData = async () => {
         try {
-          const response = await fetch("http://localhost:3001/api/user", {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -233,7 +233,7 @@ const ProfilePage = () => {
           }
 
           const productsResponse = await fetch(
-            "http://localhost:3001/api/products",
+            `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
             {
               method: "GET",
               headers: {
@@ -324,7 +324,7 @@ const ProfilePage = () => {
                                       <Image
                                         src={
                                           seller.profile_picture
-                                            ? `http://localhost:3001${seller.profile_picture}`
+                                            ? `${process.env.NEXT_PUBLIC_API_URL}${seller.profile_picture}`
                                             : "/images/user.png"
                                         }
                                         alt="seller"
@@ -396,7 +396,7 @@ const ProfilePage = () => {
                                       <Image
                                         src={
                                           product.image
-                                            ? `http://localhost:3001${product.image}`
+                                            ? `${process.env.NEXT_PUBLIC_API_URL}${product.image}`
                                             : "/images/user.png"
                                         }
                                         alt={product.name}
@@ -520,7 +520,7 @@ const ProfilePage = () => {
                           <div className="relative">
                             <Image
                               className="object-cover w-full aspect-[4/3] rounded"
-                              src={`http://localhost:3001${imagePaths[0]}`}
+                              src={`${process.env.NEXT_PUBLIC_API_URL}${imagePaths[0]}`}
                               alt={product.name}
                               width={500}
                               height={500}

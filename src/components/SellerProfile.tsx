@@ -42,7 +42,7 @@ export default function SellerProfilePage() {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:3001/api/user", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +62,7 @@ export default function SellerProfilePage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/follow/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -113,7 +113,7 @@ export default function SellerProfilePage() {
       }
 
       const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch(`http://localhost:3001/api/follow/${seller.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow/${seller.id}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +150,7 @@ export default function SellerProfilePage() {
     const fetchSellerData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3001/api/seller/${validUsername}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/seller/${validUsername}`
         );
         if (!res.ok) {
           setError("Failed to fetch seller profile.");
@@ -235,7 +235,7 @@ export default function SellerProfilePage() {
                       <div className="relative">
                         <Image
                           className="object-cover w-full aspect-[4/3] rounded"
-                          src={`http://localhost:3001${imagePaths[0]}`}
+                          src={`${process.env.NEXT_PUBLIC_API_URL}${imagePaths[0]}`}
                           alt={product.name}
                           width={500}
                           height={500}

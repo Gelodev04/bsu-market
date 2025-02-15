@@ -54,7 +54,7 @@ export default function ProductDetailPage() {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:3001/api/user", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,7 +78,7 @@ export default function ProductDetailPage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/follow/status/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow/status/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -103,7 +103,7 @@ export default function ProductDetailPage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`http://localhost:3001/api/save/status/${productId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/save/status/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -137,7 +137,7 @@ export default function ProductDetailPage() {
       }
 
       const method = isSaved ? "DELETE" : "POST";
-      const res = await fetch(`http://localhost:3001/api/save/${data?.id}`,
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/save/${data?.id}`,
       {
         method,
         headers: {
@@ -182,7 +182,7 @@ const handleFollow = async () => {
 
     const method = isFollowing ? "DELETE" : "POST";
     const res = await fetch(
-      `http://localhost:3001/api/follow/${data?.user_id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/follow/${data?.user_id}`,
       {
         method,
         headers: {
@@ -254,7 +254,7 @@ useEffect(() => {
       try {
 
         const res = await fetch(
-          `http://localhost:3001/api/productdetail/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/productdetail/${id}`
         );
 
 
@@ -314,7 +314,7 @@ useEffect(() => {
               <SwiperSlide key={index}>
                 <Image
                   className="w-full h-[400px] object-cover"
-                  src={`http://localhost:3001${imagePath}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL}${imagePath}`}
                   alt={`${data.name} - Image ${activeImageIndex + 1}`}
                   width={500}
                   height={500}

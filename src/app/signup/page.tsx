@@ -21,7 +21,7 @@ const SignUpPage = () => {
   const checkUsernameAvailability = async (username: string) => {
     try {
       const res = await fetch(
-        `http://localhost:3001/api/check-username/${username}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/check-username/${username}`
       );
       if (res.status === 409) {
         setUsernameTaken(true);

@@ -29,7 +29,7 @@ const PendingProducts = () => {
         }
 
         // Verify admin status
-        await axios.get("http://localhost:3001/api/check-admin", {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/check-admin`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -39,7 +39,7 @@ const PendingProducts = () => {
 
         // Fetch products only if admin
         const res = await axios.get(
-          "http://localhost:3001/admin/products/pending",
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/products/pending`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ const PendingProducts = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3001/admin/products/${id}/status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/products/${id}/status`,
         { status },
         {
           headers: {
@@ -108,7 +108,7 @@ const PendingProducts = () => {
               >
                 <Image
                   className="object-cover w-full aspect-[4/3] rounded"
-                  src={`http://localhost:3001${product.image}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                   alt={product.name}
                   width={500}
                   height={500}

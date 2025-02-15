@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
-       process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", 
+       "http://localhost:3000", 
       "https://localhost:3000", 
     ],
     methods: ["GET", "POST", "DELETE", "PUT"],
@@ -878,7 +878,7 @@ app.get("/api/seller/:username", async (req: Request, res: Response) => {
         username: results[0].username,
         location: results[0].location,
         profile_picture: results[0].profile_picture
-          ? `http://localhost:3001${results[0].profile_picture}` 
+          ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${results[0].profile_picture}` 
           : null,
         followers: results[0].followers,
         products: results
@@ -931,7 +931,7 @@ app.get("/api/user", (req: Request, res: Response): void => {
     }
 
     const query =
-      "SELECT id, username, googleaccount, location, followers, CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture FROM users WHERE id = ?";
+      `SELECT id, username, googleaccount, location, followers, CONCAT('${process.env.NEXT_PUBLIC_IMAGE_URL}', users.profile_picture) AS profile_picture FROM users WHERE id = ?`;
     db.query(query, [id], (err, results: mysql.RowDataPacket[]) => {
       if (err) {
         console.error("Error fetching user data:", err);
@@ -1063,7 +1063,7 @@ app.get("/api/productdetail/:id", (req: Request, res: Response): void => {
           products.*, 
           users.id as user_id,
           users.username,
-           CONCAT('http://localhost:3001', users.profile_picture) AS profile_picture
+           CONCAT('${process.env.NEXT_PUBLIC_IMAGE_URL}', users.profile_picture) AS profile_picture
         FROM products 
         JOIN users ON products.user_id = users.id 
         WHERE products.id = ?
