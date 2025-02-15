@@ -976,6 +976,69 @@ app.get("/api/products", (req: Request, res: Response) => {
   });
 });
 
+// Add this route to your Express app
+app.delete("/api/products/delete", (req: Request, res: Response) => {
+  // Check for authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+     res.status(401).send("Authorization header missing");
+     return;
+  }
+
+  // Verify token
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(403).send("Invalid or expired token");
+    }
+
+    const { id } = decoded as { id: number };
+    const { productIds } = req.body;
+
+    // Validate request body
+    if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+      return res.status(400).send("Invalid request body. Expected array of product IDs");
+    }
+
+    // First verify that all products belong to the user
+    const verifyQuery = `
+      SELECT COUNT(*) as count 
+      FROM products 
+      WHERE id IN (?) AND user_id = ?
+    `;
+
+    db.query(verifyQuery, [productIds, id], (verifyErr, verifyResults: mysql.RowDataPacket[]) => {
+      if (verifyErr) {
+        console.error("Error verifying products:", verifyErr);
+        return res.status(500).send("Database error during verification");
+      }
+
+      // Check if all products belong to the user
+      if (verifyResults[0].count !== productIds.length) {
+        return res.status(403).send("Unauthorized. Some products don't belong to the user");
+      }
+
+      // Proceed with deletion
+      const deleteQuery = `
+        DELETE FROM products 
+        WHERE id IN (?) AND user_id = ?
+      `;
+
+      db.query<ResultSetHeader>(deleteQuery, [productIds, id], (deleteErr, deleteResults) => {
+        if (deleteErr) {
+          console.error("Error deleting products:", deleteErr);
+          return res.status(500).send("Database error during deletion");
+        }
+
+        return res.status(200).json({
+          message: "Products deleted successfully",
+          deletedCount: deleteResults.affectedRows
+        });
+      });
+    });
+  });
+});
+
 app.get("/api/productdetail/:id", (req: Request, res: Response): void => {
   const { id } = req.params;
 

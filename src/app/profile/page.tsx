@@ -46,11 +46,61 @@ const ProfilePage = () => {
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
   const [showSaves, setShowSaves] = useState(false);
   const [showSelect, setShowSelect] = useState<boolean>(false);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleShowSelect = () => {
     setShowSelect((prev) => !prev);
   }
+
+  const handleProductSelect = (productId: string) => {
+    setSelectedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedProducts.size === 0) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setIsDeleting(true);
+    
+    try {
+      const response = await fetch("http://localhost:3001/api/products/delete", {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          productIds: Array.from(selectedProducts)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete products");
+      }
+
+      // Update products list by removing deleted items
+      setProducts(prev => prev.filter(product => !selectedProducts.has(product.id)));
+      setSelectedProducts(new Set());
+      setShowSelect(false);
+    } catch (error) {
+      console.error("Error deleting products:", error);
+      // Handle error appropriately - maybe show a toast notification
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchFollowing = async () => {
@@ -435,7 +485,17 @@ const ProfilePage = () => {
             <h2 className="text-2xl font-semibold">
               Your Products({products.length})
             </h2>
-            <button className="bg-bsutheme text-sm text-white px-2 py-1 rounded-full" onClick={handleShowSelect}>{showSelect ? "Hide Select" : "Show Select"}</button>
+            {showSelect && selectedProducts.size > 0 && (
+               <button 
+               className="bg-red-500 text-sm text-white px-4 py-1 rounded-full disabled:opacity-50"
+               onClick={handleDeleteSelected}
+               disabled={isDeleting}
+             >
+              
+               {isDeleting ? "Deleting..." : `Delete (${selectedProducts.size})`}
+             </button>
+            )}
+            <button className="bg-bsutheme text-sm text-white px-2 py-1 rounded-full" onClick={handleShowSelect}>{showSelect ? "Cancel" : "Select"}</button>
           </div>
 
           <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
@@ -447,8 +507,12 @@ const ProfilePage = () => {
                 return (
                   <div key={product.id} className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1">
                     { showSelect && (
-                  <div className="absolute z-[9999] pt-1 pl-1">
-                    <Checkbox />
+                  <div  className="absolute z-[9999] pt-1 pl-1" onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
+                    <Checkbox checked={selectedProducts.has(product.id)}
+                        onChange={() => handleProductSelect(product.id)}/>
                   </div>
                     )}
                       {imagePaths.length > 0 && (

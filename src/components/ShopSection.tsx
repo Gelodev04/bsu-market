@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import CustomPagination from "@/ui/CustomPagination";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Product {
   id: number;
@@ -18,9 +18,29 @@ interface ShopSectionProps {
 }
 
 export default function ShopSection({ products }: ShopSectionProps) {
-  const itemsPerPage = 15;
+  const [itemsPerPage, setItemsPerPage] = useState(14);
 
   const [currentPage, setCurrentPage] = useState(1);
+
+   useEffect(() => {
+    const updateItemsPerPage = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setItemsPerPage(20); // lg
+      } else if (width >= 768) {
+        setItemsPerPage(15); // md
+      } else {
+        setItemsPerPage(14); // default
+      }
+    };
+
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+
+    return () => {
+      window.removeEventListener("resize", updateItemsPerPage);
+    };
+  }, []);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -35,13 +55,13 @@ export default function ShopSection({ products }: ShopSectionProps) {
   };
 
   return (
-    <div id="shop" className="mx-3 mt-10 relative">
+    <div id="shop" className="mx-3 mt-10 relative lg:px-20 md:px-14">
       <div className="relative">
         <h2 className="text-[3rem]">Latest</h2>
         <div className="absolute bottom-[12px] -left-1 h-[3px] rounded-full bg-bsutheme w-[40px]"></div>
       </div>
 
-      <div className="product-list grid grid-cols-2 gap-2 gap-y-4 mt-4 ">
+      <div className="product-list grid grid-cols-2 gap-2 gap-y-4 mt-4 md:grid-cols-3  lg:grid-cols-4">
         {currentProducts.map((product: any) => {
           const imagePaths = getImagePaths(product.image);
 

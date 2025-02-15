@@ -51,7 +51,7 @@ export default function MyNavbar() {
       <CustomNavbarComponent>
         <div className="flex gap-2 items-center duration-200">
           <Image
-            className="w-[40px] h-[40px] object-cover"
+            className="w-[40px] h-[40px] object-cover lg:w-[55px] lg:h-[55px]"
             src="/images/BatStateU-NEU-Logo-300x282.png.webp"
             alt="logo"
             width={50}
@@ -81,11 +81,11 @@ export default function MyNavbar() {
               <li>
                 <Link href="/profile">
                 <Image
-                    className="rounded-full"
+                    className="rounded-full w-[40px] lg:w-[50px] "
                     src={userProfile?.profile_picture || "/images/user.png"}
                     alt="profile"
-                    width={30}
-                    height={30}
+                    width={50}
+                    height={50}
                     />
                 </Link>
               </li>

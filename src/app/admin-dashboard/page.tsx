@@ -101,10 +101,10 @@ const PendingProducts = () => {
         </button>
         <ul className="grid grid-cols-2 gap-2 gap-y-4 mt-4">
           {products.map((product: any) => (
-            <Link  key={product.id} href={`/productdetail/${product.name}`}>
+            
               <li
                 className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
-               
+                key={product.id}
               >
                 <Image
                   className="object-cover w-full aspect-[4/3] rounded"
@@ -116,7 +116,7 @@ const PendingProducts = () => {
                 <h2>{product.name}</h2>
                 <p>{product.description}</p>
                 <p>Status: {product.status}</p>
-                <div className="flex items-center justify-center gap-5 font-semibold">
+                <div className="flex items-center justify-center gap-5 font-semibold z-[9999]">
                   <button className="hover:underline decoration-bsutheme decoration-2"
                     onClick={() => updateProductStatus(product.id, "Approved")}
                   >
@@ -129,7 +129,7 @@ const PendingProducts = () => {
                   </button>
                 </div>
               </li>
-            </Link>
+          
           ))}
         </ul>
       </div>

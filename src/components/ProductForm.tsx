@@ -79,7 +79,7 @@ const ProductForm = () => {
     try {
       await createProduct(submitData);
       
-      // Reset form
+      //Reset form
       setFormData({
         name: "",
         price: "",

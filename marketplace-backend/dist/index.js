@@ -357,34 +357,6 @@ app.put("/admin/products/:id/status", verifyAdmin, (req, res) => {
     });
 });
 //FOLOWERS
-app.get("/api/following", (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        res.status(401).send("Authorization header missing");
-        return;
-    }
-    const token = authHeader.split(" ")[1];
-    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
-        if (verifyErr) {
-            res.status(403).send("Invalid or expired token");
-            return;
-        }
-        const follower_id = decoded.id;
-        db.query(`
-      SELECT u.id, u.username, u.profile_picture 
-      FROM follows f 
-      JOIN users u ON f.following_id = u.id 
-      WHERE f.follower_id = ?
-      `, [follower_id], (err, results) => {
-            if (err) {
-                console.error("Error fetching following list:", err);
-                res.status(500).send("Error fetching following list");
-                return;
-            }
-            res.status(200).json(results);
-        });
-    });
-});
 app.put("/api/user/update", (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -441,6 +413,34 @@ app.put("/api/user/update", (req, res) => {
                 });
             });
         }));
+    });
+});
+app.get("/api/following", (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (verifyErr, decoded) => {
+        if (verifyErr) {
+            res.status(403).send("Invalid or expired token");
+            return;
+        }
+        const follower_id = decoded.id;
+        db.query(`
+      SELECT u.id, u.username, u.profile_picture 
+      FROM follows f 
+      JOIN users u ON f.following_id = u.id 
+      WHERE f.follower_id = ?
+      `, [follower_id], (err, results) => {
+            if (err) {
+                console.error("Error fetching following list:", err);
+                res.status(500).send("Error fetching following list");
+                return;
+            }
+            res.status(200).json(results);
+        });
     });
 });
 app.get("/api/follow/status/:userId", (req, res) => {
@@ -728,6 +728,59 @@ app.get("/api/products", (req, res) => {
                 return res.status(500).send(err);
             }
             res.status(200).json(results);
+        });
+    });
+});
+// Add this route to your Express app
+app.delete("/api/products/delete", (req, res) => {
+    // Check for authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send("Authorization header missing");
+        return;
+    }
+    // Verify token
+    const token = authHeader.split(" ")[1];
+    jsonwebtoken_1.default.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return res.status(403).send("Invalid or expired token");
+        }
+        const { id } = decoded;
+        const { productIds } = req.body;
+        // Validate request body
+        if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+            return res.status(400).send("Invalid request body. Expected array of product IDs");
+        }
+        // First verify that all products belong to the user
+        const verifyQuery = `
+      SELECT COUNT(*) as count 
+      FROM products 
+      WHERE id IN (?) AND user_id = ?
+    `;
+        db.query(verifyQuery, [productIds, id], (verifyErr, verifyResults) => {
+            if (verifyErr) {
+                console.error("Error verifying products:", verifyErr);
+                return res.status(500).send("Database error during verification");
+            }
+            // Check if all products belong to the user
+            if (verifyResults[0].count !== productIds.length) {
+                return res.status(403).send("Unauthorized. Some products don't belong to the user");
+            }
+            // Proceed with deletion
+            const deleteQuery = `
+        DELETE FROM products 
+        WHERE id IN (?) AND user_id = ?
+      `;
+            db.query(deleteQuery, [productIds, id], (deleteErr, deleteResults) => {
+                if (deleteErr) {
+                    console.error("Error deleting products:", deleteErr);
+                    return res.status(500).send("Database error during deletion");
+                }
+                return res.status(200).json({
+                    message: "Products deleted successfully",
+                    deletedCount: deleteResults.affectedRows
+                });
+            });
         });
     });
 });
