@@ -516,7 +516,7 @@ const ProfilePage = () => {
                   </div>
                     )}
                       {imagePaths.length > 0 && (
-                        <Link href={`/productdetail/${product.name}`}>
+                        <Link href={`/productdetail/${product.id}`}>
                           <div className="relative">
                             <Image
                               className="object-cover w-full aspect-[4/3] rounded"

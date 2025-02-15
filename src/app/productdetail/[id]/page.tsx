@@ -14,6 +14,7 @@ import "@/styles/pagination.css";
 import { Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import MessageSeller from "@/components/MessageSeller";
+import ChatBox from "@/components/ChatBox";
 
 
 interface ProductDetail {
@@ -303,7 +304,7 @@ useEffect(() => {
 
       {data ? (
         <div>
-          <Swiper
+          <Swiper 
             spaceBetween={1}
             slidesPerView={1}
             pagination={true}
@@ -374,7 +375,9 @@ useEffect(() => {
           
           {/* MESSAGE SECTION */}
           
-          <MessageSeller/>
+          <div className="z-[99999]">
+          <ChatBox/>
+          </div>
 
           {/* DETAILS SECTION */}
 

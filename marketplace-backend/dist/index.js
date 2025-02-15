@@ -766,19 +766,29 @@ app.delete("/api/products/delete", (req, res) => {
             if (verifyResults[0].count !== productIds.length) {
                 return res.status(403).send("Unauthorized. Some products don't belong to the user");
             }
-            // Proceed with deletion
-            const deleteQuery = `
+            const deleteSavedProductsQuery = `
+        DELETE FROM saved_products 
+        WHERE product_id IN (?)
+      `;
+            db.query(deleteSavedProductsQuery, [productIds], (savedErr) => {
+                if (savedErr) {
+                    console.error("Error deleting related saved products:", savedErr);
+                    return res.status(500).send("Error deleting related saved products");
+                }
+                // Proceed with deletion
+                const deleteQuery = `
         DELETE FROM products 
         WHERE id IN (?) AND user_id = ?
       `;
-            db.query(deleteQuery, [productIds, id], (deleteErr, deleteResults) => {
-                if (deleteErr) {
-                    console.error("Error deleting products:", deleteErr);
-                    return res.status(500).send("Database error during deletion");
-                }
-                return res.status(200).json({
-                    message: "Products deleted successfully",
-                    deletedCount: deleteResults.affectedRows
+                db.query(deleteQuery, [productIds, id], (deleteErr, deleteResults) => {
+                    if (deleteErr) {
+                        console.error("Error deleting products:", deleteErr);
+                        return res.status(500).send("Database error during deletion");
+                    }
+                    return res.status(200).json({
+                        message: "Products deleted successfully",
+                        deletedCount: deleteResults.affectedRows
+                    });
                 });
             });
         });

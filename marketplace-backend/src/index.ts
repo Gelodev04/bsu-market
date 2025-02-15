@@ -977,6 +977,8 @@ app.get("/api/products", (req: Request, res: Response) => {
 });
 
 // Add this route to your Express app
+
+
 app.delete("/api/products/delete", (req: Request, res: Response) => {
   // Check for authorization header
   const authHeader = req.headers.authorization;
@@ -1018,6 +1020,17 @@ app.delete("/api/products/delete", (req: Request, res: Response) => {
         return res.status(403).send("Unauthorized. Some products don't belong to the user");
       }
 
+      const deleteSavedProductsQuery = `
+        DELETE FROM saved_products 
+        WHERE product_id IN (?)
+      `;
+
+      db.query(deleteSavedProductsQuery, [productIds], (savedErr) => {
+        if (savedErr) {
+          console.error("Error deleting related saved products:", savedErr);
+          return res.status(500).send("Error deleting related saved products");
+        }
+
       // Proceed with deletion
       const deleteQuery = `
         DELETE FROM products 
@@ -1037,6 +1050,7 @@ app.delete("/api/products/delete", (req: Request, res: Response) => {
       });
     });
   });
+});
 });
 
 app.get("/api/productdetail/:id", (req: Request, res: Response): void => {

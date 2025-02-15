@@ -7,6 +7,7 @@ import Link from "next/link";
 import ShopSectionWrapper from "@/components/ShopSectionWrapper";
 import  Checkbox  from "@/ui/Checkbox";
 
+
 export default async function Home() {
   return (
     <>
@@ -18,7 +19,7 @@ export default async function Home() {
       <Navbar />
       <HomeSection />
       <ShopSectionWrapper />
-     
+      
     </>
   );
 }
