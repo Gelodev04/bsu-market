@@ -14,8 +14,8 @@ dotenv.config();
 
 
 const app = express();
-const secretKey = "your_secret_key";
-const port = 3001;
+const secretKey = process.env.SECRET_KEY as string;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(
@@ -31,10 +31,10 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "4545",
-  database: "marketplace",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 db.connect((err) => {

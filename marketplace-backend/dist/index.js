@@ -24,8 +24,8 @@ const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const secretKey = "your_secret_key";
-const port = 3001;
+const secretKey = process.env.SECRET_KEY;
+const port = process.env.PORT || 3000;
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)({
     origin: [
@@ -36,10 +36,10 @@ app.use((0, cors_1.default)({
 }));
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "uploads")));
 const db = mysql2_1.default.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "4545",
-    database: "marketplace",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
 });
 db.connect((err) => {
     if (err) {
@@ -59,7 +59,7 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({
     storage,
     limits: {
-        files: 5, // Limit to 5 files
+        files: 5,
     },
 });
 const profileUpload = (0, multer_1.default)({
