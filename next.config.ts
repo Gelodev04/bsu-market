@@ -1,18 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-},
   images: {
-    domains: ["images.remotePatterns", "localhost"],
+   
     remotePatterns: [
       {
         protocol: "http",
         hostname: "localhost",
         port: "3001",
         pathname: "/uploads/**",
+      },
+      {
+        protocol: 'https',
+        hostname: 'market-backend-production-70a7.up.railway.app',
+        port: '',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'market-backend-production-70a7.up.railway.app',
+        port: '',
+        pathname: '/images/**',
       },
     ],
   },

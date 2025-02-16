@@ -89,7 +89,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           <div className="flex flex-col items-center mb-6">
             <div className="relative">
               <Image
-                src={imagePreview}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${imagePreview}`}
                 alt="Profile"
                 width={120}
                 height={120}

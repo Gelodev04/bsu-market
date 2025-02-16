@@ -182,7 +182,7 @@ export default function SellerProfilePage() {
             <div className="] rounded-full">
               <Image
                 className="w-[150px] h-[150px] rounded-full object-cover"
-                src={seller?.profile_picture || "/images/user.png"}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${seller?.profile_picture}` || "/images/user.png"}
                 alt="profile"
                 width={500}
                 height={500}
@@ -231,7 +231,7 @@ export default function SellerProfilePage() {
                   className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
                 >
                   {imagePaths.length > 0 && (
-                    <Link href={`/productdetail/${product.name}`}>
+                    <Link href={`/productdetail/${product.id}`}>
                       <div className="relative">
                         <Image
                           className="object-cover w-full aspect-[4/3] rounded"

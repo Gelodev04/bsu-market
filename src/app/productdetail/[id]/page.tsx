@@ -355,7 +355,7 @@ useEffect(() => {
                   width={60}
                   height={60}
                   className=" rounded-full"
-                  src={data.profile_picture || "/images/user.png"}
+                  src={`${process.env.NEXT_PUBLIC_API_URL}${data.profile_picture}` || "/images/user.png"}
                   alt="profile"
                 />
                 <h1 className="capitalize text-lg">{data.username}</h1>

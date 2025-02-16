@@ -276,7 +276,7 @@ const ProfilePage = () => {
           <div className=" rounded-full">
             <Image
               className="w-[150px] h-[150px] rounded-full object-cover"
-              src={profileImage}
+              src={`${process.env.NEXT_PUBLIC_API_URL}${profileImage}`}
               alt="profile"
               width={500}
               height={500}

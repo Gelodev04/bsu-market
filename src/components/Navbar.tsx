@@ -82,7 +82,10 @@ export default function MyNavbar() {
                 <Link href="/profile">
                 <Image
                     className="rounded-full w-[40px] lg:w-[50px] "
-                    src={userProfile?.profile_picture || "/images/user.png"}
+                    src={userProfile?.profile_picture
+                      ? `${process.env.NEXT_PUBLIC_API_URL}${userProfile.profile_picture}`
+                      : "/images/user.png"
+                  }
                     alt="profile"
                     width={50}
                     height={50}
