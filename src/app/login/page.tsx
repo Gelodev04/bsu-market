@@ -37,7 +37,7 @@ const LoginPage = () => {
   return (
     <div
     
-      className="h-screen flex flex-col justify-center items-center "
+      className="h-screen flex flex-col justify-center items-center max-w-[700px] mx-auto"
     >
      
     
