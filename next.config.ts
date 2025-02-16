@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   images: {
-   
+    domains: ['market-backend-production-70a7.up.railway.app'],
     remotePatterns: [
       {
         protocol: "http",
