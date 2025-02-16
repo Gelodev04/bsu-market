@@ -1,11 +1,10 @@
-// filepath: src/app/signup/page.tsx
 "use client";
 import { useState } from "react";
-import { registerUser } from "../../services/api";
 import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
 import { Select, SelectItem, Spinner } from "@heroui/react";
 import Link from "next/link";
+
 const SignUpPage = () => {
   const [username, setUsername] = useState("");
   const [googleaccount, setGoogleAccount] = useState("");
@@ -21,7 +20,13 @@ const SignUpPage = () => {
   const checkUsernameAvailability = async (username: string) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/check-username/${username}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/check-username/${username}`,
+        {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
       if (res.status === 409) {
         setUsernameTaken(true);
@@ -46,28 +51,43 @@ const SignUpPage = () => {
     }
 
     try {
-      await registerUser({ username, googleaccount, password, location });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          googleaccount,
+          password,
+          location
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
+
       setSuccess("User registered successfully!");
       
       setTimeout(() => {
-      router.push("/login");
+        router.push("/login");
       }, 1000);
 
     } catch (error) {
       console.error("Error registering user:", error);
       setError("Failed to register user.");
-    } 
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUsername = e.target.value;
     setUsername(newUsername);
-    checkUsernameAvailability(newUsername); // Check availability as user types
-
-    setError(null)
+    checkUsernameAvailability(newUsername);
+    setError(null);
   };
-
-  
 
   return (
     <div className="h-screen flex flex-col justify-center items-center ">
@@ -79,7 +99,6 @@ const SignUpPage = () => {
         </div>
       )}
 
-      {/* Success Message */}
       {success && (
         <div className="w-full max-w-md mb-4 px-4 py-2 bg-green-100 border border-green-400 text-green-700 rounded">
           {success}
@@ -89,7 +108,7 @@ const SignUpPage = () => {
       <form className="w-full px-4 flex flex-col gap-2 " onSubmit={handleSubmit}>
         <div>
           <Input
-           color="danger"
+            color="danger"
             value={username}
             onChange={handleUsernameChange}
             required
@@ -110,7 +129,7 @@ const SignUpPage = () => {
             label="Gmail(optional)"
             type="email"
             variant="faded"
-           color="danger"
+            color="danger"
           />
         </div>
 
@@ -159,17 +178,15 @@ const SignUpPage = () => {
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-2">
               <Spinner color="default" size="sm" />
-            
             </div>
           ) : (
             "Sign Up"
           )}
         </button>
 
-
         <div className="flex gap-1 justify-center">
           <span>Already have an account?</span>
-          <Link  href="/login"><span className="text-bsutheme">Log in</span></Link>
+          <Link href="/login"><span className="text-bsutheme">Log in</span></Link>
         </div>
       </form>
     </div>
