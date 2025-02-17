@@ -23,8 +23,10 @@ const SignUpPage = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/check-username/${username}`,
         {
           method: "GET",
+         
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+           
           }
         }
       );
@@ -43,18 +45,20 @@ const SignUpPage = () => {
     setError(null);
     setSuccess(null);
     setIsSubmitting(true);
-
+  
     if (usernameTaken) {
       setError("Username is already taken. Please choose another one.");
       setIsSubmitting(false);
       return;
     }
-
+  
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: 'POST',
+        
         headers: {
           'Content-Type': 'application/json',
+         
         },
         body: JSON.stringify({
           username,
@@ -63,17 +67,17 @@ const SignUpPage = () => {
           location
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Registration failed');
       }
-
+  
       setSuccess("User registered successfully!");
-      
+  
       setTimeout(() => {
         router.push("/login");
       }, 1000);
-
+  
     } catch (error) {
       console.error("Error registering user:", error);
       setError("Failed to register user.");
@@ -115,6 +119,7 @@ const SignUpPage = () => {
             label="Username(Display Name)"
             type="Text"
             variant="faded"
+           
           />
 
           {usernameTaken && (
@@ -130,6 +135,7 @@ const SignUpPage = () => {
             type="email"
             variant="faded"
             color="danger"
+            autoComplete="email"
           />
         </div>
 
@@ -142,6 +148,8 @@ const SignUpPage = () => {
             type="password"
             variant="faded"
             color="danger"
+             autoComplete="current-password"
+
           />
         </div>
 

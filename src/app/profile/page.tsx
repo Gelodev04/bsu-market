@@ -1,4 +1,3 @@
-// filepath: src/app/profile/page.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,6 +16,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import Checkbox from "@/ui/Checkbox";
+
 interface Product {
   id: string;
   name: string;
@@ -31,7 +31,7 @@ interface UserData {
   username: string;
   location: string;
   followers: string;
-  profile_picture: string;
+  profile_picture: string | null; // Allow profile_picture to be null
 }
 
 const ProfilePage = () => {
@@ -39,7 +39,7 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
-  const [profileImage, setProfileImage] = useState<string>("/images/user.png");
+  const [profileImage, setProfileImage] = useState<string>("/images/user.png"); // Default image
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [following, setFollowing] = useState<UserData[]>([]);
   const [showFollowing, setShowFollowing] = useState(false);
@@ -198,12 +198,10 @@ const ProfilePage = () => {
       setLocation(data.location);
 
       if (updatedData.profile_picture) {
-        setProfileImage(`${process.env.NEXT_PUBLIC_API_URL}${updatedData.profile_picture}`);
+        setProfileImage(`${updatedData.profile_picture}`);
       }
-      // Update profile image if your API returns the new image URL
     } catch (error) {
       console.error("Error updating profile:", error);
-      // Handle error appropriately
     }
   };
 
@@ -229,7 +227,7 @@ const ProfilePage = () => {
           setLocation(data.location);
           setFollowers(data.followers);
           if (data.profile_picture) {
-            setProfileImage(data.profile_picture);
+            setProfileImage(`${process.env.NEXT_PUBLIC_API_URL}${data.profile_picture}`);
           }
 
           const productsResponse = await fetch(
@@ -243,7 +241,7 @@ const ProfilePage = () => {
           );
           if (!productsResponse.ok) {
             console.warn("No products available.");
-            setProducts([]); // Set empty products array instead of throwing an error
+            setProducts([]);
             return;
           }
 
@@ -276,7 +274,7 @@ const ProfilePage = () => {
           <div className=" rounded-full">
             <Image
               className="w-[150px] h-[150px] rounded-full object-cover"
-              src={`${process.env.NEXT_PUBLIC_API_URL}${profileImage}`}
+              src={profileImage}
               alt="profile"
               width={500}
               height={500}
