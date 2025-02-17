@@ -455,9 +455,9 @@ const ProfilePage = () => {
                 >
                   <span className="text-white font-medium ">Edit Profile</span>
                 </div>
-                <div className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
+                <div onClick={handleLogout} className="w-[30%] cursor-pointer flex items-center justify-center bg-[#cecccc] h-[40px] rounded hover:bg-[hsl(0,2%,70%)] duration-75">
                   <span
-                    onClick={handleLogout}
+                    
                     className="text-black font-medium"
                   >
                     Log out

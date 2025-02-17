@@ -4,18 +4,19 @@ import Navbar from "@/components/Navbar";
 import HomeSection from "@/components/HomeSection";
 import { AddSvg } from "@/assets/svgs/Svg";
 import Link from "next/link";
-import ShopSectionWrapper from "@/components/ShopSectionWrapper";
-import  Checkbox  from "@/ui/Checkbox";
-import ProductCard from "@/ui/ProductCard";
+
+
+
 
 
 
 
 export default async function Home() {
-  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+  
   const products = await data.json()
 
-  console.log(products)
+ 
   return (
     <>
       <Link href="/postproduct" className="fixed bottom-0 right-0 z-[999] m-4 cursor-pointer hover:outline hover:outline-2 hover:outline-white  rounded-full">
@@ -30,3 +31,4 @@ export default async function Home() {
     </>
   );
 }
+
