@@ -9,6 +9,7 @@ interface ProductCardProps {
     price: number;
     location: string;
     imagePaths: string[];
+    
   };
 }
 
@@ -16,6 +17,8 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { id, name, price, location, imagePaths } = product;
+  const safeImagePaths = imagePaths || [];
+
 
   return (
     <div
@@ -24,18 +27,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       <Link href={`/productdetail/${id}`}>
         <div className="flex flex-col">
-          {imagePaths.length > 0 && (
+          {safeImagePaths.length > 0 && (
             <div className="relative">
               <Image
                 className="object-cover w-full aspect-[4/3] rounded"
-                src={`${process.env.NEXT_PUBLIC_API_URL}${imagePaths[0]}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${safeImagePaths[0]}`}
                 alt={name}
                 width={500}
                 height={500}
               />
 
               {/* Thumbnail indicators if there are multiple images */}
-              {imagePaths.length > 1 && (
+              {safeImagePaths.length > 1 && (
                 <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
                   +{imagePaths.length - 1}
                 </div>
