@@ -1,3 +1,5 @@
+
+
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -5,6 +7,8 @@ import PageNavbar from "@/components/PageNavbar";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@heroui/react";
+
 interface SellerProfile {
   id: number;
   username: string;
@@ -14,6 +18,7 @@ interface SellerProfile {
   profile_picture: string;
   products: Array<{
     id: number;
+    user_id: number;
     name: string;
     price: number;
     image: string;
@@ -22,12 +27,13 @@ interface SellerProfile {
 }
 
 export default function SellerProfilePage() {
-  const { username } = useParams(); // Retrieve the username from the URL query
+  const { username } = useParams();
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -49,7 +55,7 @@ export default function SellerProfilePage() {
       });
       if (res.ok) {
         const userData = await res.json();
-        console.log("userData:", userData);
+
         setCurrentUserId(userData.id?.toString() || "");
       }
     } catch (error) {
@@ -62,11 +68,14 @@ export default function SellerProfilePage() {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/follow/status/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (res.ok) {
         const { isFollowing } = await res.json();
@@ -103,7 +112,7 @@ export default function SellerProfilePage() {
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) {
-       router.push("/login")
+        router.push("/login");
         return;
       }
 
@@ -113,13 +122,16 @@ export default function SellerProfilePage() {
       }
 
       const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow/${seller.id}`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/follow/${seller.id}`,
+        {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (res.ok) {
         const newFollowStatus = !isFollowing;
@@ -170,7 +182,13 @@ export default function SellerProfilePage() {
     fetchSellerData();
   }, [validUsername]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <Spinner
+        color="danger"
+        className="h-screen flex justify-center items-center"
+      />
+    );
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -179,10 +197,13 @@ export default function SellerProfilePage() {
       {seller ? (
         <div className="px-3">
           <div className="flex  pt-10  gap-2 flex-col border-b border-gray-400 pb-5">
-            <div className="] rounded-full">
+            <div className=" rounded-full">
               <Image
                 className="w-[150px] h-[150px] rounded-full object-cover"
-                src={`${process.env.NEXT_PUBLIC_API_URL}${seller?.profile_picture}` || "/images/user.png"}
+                src={
+                  `${process.env.NEXT_PUBLIC_API_URL}${seller?.profile_picture}` ||
+                  "/images/user.png"
+                }
                 alt="profile"
                 width={500}
                 height={500}
@@ -209,7 +230,9 @@ export default function SellerProfilePage() {
                 <button
                   onClick={handleFollow}
                   className={`w-[270px] flex items-center justify-center h-[40px] rounded text-white font-medium ${
-                    isFollowing ? "bg-gray-500 hover:bg-[hsl(220,9%,50%)]" : "bg-bsutheme hover:bg-[hsl(358,84%,62%)] active:bg-[hsl(358,84%, 70%)]"
+                    isFollowing
+                      ? "bg-gray-500 hover:bg-[hsl(220,9%,50%)]"
+                      : "bg-bsutheme hover:bg-[hsl(358,84%,62%)] active:bg-[hsl(358,84%, 70%)]"
                   }`}
                 >
                   {isFollowing ? "Unfollow" : "Follow"}

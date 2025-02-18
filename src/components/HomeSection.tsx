@@ -13,7 +13,7 @@ export default function HomeSection() {
         </div>
         <div className='absolute inset-0  text-white flex justify-center items-center flex-col'>
           <h1 className='text-[3rem]  text-center font-thin'>Welcome, Spartans! Shop now for your school gear and more! </h1>
-          <Link href="#shop" className='scroll-smooth'><button className='bg-bsutheme px-5 py-3 rounded text-sm hover:bg-[hsl(358,84%,55%)] duration-75'>Shop Now</button></Link>
+          <Link href="#shop" className='scroll-smooth'><button className='bg-bsutheme px-5 py-3 rounded text-sm lg:hover:bg-[hsl(358,84%,60%)] active:bg-[hsl(358,84%,60%)] '>Shop Now</button></Link>
         </div>
       </div>
     </main>

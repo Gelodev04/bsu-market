@@ -9,21 +9,19 @@ interface ProductCardProps {
     price: number;
     location: string;
     imagePaths: string[];
-    
   };
 }
-
-
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { id, name, price, location, imagePaths } = product;
   const safeImagePaths = imagePaths || [];
 
-
   return (
     <div
       key={id}
-      className="product-card rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
+      className="product-card rounded flex flex-col relative min-h-[200px]  cursor-pointer 
+       pb-1  
+     "
     >
       <Link href={`/productdetail/${id}`}>
         <div className="flex flex-col">

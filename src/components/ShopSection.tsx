@@ -56,7 +56,7 @@ export default function ShopSection({ products }: { products: any[] }) {
   };
 
   return (
-    <div id="shop" className="mx-3 mt-10 relative lg:px-20 md:px-14">
+    <div id="shop" className="mx-3 mt-10 relative lg:px-20 md:px-14 ">
       <div className="relative">
         <h2 className="text-[3rem]">Latest</h2>
         <div className="absolute bottom-[12px] -left-1 h-[3px] rounded-full bg-bsutheme w-[40px]"></div>
@@ -67,13 +67,15 @@ export default function ShopSection({ products }: { products: any[] }) {
           const imagePaths = getImagePaths(product.image);
 
           return (
-            <ProductCard
-              key={product.id}
-              product={{
-                ...product,
-                imagePaths,
-              }}
-            />
+            <div  key={product.id}   className=" outline-2 outline-bsutheme hover:outline rounded">
+              <ProductCard
+               
+                product={{
+                  ...product,
+                  imagePaths,
+                }}
+              />
+            </div>
           );
         })}
       </div>

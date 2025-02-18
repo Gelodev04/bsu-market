@@ -5,7 +5,7 @@ import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import { Skeleton } from "@heroui/react";
 
 export default function MyNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -14,6 +14,7 @@ export default function MyNavbar() {
     role?: string;
   } | null>(null);
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,14 +24,17 @@ export default function MyNavbar() {
       fetchUserProfile(token);
     }
   }, []);
-  
+
   const fetchUserProfile = async (token: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch user profile");
@@ -39,11 +43,16 @@ export default function MyNavbar() {
       const userData = await response.json();
       setUserProfile(userData);
 
-      if(userData.role ==- "admin"){
+      if (userData.role == -"admin") {
         router.push("/admin-dashboard");
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
+      setIsLoggedIn(false);
+      setUserProfile(null);
+      localStorage.removeItem("token");
+    } finally {
+      setLoading(false); // Set loading to false after the data fetch completes
     }
   };
   return (
@@ -67,31 +76,38 @@ export default function MyNavbar() {
         </div>
 
         <ul className="flex items-center gap-3 duration-200 ">
-        
-
           {isLoggedIn ? (
             <>
-            {userProfile?.role === "admin" ? (
+              {userProfile?.role === "admin" ? (
                 <li>
                   <Link href="/admin-dashboard">
                     <p className="text-red-500">Admin Dashboard</p>
                   </Link>
                 </li>
-              ): (
-              <li>
-                <Link href="/profile">
-                <Image
-                    className="rounded-full w-[40px] lg:w-[50px] "
-                    src={userProfile?.profile_picture
-                      ? `${process.env.NEXT_PUBLIC_API_URL}${userProfile.profile_picture}`
-                      : "/images/user.png"
-                  }
-                    alt="profile"
-                    width={50}
-                    height={50}
-                    />
-                </Link>
-              </li>
+              ) : (
+                <li>
+                  <Link href="/profile">
+                    <div className="overflow-hidden rounded-full aspect-square w-[40px] lg:w-[50px]">
+                      {loading ? (
+                        <Skeleton className="rounded-full w-full h-full">
+                          <div />
+                        </Skeleton>
+                      ) : (
+                        <Image
+                          className="object-cover w-full h-full rounded-full "
+                          src={
+                            userProfile?.profile_picture
+                              ? `${process.env.NEXT_PUBLIC_API_URL}${userProfile.profile_picture}`
+                              : "/images/user.png"
+                          }
+                          alt="profile"
+                          width={50}
+                          height={50}
+                        />
+                      )}
+                    </div>
+                  </Link>
+                </li>
               )}
             </>
           ) : (

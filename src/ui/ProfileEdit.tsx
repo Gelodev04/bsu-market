@@ -87,14 +87,16 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col items-center mb-6">
-            <div className="relative">
-              <Image
-                src={`${imagePreview}`}
-                alt="Profile"
-                width={120}
-                height={120}
-                className="rounded-full object-cover"
-              />
+            <div className="relative ">
+              <div className='aspect-square overflow-hidden rounded-full w-[70px] h-[70px] flex items-center justify-center'>
+                <Image
+                  src={`${imagePreview}`}
+                  alt="Profile"
+                  width={120}
+                  height={120}
+                  className="rounded-full object-cover w-[70px] h-[70px]"
+                />
+              </div>
               <label className="absolute bottom-0 right-0 bg-bsutheme text-white p-2 rounded-full cursor-pointer">
                 <input
                   type="file"
