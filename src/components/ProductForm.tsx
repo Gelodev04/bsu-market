@@ -127,6 +127,7 @@ const ProductForm = () => {
           onChange={handleInputChange}
           className="w-full p-2 border rounded"
           required
+          autoComplete="off"
         />
       </div>
 
@@ -164,6 +165,7 @@ const ProductForm = () => {
           labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
           acceptedFileTypes={['image/*']}
           className="w-full"
+          required
         />
       </div>
 

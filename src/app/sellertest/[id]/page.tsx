@@ -169,104 +169,63 @@ export default function ProductDetailPage() {
   if (!data) return <p>No product details available.</p>;
 
   return (
-    <main>
-      <PageNavbar />
-      {data ? (
-        <div className="px-3">
-          <div className="flex  pt-10  gap-2 flex-col border-b border-gray-400 pb-5">
-            <div className=" rounded-full">
-              <Image
-                className="w-[150px] h-[150px] rounded-full object-cover"
-                src={
-                  `${process.env.NEXT_PUBLIC_API_URL}${data?.profile_picture}` ||
-                  "/images/user.png"
-                }
-                alt="profile"
-                width={500}
-                height={500}
-              />
-            </div>
-            <div className="pl-2">
-              <div className="-space-y-1 ">
-                <p className="text-[2.5rem] font-medium capitalize ">
-                  {data.username}
-                </p>
-                <p className="capitalize">{data.location}</p>
-                <p className="capitalize font-semibold">
-                  {Number(data.followers) === 0 ? (
-                    <span className="font-semibold">No followers</span>
-                  ) : (
-                    <>
-                      {data.followers}{" "}
-                      <span className="font-semibold">followers</span>
-                    </>
-                  )}
-                </p>
+    <main className="min-h-screen">
+        <PageNavbar />
+      <div className=" max-w-[900px] mx-auto">
+        {data ? (
+          <div className="px-3">
+            <div className="flex  pt-10  gap-2 flex-col border-b border-gray-400 pb-5">
+              <div className=" rounded-full">
+                <Image
+                  className="w-[150px] h-[150px] rounded-full object-cover"
+                  src={
+                    `${process.env.NEXT_PUBLIC_API_URL}${data?.profile_picture}` ||
+                    "/images/user.png"
+                  }
+                  alt="profile"
+                  width={500}
+                  height={500}
+                />
               </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <button
-                  onClick={handleFollow}
-                  className={`w-[270px] flex items-center justify-center h-[40px] rounded text-white font-medium ${
-                    isFollowing
-                      ? "bg-gray-500 hover:bg-[hsl(220,9%,50%)]"
-                      : "bg-bsutheme hover:bg-[hsl(358,84%,62%)] active:bg-[hsl(358,84%, 70%)]"
-                  }`}
-                >
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </button>
+              <div className="pl-2">
+                <div className="-space-y-1 ">
+                  <p className="text-[2.5rem] font-medium capitalize ">
+                    {data.username}
+                  </p>
+                  <p className="capitalize">{data.location}</p>
+                  <p className="capitalize font-semibold">
+                    {Number(data.followers) === 0 ? (
+                      <span className="font-semibold">No followers</span>
+                    ) : (
+                      <>
+                        {data.followers}{" "}
+                        <span className="font-semibold">followers</span>
+                      </>
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <button
+                    onClick={handleFollow}
+                    className={`w-[270px] flex items-center justify-center h-[40px] rounded text-white font-medium ${
+                      isFollowing
+                        ? "bg-gray-500 hover:bg-[hsl(220,9%,50%)]"
+                        : "bg-bsutheme hover:bg-[hsl(358,84%,62%)] active:bg-[hsl(358,84%, 70%)]"
+                    }`}
+                  >
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </button>
+                </div>
               </div>
             </div>
+      
+            <SellerDetails sellerId={data.id} />
+      
           </div>
-            
-          <SellerDetails sellerId={data.id} />
-          {/* <h2 className="text-xl font-semibold mt-5 px-3">
-          Products({data.products.length})
-        </h2>
-
-         <div className="grid grid-cols-2 gap-2 gap-y-4 mt-4 px-3">
-          {data.products.map((product, index) => {
-            const imagePaths = getImagePaths(product.image);
-            return (
-              <div
-                key={index}
-                className="rounded flex flex-col relative hover:outline outline-2 hover:outline-bsutheme active:outline-bsutheme min-h-[200px] overflow-hidden cursor-pointer active:bg-gray-300 duration-150 transition-colors pb-1"
-              >
-                {imagePaths.length > 0 && (
-                  <Link href={`/productdetail/${product.id}`}>
-                    <div className="relative">
-                      <Image
-                        className="object-cover w-full aspect-[4/3] rounded"
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${imagePaths[0]}`}
-                        alt={product.name}
-                        width={500}
-                        height={500}
-                      />
-                    
-                      {imagePaths.length > 1 && (
-                        <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
-                          +{imagePaths.length - 1}
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                )}
-                <h3 className="mt-2 text-lg font-medium">{product.name}</h3>
-
-                <p>{product.description}</p>
-                <p>
-                  ₱
-                  {Number(product.price).toLocaleString("fil-PH", {
-                    maximumFractionDigits: 0,
-                  })}
-                </p>
-              </div>
-            );
-          })}
-        </div> */}
-        </div>
-      ) : (
-        <p>No seller data available.</p>
-      )}
+        ) : (
+          <p>No seller data available.</p>
+        )}
+      </div>
     </main>
   );
 }

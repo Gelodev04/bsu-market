@@ -27,7 +27,7 @@ const NewProductPage = () => {
   }, [router]);
 
   return (
-    <div className='h-screen'>
+    <div className='min-h-screen'>
       <PageNavbar/>
       <h1 className='text-center pt-1'>Create a New Product</h1>
       <ProductForm />

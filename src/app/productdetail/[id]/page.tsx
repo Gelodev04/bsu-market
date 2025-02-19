@@ -63,8 +63,8 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error("Error checking follow status:", error);
-    }
-  };
+      }
+    };
 
   const checkSaveStatus = async (productId: number) => {
     console.log("Checking follow status for userId:", productId); // Add this line
