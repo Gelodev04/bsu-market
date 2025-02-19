@@ -38,7 +38,7 @@ export default function ProductDetailPage() {
   };
 
   const checkFollowStatus = async (userId: number) => {
-    
+  
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
     };
 
   const checkSaveStatus = async (productId: number) => {
-    console.log("Checking follow status for userId:", productId); // Add this line
+    // Add this line
     console.log("Current user ID:", currentUserId); // Add this line
     try {
       const token = localStorage.getItem("token");
@@ -97,6 +97,7 @@ export default function ProductDetailPage() {
   };
 
   const handleSave = async () => {
+   
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) {
@@ -280,7 +281,7 @@ export default function ProductDetailPage() {
       />
       {data && (
         <SellerInfo
-        productId={data.id}
+        productId={data.user_id}
           username={data.username}
           profilePicture={data.profile_picture || ""}
           baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}

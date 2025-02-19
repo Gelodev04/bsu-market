@@ -17,7 +17,7 @@ export default async function Home() {
   });
   
   const products = await data.json()
-console.log(products);
+
  
   return (
     <>
