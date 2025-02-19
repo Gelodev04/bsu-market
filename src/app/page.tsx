@@ -12,7 +12,9 @@ import Link from "next/link";
 
 
 export default async function Home() {
-  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
+    cache: "no-store", 
+  });
   
   const products = await data.json()
 console.log(products);
