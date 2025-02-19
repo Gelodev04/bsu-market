@@ -79,7 +79,7 @@ const ProductForm = () => {
     try {
       await createProduct(submitData);
       
-      //Reset form
+   
       setFormData({
         name: "",
         price: "",
@@ -89,9 +89,9 @@ const ProductForm = () => {
       });
       setFiles([]);
       
-      // Show success message or redirect
-      setTimeout(() => router.push("/"), 1000);
-      setMessage('Created Successully');  // Redirect to products page after success
+     
+    
+      setMessage('Created Successfully! Wait for the admin to confirm.');  // Redirect to products page after success
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

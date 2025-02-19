@@ -25,7 +25,7 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("Alangilan");
   const [followers, setFollowers] = useState("");
   const [products, setProducts] = useState<any[]>([]);
-  const [profileImage, setProfileImage] = useState<string>("/images/user.png"); // Default image
+  const [profileImage, setProfileImage] = useState<string>("/images/user.png"); 
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [following, setFollowing] = useState<UserData[]>([]);
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
@@ -218,7 +218,7 @@ const ProfilePage = () => {
 
               {/* FOLLOWING */}
 
-              <StatsSection following={following} savedProducts={savedProducts} followers={followers}/>
+              <StatsSection  followers={followers}/>
               
 
               <div className="flex flex- gap-1 pt-1">

@@ -1,10 +1,10 @@
 "use client";
 import PageNavbar from "@/components/PageNavbar";
-import { ProductImages } from "@/components/ProductImages";
-import { ProductInfo } from "@/components/ProductInfo";
-import { SellerInfo } from "@/components/SellerInfo";
-import ChatBox from "@/components/ChatBox";
-import { ProductDetails } from "@/components/ProductDetails";
+import { ProductImages } from "@/components/ProductDetail/ProductImages";
+import { ProductInfo } from "@/components/ProductDetail/ProductInfo";
+import { SellerInfo } from "@/components/ProductDetail/SellerInfo";
+import ChatBox from "@/components/ProductDetail/ChatBox";
+import { ProductDetails } from "@/components/ProductDetail/ProductDetails";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";

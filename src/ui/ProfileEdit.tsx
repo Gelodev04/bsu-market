@@ -34,6 +34,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [imagePreview, setImagePreview] = useState<string>(currentProfile);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+
+  
   useEffect(() => {
     if (isOpen) {
       setUsername(currentUsername);
