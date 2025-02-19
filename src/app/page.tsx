@@ -15,7 +15,7 @@ export default async function Home() {
   const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
   
   const products = await data.json()
-
+console.log(products);
  
   return (
     <>
