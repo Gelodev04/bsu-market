@@ -18,10 +18,19 @@ export default function MyNavbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const cachedProfile = localStorage.getItem("userProfile");
     setIsLoggedIn(!!token);
+
+    if (cachedProfile) {
+      setUserProfile(JSON.parse(cachedProfile));
+      setIsLoggedIn(true);
+      setLoading(false);
+    }
 
     if (token) {
       fetchUserProfile(token);
+    }else {
+      setLoading(false);
     }
   }, []);
 
@@ -42,6 +51,7 @@ export default function MyNavbar() {
 
       const userData = await response.json();
       setUserProfile(userData);
+      localStorage.setItem("userProfile", JSON.stringify(userData)); 
 
       if (userData.role == -"admin") {
         router.push("/admin-dashboard");
@@ -51,6 +61,7 @@ export default function MyNavbar() {
       setIsLoggedIn(false);
       setUserProfile(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("userProfile");
     } finally {
       setLoading(false); // Set loading to false after the data fetch completes
     }
