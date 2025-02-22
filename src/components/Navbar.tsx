@@ -3,69 +3,14 @@ import Image from "next/image";
 import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import { Skeleton } from "@heroui/react";
 
+import { useAuth } from "@/context/auth-context";
+
 export default function MyNavbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userProfile, setUserProfile] = useState<{
-    profile_picture?: string;
-    role?: string;
-  } | null>(null);
-  const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(true);
+  const { isLoggedIn, userProfile, loading, getProfileImage } = useAuth();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const cachedProfile = localStorage.getItem("userProfile");
-    setIsLoggedIn(!!token);
-
-    if (cachedProfile) {
-      setUserProfile(JSON.parse(cachedProfile));
-      setIsLoggedIn(true);
-      setLoading(false);
-    }
-
-    if (token) {
-      fetchUserProfile(token);
-    }else {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchUserProfile = async (token: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user profile");
-      }
-
-      const userData = await response.json();
-      setUserProfile(userData);
-      localStorage.setItem("userProfile", JSON.stringify(userData)); 
-
-      if (userData.role == -"admin") {
-        router.push("/admin-dashboard");
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      setIsLoggedIn(false);
-      setUserProfile(null);
-      localStorage.removeItem("token");
-      localStorage.removeItem("userProfile");
-    } finally {
-      setLoading(false); // Set loading to false after the data fetch completes
-    }
-  };
   return (
     <>
       <CustomNavbarComponent>
@@ -106,11 +51,7 @@ export default function MyNavbar() {
                       ) : (
                         <Image
                           className="object-cover w-full h-full rounded-full "
-                          src={
-                            userProfile?.profile_picture
-                              ? `${process.env.NEXT_PUBLIC_API_URL}${userProfile.profile_picture}`
-                              : "/images/user.png"
-                          }
+                          src={getProfileImage()}
                           alt="profile"
                           width={50}
                           height={50}

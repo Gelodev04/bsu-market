@@ -68,7 +68,7 @@ export default function ProductDetailPage() {
 
   const checkSaveStatus = async (productId: number) => {
     // Add this line
-    console.log("Current user ID:", currentUserId); // Add this line
+   // Add this line
     try {
       const token = localStorage.getItem("token");
       if (!token || !currentUserId) return;
@@ -233,9 +233,9 @@ export default function ProductDetailPage() {
         }
 
         const result = await res.json();
-        console.log(result);
+    
         setData(result);
-        console.log()
+    
         if (result.id && currentUserId) {
           await Promise.all([
             checkFollowStatus(result.user_id),

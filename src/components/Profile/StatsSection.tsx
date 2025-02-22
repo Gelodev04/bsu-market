@@ -12,9 +12,10 @@ import {
 import { UserData, Product } from "@/types/profile";
 import Image from "next/image";
 import Link from "next/link";
+import { getUserFollowing } from "@/services/api";
+import { getUserSaved } from "@/services/api";
 
 interface Props {
-
   followers: string;
 }
 
@@ -26,23 +27,14 @@ const StatsSection: React.FC<Props> = ({ followers }) => {
 
   useEffect(() => {
     const fetchSavedProducts = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
-
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/saved`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/saved`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch following list");
@@ -60,35 +52,29 @@ const StatsSection: React.FC<Props> = ({ followers }) => {
   }, []);
 
   useEffect(() => {
-      const fetchFollowing = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          return;
+    const fetchFollowing = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/following`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch following list");
         }
-  
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/following`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch following list");
-          }
-  
-          const data = await response.json();
-          setFollowing(data);
-        } catch (error) {
-          console.error("Error fetching following list:", error);
-        }
-      };
-  
-      fetchFollowing();
-    }, []);
+
+        const data = await response.json();
+        setFollowing(data);
+      } catch (error) {
+        console.error("Error fetching following list:", error);
+      }
+    };
+
+    fetchFollowing();
+  }, []);
 
   return (
     <div className="flex items-center justify-center gap-3 py-5">
