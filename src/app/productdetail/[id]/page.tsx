@@ -11,51 +11,40 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { ProductDetail } from "@/types/product.d";
 import { Spinner } from "@heroui/react";
-import { getProducts } from '@/services/api';
-
-
-
-
-
+import { getProducts } from "@/services/api";
 
 export default function ProductDetailPage() {
-
-
   const params = useParams();
   const router = useRouter();
   const { currentUserId } = useAuth();
-  
   const [data, setData] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
-
-
   const getImagePaths = (imageString: string | null) => {
     return imageString ? imageString.split(",") : [];
   };
 
   const checkFollowStatus = async (userId: number) => {
-  
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) return;
+      if (!currentUserId) {
+        setIsFollowing(false);
+        return;
+      }
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/follow/status/${userId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
 
       if (res.ok) {
         const { isFollowing } = await res.json();
         setIsFollowing(isFollowing);
-        // Store follow status with both the current user ID and the followed username
+        // Store with user-specific key
         localStorage.setItem(
           `followStatus_${currentUserId}_${userId}`,
           JSON.stringify(isFollowing)
@@ -63,29 +52,28 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error("Error checking follow status:", error);
-      }
-    };
+      setIsFollowing(false);
+    }
+  };
 
   const checkSaveStatus = async (productId: number) => {
-    // Add this line
-   // Add this line
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) return;
+      if (!currentUserId) {
+        setIsSaved(false);
+        return;
+      }
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/save/status/${productId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
 
       if (res.ok) {
         const { isSaved } = await res.json();
         setIsSaved(isSaved);
-        // Store follow status with both the current user ID and the followed username
+        // Store with user-specific key
         localStorage.setItem(
           `saveStatus_${currentUserId}_${productId}`,
           JSON.stringify(isSaved)
@@ -93,15 +81,14 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error("Error checking save status:", error);
+      setIsSaved(false);
     }
   };
 
   const handleSave = async () => {
-   
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) {
-        router.push("/login");
+      if (!currentUserId) {
+        router.push('/login');
         return;
       }
 
@@ -115,19 +102,19 @@ export default function ProductDetailPage() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/save/${data?.id}`,
         {
           method,
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (res.ok) {
-        const newSaveStatus = !isSaved;
-        setIsSaved(newSaveStatus);
+        const newIsSaved = !isSaved;
+        setIsSaved(newIsSaved);
         localStorage.setItem(
-          `saveStatus_${currentUserId}_${data?.id}`,
-          JSON.stringify(newSaveStatus)
+          `saveStatus_${currentUserId}_${data.id}`,
+          JSON.stringify(newIsSaved)
         );
       } else {
         const errMessage = await res.text();
@@ -137,16 +124,15 @@ export default function ProductDetailPage() {
       if (error instanceof Error) {
         alert(`Error: ${error.message}`);
       } else {
-        alert("An unexpected error occured");
+        alert("An unexpected error occurred");
       }
     }
   };
 
   const handleFollow = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) {
-        router.push("/login");
+      if (!currentUserId) {
+        router.push('/login');
         return;
       }
 
@@ -160,20 +146,19 @@ export default function ProductDetailPage() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/follow/${data?.user_id}`,
         {
           method,
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (res.ok) {
-        const newFollowStatus = !isFollowing;
-        setIsFollowing(newFollowStatus);
-        // Store follow status with both the current user ID and the followed username
+        const newIsFollowing = !isFollowing;
+        setIsFollowing(newIsFollowing);
         localStorage.setItem(
-          `followStatus_${currentUserId}_${data?.user_id}`,
-          JSON.stringify(newFollowStatus)
+          `followStatus_${currentUserId}_${data.user_id}`,
+          JSON.stringify(newIsFollowing)
         );
       } else {
         const errMessage = await res.text();
@@ -188,31 +173,21 @@ export default function ProductDetailPage() {
     }
   };
 
+  // Reset states when user changes
   useEffect(() => {
-    // Restore follow and save status from localStorage when the component mounts
-    if (currentUserId) {
-      if (data?.user_id) {
-        const storedFollowStatus = localStorage.getItem(
-          `followStatus_${currentUserId}_${data.user_id}`
-        );
-        if (storedFollowStatus) {
-          setIsFollowing(JSON.parse(storedFollowStatus));
-        }
-        checkFollowStatus(data.user_id); // Re-check follow status from the server
-      }
-
-      if (data?.id) {
-        const storedSaveStatus = localStorage.getItem(
-          `saveStatus_${currentUserId}_${data.id}`
-        );
-        if (storedSaveStatus) {
-          setIsSaved(JSON.parse(storedSaveStatus));
-        }
-        checkSaveStatus(data.id); // Re-check save status from the server
+    setIsFollowing(false);
+    setIsSaved(false);
+    
+    if (data?.id && data?.user_id) {
+      // Check status only if we have both currentUserId and required IDs
+      if (currentUserId) {
+        checkSaveStatus(data.id);
+        checkFollowStatus(data.user_id);
       }
     }
-  }, [data?.user_id, data?.id, currentUserId]);
+  }, [currentUserId, data?.id, data?.user_id]);
 
+  // Initial data fetch
   useEffect(() => {
     if (!params.id) {
       setError("Product ID is missing in the URL");
@@ -233,13 +208,26 @@ export default function ProductDetailPage() {
         }
 
         const result = await res.json();
-    
         setData(result);
-    
-        if (result.id && currentUserId) {
+
+        // Only check statuses if user is logged in
+        if (currentUserId) {
+          // Get stored states with user-specific keys
+          const savedStatus = localStorage.getItem(
+            `saveStatus_${currentUserId}_${result.id}`
+          );
+          const followStatus = localStorage.getItem(
+            `followStatus_${currentUserId}_${result.user_id}`
+          );
+
+          // Set initial states from localStorage if available
+          if (savedStatus !== null) setIsSaved(JSON.parse(savedStatus));
+          if (followStatus !== null) setIsFollowing(JSON.parse(followStatus));
+
+          // Then verify with server
           await Promise.all([
             checkFollowStatus(result.user_id),
-            checkSaveStatus(result.id),
+            checkSaveStatus(result.id)
           ]);
         }
       } catch (err: any) {
@@ -251,8 +239,6 @@ export default function ProductDetailPage() {
 
     fetchProduct();
   }, [params.id, currentUserId]);
-
-
 
   if (loading)
     return (
@@ -281,7 +267,7 @@ export default function ProductDetailPage() {
       />
       {data && (
         <SellerInfo
-        productId={data.user_id}
+          productId={data.user_id}
           username={data.username}
           profilePicture={data.profile_picture || ""}
           baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}
@@ -297,4 +283,3 @@ export default function ProductDetailPage() {
     </main>
   );
 }
-

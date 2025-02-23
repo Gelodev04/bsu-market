@@ -1,11 +1,8 @@
 "use client";
 import Image from "next/image";
-import { CartSvg, Menu, ProfileSvg, SearchSvg } from "@/assets/svgs/Svg";
 import CustomNavbarComponent from "@/ui/CustomNavbar";
 import Link from "next/link";
-
 import { Skeleton } from "@heroui/react";
-
 import { useAuth } from "@/context/auth-context";
 
 export default function MyNavbar() {

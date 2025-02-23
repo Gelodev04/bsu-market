@@ -4,14 +4,12 @@ export const useAuth = () => {
     const [currentUserId, setCurrentUserId] = useState<string>("");
     
     const getCurrentUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+     
+     
   
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
         if (res.ok) {
           const userData = await res.json();
