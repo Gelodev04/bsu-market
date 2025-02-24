@@ -36,15 +36,12 @@ export default function ProductDetailPage() {
           }
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) return;
+    
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/follow/status/${userId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
 
@@ -63,11 +60,7 @@ export default function ProductDetailPage() {
 
   const handleFollow = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token || !currentUserId) {
-        router.push("/login");
-        return;
-      }
+      
 
       if (!data?.id) {
         alert("User information not available");
@@ -81,8 +74,9 @@ export default function ProductDetailPage() {
           method,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            
           },
+          credentials: "include",
         }
       );
 

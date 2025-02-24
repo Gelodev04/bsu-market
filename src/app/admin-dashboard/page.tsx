@@ -22,17 +22,11 @@ const PendingProducts = () => {
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          return;
-        }
+        
 
         // Verify admin status
         await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/check-admin`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
         });
 
         setIsAdmin(true);
@@ -41,9 +35,7 @@ const PendingProducts = () => {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/admin/products/pending`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+           withCredentials: true,
           }
         );
 
@@ -74,9 +66,7 @@ const PendingProducts = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/products/${id}/status`,
         { status },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
         }
       );
       // Refresh the list after status change

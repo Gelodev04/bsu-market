@@ -13,7 +13,7 @@ export const useAuth = () => {
         });
         if (res.ok) {
           const userData = await res.json();
-        
+      
           setCurrentUserId(userData.id?.toString() || "");
         }
       } catch (error) {
@@ -23,7 +23,10 @@ export const useAuth = () => {
   
     useEffect(() => {
       getCurrentUser();
+     
     }, []);
+
+
   
     return { currentUserId };
   };

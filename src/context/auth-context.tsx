@@ -18,12 +18,13 @@ interface UserProfile {
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => void; // ✅ Add this line
+  setIsLoggedIn: (value: boolean) => void;
   userProfile: UserProfile | null;
   setUserProfile: (profile: UserProfile | null) => void;
   handleLogout: () => Promise<void>;
   loading: boolean;
   getProfileImage: () => string;
+  currentUserId: number | null;
 }
 
 
@@ -33,17 +34,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const router = useRouter();
 
   const getProfileImage = (): string => {
     if (!userProfile?.profile_picture) return DEFAULT_PROFILE_IMAGE;
 
-    // If the profile picture is already a full URL, return it
+   
     if (userProfile.profile_picture.startsWith("http")) {
       return userProfile.profile_picture;
     }
 
-    // Otherwise, prepend the API URL
+   
     return `${process.env.NEXT_PUBLIC_API_URL}${userProfile.profile_picture}`;
   };
 
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUserProfile(parsedUser);
-
+      setCurrentUserId(parsedUser.id);
       setIsLoggedIn(true);
       setLoading(false);
       return;
@@ -67,13 +69,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             credentials: "include",
           }
         );
-
+  
         if (response.ok) {
           const userData = await response.json();
+     
           setIsLoggedIn(true);
+          setCurrentUserId(userData.id);
           setUserProfile(userData);
-
           localStorage.setItem("userProfile", JSON.stringify(userData));
+          
         } else {
           setIsLoggedIn(false);
           setUserProfile(null);
@@ -84,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoggedIn(false);
       } finally {
         setLoading(false);
+        
       }
     };
 
@@ -100,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Clear local storage and state
       localStorage.removeItem("userProfile");
       setIsLoggedIn(false);
-      setUserProfile(null);
+      
 
       router.push("/login");
     } catch (error) {
@@ -118,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserProfile,
         loading,
         getProfileImage,
+        currentUserId,
       }}
     >
       {children}

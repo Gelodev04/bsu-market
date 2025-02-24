@@ -32,7 +32,7 @@ interface SellerInfoProps {
             alt="profile"
           />
         )}
-          <h1 className="capitalize text-lg">{username}</h1>
+          <h1 className=" text-lg">{username}</h1>
         </Link>
         <button
           onClick={onFollow}

@@ -13,6 +13,7 @@ import { ProductsSection } from "@/components/Profile/ProductsSection";
 import { getUserFollowing } from "@/services/api";
 import { useAuth } from "@/context/auth-context";
 
+
 const ProfilePage = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("Alangilan");
@@ -20,7 +21,7 @@ const ProfilePage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [profileImage, setProfileImage] = useState<string>("/images/user.png");
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-  const { handleLogout, userProfile } = useAuth();
+  const { handleLogout, userProfile, getProfileImage } = useAuth();
   const router = useRouter();
 
   const handleProfileUpdate = async (data: ProfileUpdateData) => {
@@ -127,7 +128,7 @@ const ProfilePage = () => {
             <div className=" rounded-full">
               <Image
                 className="w-[150px] h-[150px] rounded-full object-cover"
-                src={profileImage}
+                src={getProfileImage()}
                 alt="profile"
                 width={500}
                 height={500}

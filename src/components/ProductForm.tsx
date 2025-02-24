@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FilePond, registerPlugin } from 'react-filepond';
 import { createProduct } from "../services/api";
 import { useRouter } from 'next/navigation';
-
+import { useAuth } from "@/context/auth-context";
 
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
@@ -25,16 +25,8 @@ const ProductForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+const {currentUserId} = useAuth();
 
-  useEffect(() => {
-    // Check authentication on component mount
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-    
-    if (!token || !userId) {
-      setTimeout(() => router.push("/login"), 2000);  // Redirect to login if not authenticated
-    }
-  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -53,14 +45,7 @@ const ProductForm = () => {
     setError(null);
     setIsLoading(true);
 
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-
-    if (!userId || !token) {
-      setError("You must be logged in");
-      setTimeout(() => router.push("/login"), 2000); 
-      return;
-    }
+    
 
     const submitData = new FormData();
     submitData.append("name", formData.name);
@@ -68,7 +53,7 @@ const ProductForm = () => {
     submitData.append("description", formData.description);
     submitData.append("location", formData.location);
     submitData.append("condition", formData.condition);
-    submitData.append("userId", userId);
+    submitData.append("userId", currentUserId?.toString() || "");
     
     files.forEach((fileItem, index) => {
     if (fileItem.file) {

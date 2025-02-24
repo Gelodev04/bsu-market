@@ -204,6 +204,7 @@ export default function ProductDetailPage() {
         if (!res.ok) {
           const errMessage = await res.text();
           setError(errMessage || "Failed to fetch product details");
+          
           return;
         }
 

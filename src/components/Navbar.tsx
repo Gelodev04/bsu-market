@@ -6,7 +6,8 @@ import { Skeleton } from "@heroui/react";
 import { useAuth } from "@/context/auth-context";
 
 export default function MyNavbar() {
-  const { isLoggedIn, userProfile, loading, getProfileImage } = useAuth();
+  const { isLoggedIn, userProfile, loading, getProfileImage, currentUserId } = useAuth();
+
 
   return (
     <>

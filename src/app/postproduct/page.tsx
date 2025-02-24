@@ -8,23 +8,21 @@ const ProductForm = dynamic(() => import('@/components/ProductForm'), {
 });
 
 
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PageNavbar from '@/components/PageNavbar';
 
-const NewProductPage = () => {
-  const router = useRouter();
+import { useAuth } from "@/context/auth-context";
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Now we can safely access localStorage in the client-side
-      const token = localStorage.getItem("token"); // Assuming you store the token in localStorage
-      if (!token) {
-        // If there is no token, redirect to the login page
-        router.push("/login");
-      }
+const NewProductPage = () => {
+  const { isLoggedIn, userProfile, loading, getProfileImage, currentUserId } = useAuth();
+  const router = useRouter();
+ 
+useEffect(() => {
+    if (!isLoggedIn && !loading) {
+      router.push("/login");
     }
-  }, [router]);
+  }, [isLoggedIn, loading]);
 
   return (
     <div className='min-h-screen'>
