@@ -13,6 +13,7 @@ import { ProductDetail } from "@/types/product.d";
 import { Spinner } from "@heroui/react";
 import { getProducts } from "@/services/api";
 
+
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function ProductDetailPage() {
   const handleSave = async () => {
     try {
       if (!currentUserId) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
@@ -132,7 +133,7 @@ export default function ProductDetailPage() {
   const handleFollow = async () => {
     try {
       if (!currentUserId) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
@@ -177,7 +178,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     setIsFollowing(false);
     setIsSaved(false);
-    
+
     if (data?.id && data?.user_id) {
       // Check status only if we have both currentUserId and required IDs
       if (currentUserId) {
@@ -204,7 +205,7 @@ export default function ProductDetailPage() {
         if (!res.ok) {
           const errMessage = await res.text();
           setError(errMessage || "Failed to fetch product details");
-          
+
           return;
         }
 
@@ -228,7 +229,7 @@ export default function ProductDetailPage() {
           // Then verify with server
           await Promise.all([
             checkFollowStatus(result.user_id),
-            checkSaveStatus(result.id)
+            checkSaveStatus(result.id),
           ]);
         }
       } catch (err: any) {
@@ -252,35 +253,39 @@ export default function ProductDetailPage() {
   if (!data) return <p>No product details available.</p>;
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen relative">
       <PageNavbar />
-      <ProductImages
-        images={getImagePaths(data.image)}
-        productName={data.name}
-        baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}
-      />
-      <ProductInfo
-        name={data.name}
-        price={data.price}
-        description={data.description}
-        isSaved={isSaved}
-        onSave={handleSave}
-      />
-      {data && (
-        <SellerInfo
-          productId={data.user_id}
-          username={data.username}
-          profilePicture={data.profile_picture || ""}
-          baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}
-          isFollowing={isFollowing}
-          onFollow={handleFollow}
-          loading={loading}
-        />
-      )}
-      <div className="z-[99999]">
-        <ChatBox />
+      <div className="xl:flex xl:h-[95vh]">
+        <div className="xl:w-3/4  xl:h-full h-[620px]">
+          <ProductImages
+            images={getImagePaths(data.image)}
+            productName={data.name}
+            baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}
+          />
+        </div>
+        <div className="xl:w-1/4 xl:h-full xl:p-4  ">
+          <ProductInfo
+            name={data.name}
+            price={data.price}
+            description={data.description}
+            isSaved={isSaved}
+            onSave={handleSave}
+          />
+          {data && (
+            <SellerInfo
+              productId={data.user_id}
+              username={data.username}
+              profilePicture={data.profile_picture || ""}
+              baseUrl={process.env.NEXT_PUBLIC_API_URL || ""}
+              isFollowing={isFollowing}
+              onFollow={handleFollow}
+              loading={loading}
+            />
+          )}
+          <ProductDetails location={data.location} condition={data.condition} />
+        </div>
       </div>
-      <ProductDetails location={data.location} condition={data.condition} />
-    </main>
+      <div className="z-[99999]">{/* <ChatBox /> */}</div>
+    </div>
   );
 }

@@ -124,18 +124,18 @@ export default function PageNavbar() {
   const router = useRouter();
 
   return (
-    <nav
-      className="flex justify-between
-            bg-white text-black py-3 px-4 w-full
-        "
-    >
-     
-        <div className="flex gap-3 duration-200 cursor-pointer" onClick={() => router.back()}>
-          <CloseSvg/>
-        </div>
-     
-
-     
-    </nav>
+   
+      <div
+        className="h-[5vh] bg-white shadow-md flex items-center justify-between px-4 py-2 w-full   z-50
+          "
+      >
+      
+          <div className="flex gap-3 duration-200 cursor-pointer" onClick={() => router.back()}>
+            <CloseSvg/>
+          </div>
+      
+      
+      </div>
+   
   );
 }

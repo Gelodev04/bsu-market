@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
@@ -13,18 +12,30 @@ interface ProductImagesProps {
   baseUrl: string;
 }
 
-export const ProductImages = ({ images, productName, baseUrl }: ProductImagesProps) => (
-  <Swiper spaceBetween={1} slidesPerView={1} pagination={true} modules={[Pagination]}>
-    {images.map((imagePath, index) => (
-      <SwiperSlide key={index}>
-        <Image
-          className="w-full h-[400px] object-cover"
-          src={`${baseUrl}${imagePath}`}
-          alt={`${productName} - Image ${index + 1}`}
-          width={500}
-          height={500}
-        />
-      </SwiperSlide>
-    ))}
-  </Swiper>
+export const ProductImages = ({
+  images,
+  productName,
+  baseUrl,
+}: ProductImagesProps) => (
+  <div className="w-full h-full">
+    <Swiper
+      spaceBetween={1}
+      slidesPerView={1}
+      pagination={true}
+      modules={[Pagination]}
+      className="w-full h-full"
+    >
+      {images.map((imagePath, index) => (
+        <SwiperSlide key={index}>
+          <Image
+            className="w-full h-full object-cover "
+            src={`${baseUrl}${imagePath}`}
+            alt={`${productName} - Image ${index + 1}`}
+            width={500}
+            height={500}
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
 );
