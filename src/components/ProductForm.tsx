@@ -65,14 +65,14 @@ const {currentUserId} = useAuth();
       await createProduct(submitData);
       
    
-      setFormData({
-        name: "",
-        price: "",
-        description: "",
-        location: "Alangilan",
-        condition: ""
-      });
-      setFiles([]);
+      // setFormData({
+      //   name: "",
+      //   price: "",
+      //   description: "",
+      //   location: "Alangilan",
+      //   condition: ""
+      // });
+      // setFiles([]);
       
      
     
