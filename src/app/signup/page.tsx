@@ -94,109 +94,101 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center ">
-      <h1 className="text-[2rem] font-bold">Sign Up</h1>
-
-      {error && (
-        <div className="w-full max-w-md mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="w-full max-w-md mb-4 px-4 py-2 bg-green-100 border border-green-400 text-green-700 rounded">
-          {success}
-        </div>
-      )}
-
-      <form className="w-full px-4 flex flex-col gap-2 " onSubmit={handleSubmit}>
-        <div>
-          <Input
-            color="danger"
-            value={username}
-            onChange={handleUsernameChange}
-            required
-            label="Username(Display Name)"
-            type="Text"
-            variant="faded"
-           
-          />
-
-          {usernameTaken && (
-            <p style={{ color: "red" }}>Username is already taken</p>
-          )}
-        </div>
-
-        <div>
-          <Input
-            value={googleaccount}
-            onChange={(e) => setGoogleAccount(e.target.value)}
-            label="Gmail(optional)"
-            type="email"
-            variant="faded"
-            color="danger"
-            autoComplete="email"
-          />
-        </div>
-
-        <div>
-          <Input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            label="Password"
-            type="password"
-            variant="faded"
-            color="danger"
-             autoComplete="current-password"
-
-          />
-        </div>
-
-        <div>
-          <Select
-            className=""
-            label="Campus"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-            color="danger"
-            variant="faded"
+    <div className="h-screen flex flex-col justify-center max-w-[900px] mx-auto">
+      <div className="w-full mx-auto">
+        <h1 className="text-[2rem] font-bold text-center">Sign Up</h1>
+        {error && (
+          <div className="w-full max-w-md mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="w-full max-w-md mb-4 px-4 py-2 bg-green-100 border border-green-400 text-green-700 rounded">
+            {success}
+          </div>
+        )}
+        <form className="w-full px-4 flex flex-col gap-2 " onSubmit={handleSubmit}>
+          <div>
+            <Input
+              color="danger"
+              value={username}
+              onChange={handleUsernameChange}
+              required
+              label="Username(Display Name)"
+              type="Text"
+              variant="faded"
+        
+            />
+            {usernameTaken && (
+              <p style={{ color: "red" }}>Username is already taken</p>
+            )}
+          </div>
+          <div>
+            <Input
+              value={googleaccount}
+              onChange={(e) => setGoogleAccount(e.target.value)}
+              label="Gmail(optional)"
+              type="email"
+              variant="faded"
+              color="danger"
+              autoComplete="email"
+            />
+          </div>
+          <div>
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              label="Password"
+              type="password"
+              variant="faded"
+              color="danger"
+               autoComplete="current-password"
+            />
+          </div>
+          <div>
+            <Select
+              className=""
+              label="Campus"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              required
+              color="danger"
+              variant="faded"
+            >
+              {[
+                { value: "alangilan", label: "Alangilan" },
+                { value: "pablo-borbon", label: "Pablo Borbon" },
+              ].map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+          <button
+            className={`w-full mt-2 font-medium rounded-xl text-white py-3 ${
+              isSubmitting || usernameTaken
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-bsutheme hover:bg-[hsl(358,84%,55%)] active:bg-[hsl(358,84%,58%)] '
+            }`}
+            type="submit"
+            disabled={isSubmitting || usernameTaken}
           >
-            {[
-              { value: "alangilan", label: "Alangilan" },
-              { value: "pablo-borbon", label: "Pablo Borbon" },
-            ].map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
-
-        <button 
-          className={`w-full mt-2 font-medium rounded-xl text-white py-3 ${
-            isSubmitting || usernameTaken 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-bsutheme hover:bg-[hsl(358,84%,55%)] active:bg-[hsl(358,84%,58%)] '
-          }`} 
-          type="submit" 
-          disabled={isSubmitting || usernameTaken}
-        >
-          {isSubmitting ? (
-            <div className="flex items-center justify-center gap-2">
-              <Spinner color="default" size="sm" />
-            </div>
-          ) : (
-            "Sign Up"
-          )}
-        </button>
-
-        <div className="flex gap-1 justify-center">
-          <span>Already have an account?</span>
-          <Link href="/login"><span className="text-bsutheme">Log in</span></Link>
-        </div>
-      </form>
+            {isSubmitting ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner color="default" size="sm" />
+              </div>
+            ) : (
+              "Sign Up"
+            )}
+          </button>
+          <div className="flex gap-1 justify-center">
+            <span>Already have an account?</span>
+            <Link href="/login"><span className="text-bsutheme">Log in</span></Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
